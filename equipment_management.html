@@ -1,0 +1,980 @@
+<div class="p-8">
+    <h2 class="text-3xl font-bold text-gray-900 mb-6">Equipment Management</h2>
+
+    <div class="flex flex-wrap items-center justify-between mb-6 gap-4">
+        <button id="addEquipmentBtn" class="px-6 py-3 bg-[#EA3A26] text-white rounded-md font-semibold hover:bg-[#F54F1D] transition-colors duration-200 flex items-center gap-2">
+            <i class="fas fa-plus-circle"></i> Add New Equipment
+        </button>
+        <div class="flex flex-wrap items-center gap-4">
+            <input type="text" id="equipmentSearch" placeholder="Search by ID, Type..." onkeyup="filterEquipment()"
+                   class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#EA3A26] w-full md:w-auto">
+            <select id="statusFilter" onchange="filterEquipment()"
+                    class="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#EA3A26] w-full md:w-auto">
+                <option value="">All Statuses</option>
+                <option value="Available">Available</option>
+                <option value="On Rent">On Rent</option>
+                <option value="In Maintenance">In Maintenance</option>
+                <option value="Out of Service">Out of Service</option>
+                <option value="Reserved">Reserved</option>
+                <option value="Out of Service">Out of Service</option>
+            </select>
+            <select id="typeFilter" onchange="filterEquipment()"
+                    class="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#EA3A26] w-full md:w-auto">
+                <option value="">All Types</option>
+                <option value="Dumpster">Dumpster</option>
+                <option value="Temporary Toilet">Temporary Toilet</option>
+                <option value="Storage Container">Storage Container</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md overflow-x-auto mb-8">
+        <table class="min-w-full divide-y divide-gray-200" id="equipmentTable">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Size</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Daily Rate</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                <!-- Equipment data will be rendered here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Add/Edit Equipment Modal -->
+    <div id="equipmentModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-8 rounded-lg shadow-xl w-11/12 max-w-3xl relative max-h-[90vh] overflow-y-auto">
+            <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold" onclick="closeModal('equipmentModal')">&times;</button>
+            <h3 id="modalTitle" class="text-2xl font-bold text-[#EA3A26] mb-6 border-b pb-3 border-gray-200">Add New Equipment</h3>
+            <form id="equipmentForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input type="hidden" id="equipmentId">
+
+                <div class="col-span-1 md:col-span-2">
+                    <label for="equipmentType" class="block text-sm font-medium text-gray-700 mb-1">Equipment Type:</label>
+                    <select id="equipmentType" required onchange="toggleTypeSpecificFields()"
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                        <option value="">Select Type</option>
+                        <option value="Dumpster">Dumpster</option>
+                        <option value="Temporary Toilet">Temporary Toilet</option>
+                        <option value="Storage Container">Storage Container</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="equipmentSize" class="block text-sm font-medium text-gray-700 mb-1">Size:</label>
+                    <input type="text" id="equipmentSize" placeholder="e.g., 20-yard, 10ft, Standard" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+
+                <div>
+                    <label for="equipmentStatus" class="block text-sm font-medium text-gray-700 mb-1">Status:</label>
+                    <select id="equipmentStatus" required
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                        <option value="Available">Available</option>
+                        <option value="On Rent">On Rent</option>
+                        <option value="In Maintenance">In Maintenance</option>
+                        <option value="Out of Service">Out of Service</option>
+                        <option value="Reserved">Reserved</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="equipmentLocation" class="block text-sm font-medium text-gray-700 mb-1">Current Location:</label>
+                    <input type="text" id="equipmentLocation" placeholder="e.g., Yard A, Customer Site X" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+
+                <div>
+                    <label for="purchaseDate" class="block text-sm font-medium text-gray-700 mb-1">Purchase Date:</label>
+                    <input type="date" id="purchaseDate"
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+
+                <div>
+                    <label for="purchaseCost" class="block text-sm font-medium text-gray-700 mb-1">Purchase Cost ($):</label>
+                    <input type="number" id="purchaseCost" min="0" step="0.01"
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+
+                <div class="col-span-1 md:col-span-2">
+                    <label for="supplierManufacturer" class="block text-sm font-medium text-gray-700 mb-1">Supplier/Manufacturer:</label>
+                    <input type="text" id="supplierManufacturer" placeholder="e.g., ABC Supply Co."
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+
+                <div class="col-span-1 md:col-span-2">
+                    <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description (Internal Notes):</label>
+                    <textarea id="description" rows="3"
+                              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26] resize-y"></textarea>
+                </div>
+
+                <div class="col-span-1 md:col-span-2">
+                    <label for="equipmentImages" class="block text-sm font-medium text-gray-700 mb-1">Equipment Images (Dummy):</label>
+                    <input type="file" id="equipmentImages" multiple accept="image/*"
+                           class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-[#EA3A26] file:text-white hover:file:bg-[#F54F1D]"/>
+                    <p class="text-xs text-gray-500 mt-1">Note: File upload is for demo purposes; actual files won't be stored.</p>
+                </div>
+
+                <!-- Type-Specific Fields - Initially hidden -->
+                <div id="dumpsterFields" class="col-span-1 md:col-span-2 border-t border-gray-200 pt-4 mt-4 hidden">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Dumpster Specifics</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="dumpsterDimensions" class="block text-sm font-medium text-gray-700 mb-1">Dimensions (LxWxH):</label>
+                            <input type="text" id="dumpsterDimensions" placeholder="e.g., 20x8x5 ft"
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                        </div>
+                        <div>
+                            <label for="maxTonnage" class="block text-sm font-medium text-gray-700 mb-1">Max Tonnage:</label>
+                            <input type="number" id="maxTonnage" min="0" step="0.1"
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                        </div>
+                        <div>
+                            <label for="dumpsterContainerType" class="block text-sm font-medium text-gray-700 mb-1">Container Type:</label>
+                            <select id="dumpsterContainerType"
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                                <option value="">Select</option>
+                                <option value="Roll-off">Roll-off</option>
+                                <option value="Front-load">Front-load</option>
+                                <option value="Rear-load">Rear-load</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="gateType" class="block text-sm font-medium text-gray-700 mb-1">Gate Type:</label>
+                            <select id="gateType"
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                                <option value="">Select</option>
+                                <option value="Walk-in Door">Walk-in Door</option>
+                                <option value="No Door">No Door</option>
+                            </select>
+                        </div>
+                        <div class="col-span-1 md:col-span-2">
+                            <label for="prohibitedMaterials" class="block text-sm font-medium text-gray-700 mb-1">Prohibited Materials (comma-separated):</label>
+                            <textarea id="prohibitedMaterials" rows="2" placeholder="e.g., Tires, Batteries, Hazardous Waste"
+                                      class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26] resize-y"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="toiletFields" class="col-span-1 md:col-span-2 border-t border-gray-200 pt-4 mt-4 hidden">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Temporary Toilet Specifics</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="toiletCapacity" class="block text-sm font-medium text-gray-700 mb-1">Capacity (Gallons/Uses):</label>
+                            <input type="text" id="toiletCapacity" placeholder="e.g., 60 Gallons, 200 Uses"
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                        </div>
+                        <div>
+                            <label for="serviceFrequency" class="block text-sm font-medium text-gray-700 mb-1">Default Service Frequency:</label>
+                            <select id="serviceFrequency"
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                                <option value="Weekly">Weekly</option>
+                                <option value="Bi-weekly">Bi-weekly</option>
+                                <option value="Event-specific">Event-specific</option>
+                                <option value="Monthly">Monthly</option>
+                            </select>
+                        </div>
+                        <div class="col-span-1 md:col-span-2">
+                            <label for="toiletFeatures" class="block text-sm font-medium text-gray-700 mb-1">Features (Interior/Exterior, comma-separated):</label>
+                            <textarea id="toiletFeatures" rows="2" placeholder="e.g., Sink, Urinal, Mirror, Solar Light"
+                                      class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26] resize-y"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="containerFields" class="col-span-1 md:col-span-2 border-t border-gray-200 pt-4 mt-4 hidden">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Storage Container Specifics</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="storageContainerType" class="block text-sm font-medium text-gray-700 mb-1">Container Type:</label>
+                            <select id="storageContainerType"
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                                <option value="">Select</option>
+                                <option value="Standard">Standard</option>
+                                <option value="High Cube">High Cube</option>
+                                <option value="Open Top">Open Top</option>
+                                <option value="Reefer">Reefer (Refrigerated)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="doorType" class="block text-sm font-medium text-gray-700 mb-1">Door Type:</label>
+                            <select id="doorType"
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                                <option value="">Select</option>
+                                <option value="Roll-up">Roll-up</option>
+                                <option value="Swing-out">Swing-out</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="condition" class="block text-sm font-medium text-gray-700 mb-1">Condition:</label>
+                            <select id="condition"
+                                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                                <option value="">Select</option>
+                                <option value="Wind & Watertight">Wind & Watertight</option>
+                                <option value="Cargo Worthy">Cargo Worthy</option>
+                                <option value="As-Is">As-Is</option>
+                            </select>
+                        </div>
+                        <div class="col-span-1 md:col-span-2">
+                            <label for="securityFeatures" class="block text-sm font-medium text-gray-700 mb-1">Security Features (comma-separated):</label>
+                            <textarea id="securityFeatures" rows="2" placeholder="e.g., Lockbox, Reinforced Doors, Alarm System"
+                                      class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26] resize-y"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rental Pricing & Rules -->
+                <div class="col-span-1 md:col-span-2 border-t border-gray-200 pt-4 mt-4">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-4">Rental Pricing & Rules</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="baseDailyRate" class="block text-sm font-medium text-gray-700 mb-1">Base Daily Rate ($):</label>
+                            <input type="number" id="baseDailyRate" min="0" step="0.01" required
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                        </div>
+                        <div>
+                            <label for="defaultRentalPeriod" class="block text-sm font-medium text-gray-700 mb-1">Default Rental Period (days):</label>
+                            <input type="number" id="defaultRentalPeriod" min="1" step="1" placeholder="e.g., 7"
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                        </div>
+                        <div>
+                            <label for="minRentalPeriod" class="block text-sm font-medium text-gray-700 mb-1">Minimum Rental Period (days):</label>
+                            <input type="number" id="minRentalPeriod" min="1" step="1" placeholder="e.g., 1"
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                        </div>
+                        <div>
+                            <label for="extendedDailyRate" class="block text-sm font-medium text-gray-700 mb-1">Extended Daily Rate ($):</label>
+                            <input type="number" id="extendedDailyRate" min="0" step="0.01" placeholder="e.g., 10.00"
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                        </div>
+                        <div>
+                            <label for="deliveryFee" class="block text-sm font-medium text-gray-700 mb-1">Delivery Fee ($):</label>
+                            <input type="number" id="deliveryFee" min="0" step="0.01" placeholder="e.g., 50.00"
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                        </div>
+                        <div>
+                            <label for="pickupFee" class="block text-sm font-medium text-gray-700 mb-1">Pickup Fee ($):</label>
+                            <input type="number" id="pickupFee" min="0" step="0.01" placeholder="e.g., 50.00"
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                        </div>
+                        <div>
+                            <label for="overagePerTonFee" class="block text-sm font-medium text-gray-700 mb-1">Overage Per Ton Fee ($) (Dumpsters):</label>
+                            <input type="number" id="overagePerTonFee" min="0" step="0.01" placeholder="e.g., 75.00"
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                        </div>
+                        <div>
+                            <label for="disposalRatePerTon" class="block text-sm font-medium text-gray-700 mb-1">Disposal Rate Per Ton ($) (Dumpsters):</label>
+                            <input type="number" id="disposalRatePerTon" min="0" step="0.01" placeholder="e.g., 50.00"
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                        </div>
+                        <div class="col-span-1 md:col-span-2">
+                            <label for="damageWaiverCost" class="block text-sm font-medium text-gray-700 mb-1">Damage Waiver Cost ($):</label>
+                            <input type="number" id="damageWaiverCost" min="0" step="0.01" placeholder="e.g., 25.00"
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-span-1 md:col-span-2 flex justify-end gap-3 mt-6">
+                    <button type="button" class="px-6 py-2 bg-gray-300 text-gray-800 rounded-md font-semibold hover:bg-gray-400 transition-colors duration-200" onclick="closeModal('equipmentModal')">Cancel</button>
+                    <button type="submit" class="px-6 py-2 bg-[#EA3A26] text-white rounded-md font-semibold hover:bg-[#F54F1D] transition-colors duration-200">Save Equipment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- View Equipment Detail Modal -->
+    <div id="viewEquipmentModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-8 rounded-lg shadow-xl w-11/12 max-w-3xl relative max-h-[90vh] overflow-y-auto">
+            <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold" onclick="closeModal('viewEquipmentModal')">&times;</button>
+            <h3 class="text-2xl font-bold text-[#EA3A26] mb-6 border-b pb-3 border-gray-200">Equipment Details: <span id="detailId"></span></h3>
+            <div class="space-y-4 text-gray-700">
+                <div class="bg-gray-50 p-4 rounded-md shadow-sm">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">General Information</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <p><strong>Type:</strong> <span id="detailType"></span></p>
+                        <p><strong>Size:</strong> <span id="detailSize"></span></p>
+                        <p><strong>Status:</strong> <span id="detailStatus"></span></p>
+                        <p><strong>Current Location:</strong> <span id="detailLocation"></span></p>
+                        <p><strong>Purchase Date:</strong> <span id="detailPurchaseDate"></span></p>
+                        <p><strong>Purchase Cost:</strong> $<span id="detailPurchaseCost"></span></p>
+                        <p class="col-span-1 md:col-span-2"><strong>Supplier/Manufacturer:</strong> <span id="detailSupplierManufacturer"></span></p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-md shadow-sm hidden" id="detailDescriptionGroup">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Internal Description</h4>
+                    <p><span id="detailDescription"></span></p>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-md shadow-sm hidden" id="detailDumpsterFields">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Dumpster Specifics</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <p><strong>Dimensions:</strong> <span id="detailDumpsterDimensions"></span></p>
+                        <p><strong>Max Tonnage:</strong> <span id="detailMaxTonnage"></span> tons</p>
+                        <p><strong>Container Type:</strong> <span id="detailDumpsterContainerType"></span></p>
+                        <p><strong>Gate Type:</strong> <span id="detailGateType"></span></p>
+                        <p class="col-span-1 md:col-span-2"><strong>Prohibited Materials:</strong> <span id="detailProhibitedMaterials"></span></p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-md shadow-sm hidden" id="detailToiletFields">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Temporary Toilet Specifics</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <p><strong>Capacity:</strong> <span id="detailToiletCapacity"></span></p>
+                        <p><strong>Service Frequency:</strong> <span id="detailServiceFrequency"></span></p>
+                        <p class="col-span-1 md:col-span-2"><strong>Features:</strong> <span id="detailToiletFeatures"></span></p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-md shadow-sm hidden" id="detailContainerFields">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Storage Container Specifics</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <p><strong>Container Type:</strong> <span id="detailStorageContainerType"></span></p>
+                        <p><strong>Door Type:</strong> <span id="detailDoorType"></span></p>
+                        <p><strong>Condition:</strong> <span id="detailCondition"></span></p>
+                        <p class="col-span-1 md:col-span-2"><strong>Security Features:</strong> <span id="detailSecurityFeatures"></span></p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-md shadow-sm">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Rental Pricing & Rules</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <p><strong>Base Daily Rate:</strong> $<span id="detailBaseDailyRate"></span></p>
+                        <p><strong>Default Rental Period:</strong> <span id="detailDefaultRentalPeriod"></span> days</p>
+                        <p><strong>Minimum Rental Period:</strong> <span id="detailMinRentalPeriod"></span> days</p>
+                        <p><strong>Extended Daily Rate:</strong> $<span id="detailExtendedDailyRate"></span></p>
+                        <p><strong>Delivery Fee:</strong> $<span id="detailDeliveryFee"></span></p>
+                        <p><strong>Pickup Fee:</strong> $<span id="detailPickupFee"></span></p>
+                        <p><strong>Overage Per Ton Fee:</strong> $<span id="detailOveragePerTonFee"></span></p>
+                        <p><strong>Disposal Rate Per Ton:</strong> $<span id="detailDisposalRatePerTon"></span></p>
+                        <p class="col-span-1 md:col-span-2"><strong>Damage Waiver Cost:</strong> $<span id="detailDamageWaiverCost"></span></p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-md shadow-sm">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Maintenance History (Dummy)</h4>
+                    <p class="text-gray-600">No maintenance records found for this equipment. (In a real application, this would display a detailed log or link to a maintenance module.)</p>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-md shadow-sm">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Attached Documents (Dummy)</h4>
+                    <p class="text-gray-600">No documents attached. (In a real application, this would list downloadable files like manuals, repair receipts, etc.)</p>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-end gap-3">
+                <button type="button" class="px-6 py-2 bg-gray-300 text-gray-800 rounded-md font-semibold hover:bg-gray-400 transition-colors duration-200" onclick="closeModal('viewEquipmentModal')">Close</button>
+                <button type="button" class="px-6 py-2 bg-[#EA3A26] text-white rounded-md font-semibold hover:bg-[#F54F1D] transition-colors duration-200" id="editFromDetailBtn">Edit Equipment</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Ensure window.equipmentData exists and is an array, otherwise initialize it.
+    if (typeof window.equipmentData === 'undefined' || !Array.isArray(window.equipmentData)) {
+        window.equipmentData = [
+            {
+                id: 'EQ001',
+                type: 'Dumpster',
+                size: '20-yard',
+                status: 'Available',
+                location: 'Yard A',
+                description: 'Standard 20-yard dumpster, good condition.',
+                purchaseDate: '2022-01-15',
+                purchaseCost: 3500.00,
+                supplierManufacturer: 'Waste Solutions Inc.',
+                dumpsterDimensions: '20x8x5 ft',
+                maxTonnage: 3,
+                dumpsterContainerType: 'Roll-off', // Corrected ID
+                gateType: 'Walk-in Door',
+                prohibitedMaterials: 'Tires, Batteries',
+                baseDailyRate: 150.00,
+                defaultRentalPeriod: 7,
+                minRentalPeriod: 1,
+                extendedDailyRate: 15.00,
+                deliveryFee: 75.00,
+                pickupFee: 75.00,
+                overagePerTonFee: 75.00,
+                disposalRatePerTon: 50.00,
+                damageWaiverCost: 25.00
+            },
+            {
+                id: 'EQ002',
+                type: 'Temporary Toilet',
+                size: 'Standard',
+                status: 'On Rent',
+                location: 'Job Site Alpha',
+                description: 'Basic portable toilet, serviced weekly.',
+                purchaseDate: '2023-03-01',
+                purchaseCost: 800.00,
+                supplierManufacturer: 'Porta-Loo Co.',
+                toiletCapacity: '60 Gallons',
+                serviceFrequency: 'Weekly',
+                toiletFeatures: 'Urinal, Toilet Paper Dispenser',
+                baseDailyRate: 25.00,
+                defaultRentalPeriod: 28, // 4 weeks
+                minRentalPeriod: 7,
+                extendedDailyRate: 5.00,
+                deliveryFee: 50.00,
+                pickupFee: 50.00,
+                overagePerTonFee: 0,
+                disposalRatePerTon: 0,
+                damageWaiverCost: 10.00
+            },
+            {
+                id: 'EQ003',
+                type: 'Storage Container',
+                size: '40ft',
+                status: 'In Maintenance',
+                location: 'Repair Shop',
+                description: 'Needs door repair.',
+                purchaseDate: '2021-06-20',
+                purchaseCost: 6000.00,
+                supplierManufacturer: 'Container Solutions',
+                storageContainerType: 'Standard', // Corrected ID
+                doorType: 'Swing-out',
+                condition: 'As-Is',
+                securityFeatures: 'Lockbox',
+                baseDailyRate: 90.00,
+                defaultRentalPeriod: 30,
+                minRentalPeriod: 14,
+                extendedDailyRate: 20.00,
+                deliveryFee: 100.00,
+                pickupFee: 100.00,
+                overagePerTonFee: 0,
+                disposalRatePerTon: 0,
+                damageWaiverCost: 30.00
+            },
+            {
+                id: 'EQ004',
+                type: 'Dumpster',
+                size: '30-yard',
+                status: 'Available',
+                location: 'Yard B',
+                description: 'Larger capacity dumpster, heavy duty.',
+                purchaseDate: '2023-09-10',
+                purchaseCost: 4500.00,
+                supplierManufacturer: 'MegaBins Inc.',
+                dumpsterDimensions: '22x8x6 ft',
+                maxTonnage: 5,
+                dumpsterContainerType: 'Roll-off', // Corrected ID
+                gateType: 'No Door',
+                prohibitedMaterials: 'Asbestos, Chemicals',
+                baseDailyRate: 200.00,
+                defaultRentalPeriod: 10,
+                minRentalPeriod: 3,
+                extendedDailyRate: 20.00,
+                deliveryFee: 100.00,
+                pickupFee: 100.00,
+                overagePerTonFee: 85.00,
+                disposalRatePerTon: 60.00,
+                damageWaiverCost: 35.00
+            },
+            {
+                id: 'EQ005',
+                type: 'Temporary Toilet',
+                size: 'ADA Compliant',
+                status: 'Available',
+                location: 'Yard A',
+                description: 'ADA compliant unit with handrails.',
+                purchaseDate: '2024-01-05',
+                purchaseCost: 1200.00,
+                supplierManufacturer: 'Accessible Loos',
+                toiletCapacity: '80 Gallons',
+                serviceFrequency: 'Weekly',
+                toiletFeatures: 'Handrails, Wider Door, Interior Light',
+                baseDailyRate: 35.00,
+                defaultRentalPeriod: 28,
+                minRentalPeriod: 7,
+                extendedDailyRate: 7.00,
+                deliveryFee: 60.00,
+                pickupFee: 60.00,
+                overagePerTonFee: 0,
+                disposalRatePerTon: 0,
+                damageWaiverCost: 15.00
+            },
+            {
+                id: 'EQ006',
+                type: 'Storage Container',
+                size: '20ft',
+                status: 'On Rent',
+                location: 'Customer Warehouse',
+                description: 'Secure storage for tools and equipment.',
+                purchaseDate: '2022-11-01',
+                purchaseCost: 4000.00,
+                supplierManufacturer: 'Secure Storage Units',
+                storageContainerType: 'Standard', // Corrected ID
+                doorType: 'Roll-up',
+                condition: 'Wind & Watertight',
+                securityFeatures: 'Reinforced Doors',
+                baseDailyRate: 60.00,
+                defaultRentalPeriod: 30,
+                minRentalPeriod: 7,
+                extendedDailyRate: 12.00,
+                deliveryFee: 80.00,
+                pickupFee: 80.00,
+                overagePerTonFee: 0,
+                disposalRatePerTon: 0,
+                damageWaiverCost: 20.00
+            },
+            {
+                id: 'EQ007',
+                type: 'Dumpster',
+                size: '10-yard',
+                status: 'Reserved',
+                location: 'Yard A',
+                description: 'Small dumpster for residential cleanouts.',
+                purchaseDate: '2023-05-20',
+                purchaseCost: 2500.00,
+                supplierManufacturer: 'EcoBins',
+                dumpsterDimensions: '12x8x3.5 ft',
+                maxTonnage: 1.5,
+                dumpsterContainerType: 'Roll-off', // Corrected ID
+                gateType: 'Walk-in Door',
+                prohibitedMaterials: 'Paint, Oils',
+                baseDailyRate: 100.00,
+                defaultRentalPeriod: 5,
+                minRentalPeriod: 1,
+                extendedDailyRate: 10.00,
+                deliveryFee: 60.00,
+                pickupFee: 60.00,
+                overagePerTonFee: 60.00,
+                disposalRatePerTon: 40.00,
+                damageWaiverCost: 15.00
+            }
+        ];
+    }
+
+    // Use a local reference for convenience, but it points to the window.equipmentData
+    let equipmentData = window.equipmentData;
+
+    let currentEquipmentId = null;
+
+    // Get elements
+    const equipmentTableBody = document.querySelector('#equipmentTable tbody');
+    const addEquipmentBtn = document.getElementById('addEquipmentBtn');
+    const equipmentModal = document.getElementById('equipmentModal');
+    const viewEquipmentModal = document.getElementById('viewEquipmentModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const equipmentForm = document.getElementById('equipmentForm');
+    const equipmentIdField = document.getElementById('equipmentId');
+    const equipmentTypeSelect = document.getElementById('equipmentType'); // Get the select element
+
+    // Type-specific field containers
+    const dumpsterFields = document.getElementById('dumpsterFields');
+    const toiletFields = document.getElementById('toiletFields');
+    const containerFields = document.getElementById('containerFields');
+
+    // Detail view elements
+    const detailId = document.getElementById('detailId');
+    const detailType = document.getElementById('detailType');
+    const detailSize = document.getElementById('detailSize');
+    const detailStatus = document.getElementById('detailStatus');
+    const detailLocation = document.getElementById('detailLocation');
+    const detailPurchaseDate = document.getElementById('detailPurchaseDate');
+    const detailPurchaseCost = document.getElementById('detailPurchaseCost');
+    const detailSupplierManufacturer = document.getElementById('detailSupplierManufacturer');
+    const detailDescription = document.getElementById('detailDescription');
+    const detailDescriptionGroup = document.getElementById('detailDescriptionGroup');
+
+    // Dumpster specific detail elements
+    const detailDumpsterFields = document.getElementById('detailDumpsterFields');
+    const detailDumpsterDimensions = document.getElementById('detailDumpsterDimensions');
+    const detailMaxTonnage = document.getElementById('detailMaxTonnage');
+    const detailDumpsterContainerType = document.getElementById('detailDumpsterContainerType'); // Corrected ID
+    const detailGateType = document.getElementById('detailGateType');
+    const detailProhibitedMaterials = document.getElementById('detailProhibitedMaterials');
+
+    // Toilet specific detail elements
+    const detailToiletFields = document.getElementById('detailToiletFields');
+    const detailToiletCapacity = document.getElementById('detailToiletCapacity');
+    const detailServiceFrequency = document.getElementById('detailServiceFrequency');
+    const detailToiletFeatures = document.getElementById('detailToiletFeatures');
+
+    // Container specific detail elements
+    const detailContainerFields = document.getElementById('detailContainerFields');
+    const detailStorageContainerType = document.getElementById('detailStorageContainerType'); // Corrected ID
+    const detailDoorType = document.getElementById('detailDoorType');
+    const detailCondition = document.getElementById('detailCondition');
+    const detailSecurityFeatures = document.getElementById('detailSecurityFeatures');
+
+    // Pricing details
+    const detailBaseDailyRate = document.getElementById('detailBaseDailyRate');
+    const detailDefaultRentalPeriod = document.getElementById('detailDefaultRentalPeriod');
+    const detailMinRentalPeriod = document.getElementById('detailMinRentalPeriod');
+    const detailExtendedDailyRate = document.getElementById('detailExtendedDailyRate');
+    const detailDeliveryFee = document.getElementById('detailDeliveryFee');
+    const detailPickupFee = document.getElementById('detailPickupFee');
+    const detailOveragePerTonFee = document.getElementById('detailOveragePerTonFee');
+    const detailDisposalRatePerTon = document.getElementById('detailDisposalRatePerTon');
+    const detailDamageWaiverCost = document.getElementById('detailDamageWaiverCost');
+
+    const editFromDetailBtn = document.getElementById('editFromDetailBtn');
+
+    // Event Listeners
+    addEquipmentBtn.addEventListener('click', () => openAddModal());
+    equipmentForm.addEventListener('submit', (e) => saveEquipment(e));
+    editFromDetailBtn.addEventListener('click', () => {
+        closeModal('viewEquipmentModal');
+        openEditModal(currentEquipmentId);
+    });
+
+    // --- Modal Functions ---
+    function openModal(modalId) {
+        document.getElementById(modalId).classList.remove('hidden');
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).classList.add('hidden');
+        // Reset form on close if it's the add/edit modal
+        if (modalId === 'equipmentModal') {
+            equipmentForm.reset();
+            currentEquipmentId = null;
+            // Ensure all type-specific fields are hidden when modal closes
+            toggleTypeSpecificFields(''); // Pass empty string to hide all
+        }
+    }
+
+    // --- CRUD Operations ---
+    function renderEquipmentTable(dataToRender = equipmentData) {
+        console.log("Rendering equipment table with data:", dataToRender);
+        equipmentTableBody.innerHTML = '';
+        if (!Array.isArray(dataToRender) || dataToRender.length === 0) {
+            const row = equipmentTableBody.insertRow();
+            row.innerHTML = '<td colspan="7" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">No equipment found.</td>';
+            return;
+        }
+        dataToRender.forEach(equipment => {
+            const row = equipmentTableBody.insertRow();
+            row.classList.add('hover:bg-gray-50'); // Tailwind hover effect
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'font-medium', 'text-gray-900');
+            row.cells[0].textContent = equipment.id;
+
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-500');
+            row.cells[1].textContent = equipment.type;
+
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-500');
+            row.cells[2].textContent = equipment.size;
+
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-500');
+            row.cells[3].textContent = equipment.status;
+
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-500');
+            row.cells[4].textContent = equipment.location;
+
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-500');
+            row.cells[5].textContent = `$${equipment.baseDailyRate ? equipment.baseDailyRate.toFixed(2) : 'N/A'}`; // Use baseDailyRate
+
+            const actionsCell = row.insertCell();
+            actionsCell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-right', 'text-sm', 'font-medium');
+
+            const viewBtn = document.createElement('button');
+            viewBtn.textContent = 'View';
+            viewBtn.classList.add('text-indigo-600', 'hover:text-indigo-900', 'mr-3', 'transition-colors', 'duration-200');
+            viewBtn.onclick = () => viewEquipmentDetails(equipment.id);
+            actionsCell.appendChild(viewBtn);
+
+            const editBtn = document.createElement('button');
+            editBtn.textContent = 'Edit';
+            editBtn.classList.add('text-[#EA3A26]', 'hover:text-[#F54F1D]', 'mr-3', 'transition-colors', 'duration-200');
+            editBtn.onclick = () => openEditModal(equipment.id);
+            actionsCell.appendChild(editBtn);
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.classList.add('text-red-600', 'hover:text-red-900', 'transition-colors', 'duration-200');
+            deleteBtn.onclick = () => deleteEquipment(equipment.id);
+            actionsCell.appendChild(deleteBtn);
+        });
+    }
+
+    function openAddModal() {
+        modalTitle.textContent = 'Add New Equipment';
+        equipmentIdField.value = '';
+        equipmentForm.reset();
+        currentEquipmentId = null;
+        equipmentTypeSelect.value = ''; // Ensure the select dropdown is reset to "Select Type"
+        toggleTypeSpecificFields(''); // Explicitly hide all type-specific fields
+        openModal('equipmentModal');
+    }
+
+    function openEditModal(id) {
+        const equipment = equipmentData.find(e => e.id === id);
+        if (equipment) {
+            modalTitle.textContent = `Edit Equipment: ${equipment.id}`;
+            equipmentIdField.value = equipment.id;
+            equipmentTypeSelect.value = equipment.type; // Set the type first
+            document.getElementById('equipmentSize').value = equipment.size;
+            document.getElementById('equipmentStatus').value = equipment.status;
+            document.getElementById('equipmentLocation').value = equipment.location;
+            document.getElementById('description').value = equipment.description || '';
+            document.getElementById('purchaseDate').value = equipment.purchaseDate || '';
+            document.getElementById('purchaseCost').value = equipment.purchaseCost || '';
+            document.getElementById('supplierManufacturer').value = equipment.supplierManufacturer || '';
+
+            // Pricing fields
+            document.getElementById('baseDailyRate').value = equipment.baseDailyRate || '';
+            document.getElementById('defaultRentalPeriod').value = equipment.defaultRentalPeriod || '';
+            document.getElementById('minRentalPeriod').value = equipment.minRentalPeriod || '';
+            document.getElementById('extendedDailyRate').value = equipment.extendedDailyRate || '';
+            document.getElementById('deliveryFee').value = equipment.deliveryFee || '';
+            document.getElementById('pickupFee').value = equipment.pickupFee || '';
+            document.getElementById('overagePerTonFee').value = equipment.overagePerTonFee || '';
+            document.getElementById('disposalRatePerTon').value = equipment.disposalRatePerTon || '';
+            document.getElementById('damageWaiverCost').value = equipment.damageWaiverCost || '';
+
+
+            currentEquipmentId = id;
+            toggleTypeSpecificFields(equipment.type); // Show fields based on type
+
+            // Populate type-specific fields
+            if (equipment.type === 'Dumpster') {
+                document.getElementById('dumpsterDimensions').value = equipment.dumpsterDimensions || '';
+                document.getElementById('maxTonnage').value = equipment.maxTonnage || '';
+                document.getElementById('dumpsterContainerType').value = equipment.dumpsterContainerType || ''; // Corrected ID
+                document.getElementById('gateType').value = equipment.gateType || '';
+                document.getElementById('prohibitedMaterials').value = equipment.prohibitedMaterials || '';
+            } else if (equipment.type === 'Temporary Toilet') {
+                document.getElementById('toiletCapacity').value = equipment.toiletCapacity || '';
+                document.getElementById('serviceFrequency').value = equipment.serviceFrequency || 'Weekly';
+                document.getElementById('toiletFeatures').value = equipment.toiletFeatures || '';
+            } else if (equipment.type === 'Storage Container') {
+                document.getElementById('storageContainerType').value = equipment.storageContainerType || ''; // Corrected ID
+                document.getElementById('doorType').value = equipment.doorType || '';
+                document.getElementById('condition').value = equipment.condition || '';
+                document.getElementById('securityFeatures').value = equipment.securityFeatures || '';
+            }
+
+            openModal('equipmentModal');
+        } else {
+            alert('Equipment not found for editing.');
+        }
+    }
+
+    function saveEquipment(event) {
+        event.preventDefault(); // Prevent default form submission
+
+        const id = equipmentIdField.value;
+        const type = equipmentTypeSelect.value; // Use the select element directly
+        const size = document.getElementById('equipmentSize').value;
+        const status = document.getElementById('equipmentStatus').value;
+        const location = document.getElementById('equipmentLocation').value;
+        const description = document.getElementById('description').value;
+        const purchaseDate = document.getElementById('purchaseDate').value;
+        const purchaseCost = parseFloat(document.getElementById('purchaseCost').value) || 0;
+        const supplierManufacturer = document.getElementById('supplierManufacturer').value;
+
+        // Pricing fields
+        const baseDailyRate = parseFloat(document.getElementById('baseDailyRate').value) || 0;
+        const defaultRentalPeriod = parseInt(document.getElementById('defaultRentalPeriod').value) || 0;
+        const minRentalPeriod = parseInt(document.getElementById('minRentalPeriod').value) || 0;
+        const extendedDailyRate = parseFloat(document.getElementById('extendedDailyRate').value) || 0;
+        const deliveryFee = parseFloat(document.getElementById('deliveryFee').value) || 0;
+        const pickupFee = parseFloat(document.getElementById('pickupFee').value) || 0;
+        const overagePerTonFee = parseFloat(document.getElementById('overagePerTonFee').value) || 0;
+        const disposalRatePerTon = parseFloat(document.getElementById('disposalRatePerTon').value) || 0;
+        const damageWaiverCost = parseFloat(document.getElementById('damageWaiverCost').value) || 0;
+
+
+        if (!type || !size || !status || !location || isNaN(baseDailyRate)) {
+            alert('Please fill in all required general and base pricing fields.');
+            return;
+        }
+
+        let newEquipment = {
+            id: id,
+            type: type,
+            size: size,
+            status: status,
+            location: location,
+            description: description,
+            purchaseDate: purchaseDate,
+            purchaseCost: purchaseCost,
+            supplierManufacturer: supplierManufacturer,
+            baseDailyRate: baseDailyRate,
+            defaultRentalPeriod: defaultRentalPeriod,
+            minRentalPeriod: minRentalPeriod,
+            extendedDailyRate: extendedDailyRate,
+            deliveryFee: deliveryFee,
+            pickupFee: pickupFee,
+            overagePerTonFee: overagePerTonFee,
+            disposalRatePerTon: disposalRatePerTon,
+            damageWaiverCost: damageWaiverCost
+        };
+
+        // Add type-specific data
+        if (type === 'Dumpster') {
+            newEquipment.dumpsterDimensions = document.getElementById('dumpsterDimensions').value;
+            newEquipment.maxTonnage = parseFloat(document.getElementById('maxTonnage').value) || 0;
+            newEquipment.dumpsterContainerType = document.getElementById('dumpsterContainerType').value; // Corrected ID
+            newEquipment.gateType = document.getElementById('gateType').value;
+            newEquipment.prohibitedMaterials = document.getElementById('prohibitedMaterials').value;
+        } else if (type === 'Temporary Toilet') {
+            newEquipment.toiletCapacity = document.getElementById('toiletCapacity').value;
+            newEquipment.serviceFrequency = document.getElementById('serviceFrequency').value;
+            newEquipment.toiletFeatures = document.getElementById('toiletFeatures').value;
+        } else if (type === 'Storage Container') {
+            newEquipment.storageContainerType = document.getElementById('storageContainerType').value; // Corrected ID
+            newEquipment.doorType = document.getElementById('doorType').value;
+            newEquipment.condition = document.getElementById('condition').value;
+            newEquipment.securityFeatures = document.getElementById('securityFeatures').value;
+        }
+
+        if (id) {
+            // Edit existing equipment
+            const index = equipmentData.findIndex(e => e.id === id);
+            if (index !== -1) {
+                equipmentData[index] = newEquipment;
+                alert(`Equipment ${id} updated successfully!`);
+            } else {
+                alert(`Error: Equipment ${id} not found for update.`);
+            }
+        } else {
+            // Add new equipment
+            newEquipment.id = 'EQ' + (equipmentData.length + 1).toString().padStart(3, '0');
+            equipmentData.push(newEquipment);
+            alert(`New equipment ${newEquipment.id} added successfully!`);
+        }
+
+        renderEquipmentTable();
+        closeModal('equipmentModal');
+    }
+
+    function deleteEquipment(id) {
+        if (confirm(`Are you sure you want to delete equipment ID: ${id}? This action cannot be undone.`)) {
+            equipmentData = equipmentData.filter(e => e.id !== id);
+            renderEquipmentTable();
+            alert(`Equipment ${id} deleted successfully.`);
+        }
+    }
+
+    function viewEquipmentDetails(id) {
+        const equipment = equipmentData.find(e => e.id === id);
+        if (equipment) {
+            detailId.textContent = equipment.id;
+            detailType.textContent = equipment.type;
+            detailSize.textContent = equipment.size;
+            detailStatus.textContent = equipment.status;
+            detailLocation.textContent = equipment.location;
+            detailPurchaseDate.textContent = equipment.purchaseDate || 'N/A';
+            detailPurchaseCost.textContent = (equipment.purchaseCost || 0).toFixed(2);
+            detailSupplierManufacturer.textContent = equipment.supplierManufacturer || 'N/A';
+
+            if (equipment.description) {
+                detailDescriptionGroup.classList.remove('hidden');
+                detailDescription.textContent = equipment.description;
+            } else {
+                detailDescriptionGroup.classList.add('hidden');
+            }
+
+            // Pricing details
+            detailBaseDailyRate.textContent = (equipment.baseDailyRate || 0).toFixed(2);
+            detailDefaultRentalPeriod.textContent = equipment.defaultRentalPeriod || 'N/A';
+            detailMinRentalPeriod.textContent = equipment.minRentalPeriod || 'N/A';
+            detailExtendedDailyRate.textContent = (equipment.extendedDailyRate || 0).toFixed(2);
+            detailDeliveryFee.textContent = (equipment.deliveryFee || 0).toFixed(2);
+            detailPickupFee.textContent = (equipment.pickupFee || 0).toFixed(2);
+            detailOveragePerTonFee.textContent = (equipment.overagePerTonFee || 0).toFixed(2);
+            detailDisposalRatePerTon.textContent = (equipment.disposalRatePerTon || 0).toFixed(2);
+            detailDamageWaiverCost.textContent = (equipment.damageWaiverCost || 0).toFixed(2);
+
+            // Hide all type-specific fields first
+            detailDumpsterFields.classList.add('hidden');
+            detailToiletFields.classList.add('hidden');
+            detailContainerFields.classList.add('hidden');
+
+            // Show and populate relevant type-specific fields
+            if (equipment.type === 'Dumpster') {
+                detailDumpsterFields.classList.remove('hidden');
+                detailDumpsterDimensions.textContent = equipment.dumpsterDimensions || 'N/A';
+                detailMaxTonnage.textContent = equipment.maxTonnage || 'N/A';
+                detailDumpsterContainerType.textContent = equipment.dumpsterContainerType || 'N/A'; // Corrected ID
+                detailGateType.textContent = equipment.gateType || 'N/A';
+                detailProhibitedMaterials.textContent = equipment.prohibitedMaterials || 'N/A';
+            } else if (equipment.type === 'Temporary Toilet') {
+                detailToiletFields.classList.remove('hidden');
+                detailToiletCapacity.textContent = equipment.toiletCapacity || 'N/A';
+                detailServiceFrequency.textContent = equipment.serviceFrequency || 'N/A';
+                detailToiletFeatures.textContent = equipment.toiletFeatures || 'N/A';
+            } else if (equipment.type === 'Storage Container') {
+                detailContainerFields.classList.remove('hidden');
+                detailStorageContainerType.textContent = equipment.storageContainerType || 'N/A'; // Corrected ID
+                detailDoorType.textContent = equipment.doorType || 'N/A';
+                detailCondition.textContent = equipment.condition || 'N/A';
+                detailSecurityFeatures.textContent = equipment.securityFeatures || 'N/A';
+            }
+            currentEquipmentId = id; // Set for edit button from detail view
+            openModal('viewEquipmentModal');
+        } else {
+            alert('Equipment details not found.');
+        }
+    }
+
+    function toggleTypeSpecificFields(selectedType) {
+        // Hide all type-specific containers
+        dumpsterFields.classList.add('hidden');
+        toiletFields.classList.add('hidden');
+        containerFields.classList.add('hidden');
+
+        // Reset values of all type-specific fields to prevent old data persistence
+        document.getElementById('dumpsterDimensions').value = '';
+        document.getElementById('maxTonnage').value = '';
+        document.getElementById('dumpsterContainerType').value = ''; // Corrected ID
+        document.getElementById('gateType').value = '';
+        document.getElementById('prohibitedMaterials').value = '';
+
+        document.getElementById('toiletCapacity').value = '';
+        document.getElementById('serviceFrequency').value = 'Weekly'; // Default
+        document.getElementById('toiletFeatures').value = '';
+
+        document.getElementById('storageContainerType').value = ''; // Corrected ID
+        document.getElementById('doorType').value = '';
+        document.getElementById('condition').value = '';
+        document.getElementById('securityFeatures').value = '';
+
+        // Show the relevant container based on selectedType
+        if (selectedType === 'Dumpster') {
+            dumpsterFields.classList.remove('hidden');
+        } else if (selectedType === 'Temporary Toilet') {
+            toiletFields.classList.remove('hidden');
+        } else if (selectedType === 'Storage Container') {
+            containerFields.classList.remove('hidden');
+        }
+    }
+
+    // --- Filtering and Searching ---
+    function filterEquipment() {
+        const searchTerm = document.getElementById('equipmentSearch').value.toLowerCase();
+        const statusFilter = document.getElementById('statusFilter').value;
+        const typeFilter = document.getElementById('typeFilter').value;
+
+        const filteredData = equipmentData.filter(equipment => {
+            const matchesSearch = equipment.id.toLowerCase().includes(searchTerm) ||
+                                  equipment.type.toLowerCase().includes(searchTerm) ||
+                                  equipment.size.toLowerCase().includes(searchTerm) ||
+                                  equipment.location.toLowerCase().includes(searchTerm) ||
+                                  (equipment.description && equipment.description.toLowerCase().includes(searchTerm));
+            const matchesStatus = statusFilter === '' || equipment.status === statusFilter;
+            const matchesType = typeFilter === '' || equipment.type === typeFilter;
+
+            return matchesSearch && matchesStatus && matchesType;
+        });
+
+        renderEquipmentTable(filteredData);
+    }
+
+    // Initial render when the module loads
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        renderEquipmentTable();
+    } else {
+        document.addEventListener('DOMContentLoaded', renderEquipmentTable);
+    }
+
+</script>

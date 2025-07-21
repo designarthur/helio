@@ -1,0 +1,646 @@
+<div class="p-8">
+    <h2 class="text-3xl font-bold text-gray-900 mb-6">Analytics & Reporting</h2>
+
+    <div class="flex border-b border-gray-200 mb-8 space-x-6">
+        <span class="analytics-tab py-2 px-0 cursor-pointer font-bold text-gray-500 transition-colors duration-300 hover:text-gray-800 border-b-2 border-transparent text-[#EA3A26] border-[#EA3A26]" data-tab="overview">Overview</span>
+        <span class="analytics-tab py-2 px-0 cursor-pointer font-bold text-gray-500 transition-colors duration-300 hover:text-gray-800 border-b-2 border-transparent" data-tab="trends">Trends</span>
+        <span class="analytics-tab py-2 px-0 cursor-pointer font-bold text-gray-500 transition-colors duration-300 hover:text-gray-800 border-b-2 border-transparent" data-tab="reports">Reports</span>
+        <span class="analytics-tab py-2 px-0 cursor-pointer font-bold text-gray-500 transition-colors duration-300 hover:text-gray-800 border-b-2 border-transparent" data-tab="performance">Performance (Conceptual)</span>
+    </div>
+
+    <div id="analytics-tab-overview" class="analytics-content-view">
+        <h3 class="text-2xl font-bold text-gray-800 mb-4">Analytics Overview</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                <h4 class="text-lg text-gray-500 mb-2">Total Bookings (YTD)</h4>
+                <p id="overviewTotalBookings" class="text-4xl font-bold text-blue-600">$0</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                <h4 class="text-lg text-gray-500 mb-2">Avg. Booking Value</h4>
+                <p id="overviewAvgBookingValue" class="text-4xl font-bold text-purple-600">$0.00</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                <h4 class="text-lg text-gray-500 mb-2">New Customers (YTD)</h4>
+                <p id="overviewNewCustomers" class="text-4xl font-bold text-green-600">$0</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                <h4 class="text-lg text-gray-500 mb-2">Equipment Utilization</h4>
+                <p id="overviewEquipmentUtilization" class="text-4xl font-bold text-[#FF8600]">0%</p>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h4 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2 border-gray-300">Key Analytical Insights</h4>
+            <p class="text-gray-600">
+                This section would offer a deeper dive into overall business performance using various metrics.
+                (In a real application, more complex charts, heatmaps, or executive summaries would be displayed here.)
+            </p>
+        </div>
+    </div>
+
+    <div id="analytics-tab-trends" class="analytics-content-view hidden">
+        <h3 class="text-2xl font-bold text-gray-800 mb-4">Performance Trends</h3>
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="flex justify-between items-center pb-3 mb-4 border-b border-gray-200">
+                    <h4 class="text-xl text-gray-800 font-semibold m-0">Daily Engagement & Bookings</h4>
+                    <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md text-sm hover:bg-gray-300 transition-colors" onclick="alert('Simulating export of daily trend data...')">Export</button>
+                </div>
+                <canvas id="dailyAnalyticsChartAnalytics" class="max-h-[300px]"></canvas>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="flex justify-between items-center pb-3 mb-4 border-b border-gray-200">
+                    <h4 class="text-xl text-gray-800 font-semibold m-0">Monthly Revenue & Bookings</h4>
+                    <button class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md text-sm hover:bg-gray-300 transition-colors" onclick="alert('Simulating export of monthly trend data...')">Export</button>
+                </div>
+                <canvas id="monthlyRevenueBookingsChart" class="max-h-[300px]"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div id="analytics-tab-reports" class="analytics-content-view hidden">
+        <h3 class="text-2xl font-bold text-gray-800 mb-4">Detailed Reports</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h4 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2 border-gray-300">Customer Reports</h4>
+                <div class="space-y-4">
+                    <button class="w-full text-left px-4 py-3 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors" onclick="generateAnalyticsReport('bookingsByCustomerType')">Bookings by Customer Type</button>
+                    <button class="w-full text-left px-4 py-3 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors" onclick="generateAnalyticsReport('revenueByCustomerType')">Revenue by Customer Type</button>
+                    <button class="w-full text-left px-4 py-3 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors" onclick="generateAnalyticsReport('topCustomers')">Top 5 Customers by Revenue</button>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h4 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2 border-gray-300">Equipment Reports</h4>
+                <div class="space-y-4">
+                    <button class="w-full text-left px-4 py-3 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors" onclick="generateAnalyticsReport('bookingsByEquipmentType')">Bookings by Equipment Type</button>
+                    <button class="w-full text-left px-4 py-3 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors" onclick="generateAnalyticsReport('revenueByEquipmentType')">Revenue by Equipment Type</button>
+                    <button class="w-full text-left px-4 py-3 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors" onclick="generateAnalyticsReport('equipmentUtilization')">Equipment Utilization Rates</button>
+                </div>
+            </div>
+        </div>
+        <div id="analyticsReportOutput" class="bg-white p-6 rounded-lg shadow-md mt-6 hidden">
+            <h4 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2 border-gray-300" id="analyticsReportTitle">Report Output</h4>
+            <div id="analyticsReportContent" class="overflow-x-auto">
+                </div>
+        </div>
+    </div>
+
+    <div id="analytics-tab-performance" class="analytics-content-view hidden">
+        <h3 class="text-2xl font-bold text-gray-800 mb-4">Performance Insights (Conceptual)</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h4 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2 border-gray-300">Driver Performance</h4>
+                <p class="text-gray-600">
+                    This section would provide detailed metrics on individual driver performance, including:
+                    <ul class="list-disc list-inside ml-4 text-sm mt-2">
+                        <li>On-time delivery rates</li>
+                        <li>Average time per job</li>
+                        <li>Fuel efficiency comparisons</li>
+                        <li>Customer satisfaction scores related to driver interaction</li>
+                    </ul>
+                    (Requires integration with Dispatching and potentially driver mobile apps.)
+                </p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h4 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2 border-gray-300">Equipment Performance & ROI</h4>
+                <p class="text-gray-600">
+                    Track the return on investment for each equipment type and individual units:
+                    <ul class="list-disc list-inside ml-4 text-sm mt-2">
+                        <li>Total revenue generated per unit/type</li>
+                        <li>Maintenance costs vs. revenue</li>
+                        <li>Downtime analysis</li>
+                        <li>Break-even analysis for equipment purchases</li>
+                    </ul>
+                    (Requires detailed cost tracking and revenue attribution.)
+                </p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md col-span-1 md:col-span-2">
+                <h4 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2 border-gray-300">Junk Removal Profitability</h4>
+                <p class="text-gray-600">
+                    Analyze the profitability of your junk removal services:
+                    <ul class="list-disc list-inside ml-4 text-sm mt-2">
+                        <li>Average revenue per junk removal job</li>
+                        <li>Disposal costs vs. revenue</li>
+                        <li>Customer acquisition cost for junk removal leads</li>
+                        <li>Breakdown by junk type or volume.</li>
+                    </ul>
+                    (Requires detailed tracking within the Junk Removal module.)
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Ensure global data is accessible or provide minimal fallbacks
+    if (typeof window.customerData === 'undefined' || !Array.isArray(window.customerData)) {
+        window.customerData = [
+            { id: 'CUST001', name: 'Alice Smith', company: 'ABC Construction', customerType: 'Commercial' },
+            { id: 'CUST002', name: 'Bob Johnson', company: '', customerType: 'Residential' },
+            { id: 'CUST003', name: 'Charlie Brown', company: 'Brown Events', customerType: 'Commercial' }
+        ];
+    }
+    if (typeof window.equipmentData === 'undefined' || !Array.isArray(window.equipmentData)) {
+        window.equipmentData = [
+            { id: 'EQ001', type: 'Dumpster', size: '20-yard', baseDailyRate: 150, purchaseCost: 3500 },
+            { id: 'EQ002', type: 'Temporary Toilet', size: 'Standard', baseDailyRate: 25, purchaseCost: 800 },
+            { id: 'EQ003', type: 'Storage Container', size: '40ft', baseDailyRate: 90, purchaseCost: 6000 }
+        ];
+    }
+    if (typeof window.bookingData === 'undefined' || !Array.isArray(window.bookingData)) {
+        window.bookingData = [
+            { id: 'BOOK001', customerId: 'CUST001', equipmentId: 'EQ001', rentalStartDate: '2025-01-10', rentalEndDate: '2025-01-15', totalPrice: 750 }, // Jan
+            { id: 'BOOK002', customerId: 'CUST002', equipmentId: 'EQ002', rentalStartDate: '2025-02-01', rentalEndDate: '2025-02-05', totalPrice: 125 }, // Feb
+            { id: 'BOOK003', customerId: 'CUST001', equipmentId: 'EQ003', rentalStartDate: '2025-03-01', rentalEndDate: '2025-03-30', totalPrice: 2700 }, // Mar
+            { id: 'BOOK004', customerId: 'CUST003', equipmentId: 'EQ001', rentalStartDate: '2025-03-10', rentalEndDate: '2025-03-15', totalPrice: 750 }, // Mar
+            { id: 'BOOK005', customerId: 'CUST002', equipmentId: 'EQ001', rentalStartDate: '2025-04-01', rentalEndDate: '2025-04-05', totalPrice: 750 }, // Apr
+            { id: 'BOOK006', customerId: 'CUST001', equipmentId: 'EQ002', rentalStartDate: '2025-05-01', rentalEndDate: '2025-05-10', totalPrice: 250 }, // May
+            { id: 'BOOK007', customerId: 'CUST003', equipmentId: 'EQ003', rentalStartDate: '2025-06-01', rentalEndDate: '2025-06-30', totalPrice: 2700 }, // June
+            { id: 'BOOK008', customerId: 'CUST001', equipmentId: 'EQ001', rentalStartDate: '2025-07-10', rentalEndDate: '2025-07-15', totalPrice: 750 }, // July
+        ];
+    }
+    if (typeof window.invoicesData === 'undefined' || !Array.isArray(window.invoicesData)) {
+        // Sample invoices with linked booking IDs for analytics
+        window.invoicesData = [
+            { id: 'INV001', customerId: 'CUST001', totalAmount: 750, balanceDue: 0, status: 'Paid', issueDate: '2025-01-15', linkedBookingId: 'BOOK001' },
+            { id: 'INV002', customerId: 'CUST002', totalAmount: 125, balanceDue: 0, status: 'Paid', issueDate: '2025-02-05', linkedBookingId: 'BOOK002' },
+            { id: 'INV003', customerId: 'CUST001', totalAmount: 2700, balanceDue: 0, status: 'Paid', issueDate: '2025-03-30', linkedBookingId: 'BOOK003' },
+            { id: 'INV004', customerId: 'CUST003', totalAmount: 750, balanceDue: 750, status: 'Sent', issueDate: '2025-03-15', linkedBookingId: 'BOOK004' },
+            { id: 'INV005', customerId: 'CUST002', totalAmount: 750, balanceDue: 0, status: 'Paid', issueDate: '2025-04-05', linkedBookingId: 'BOOK005' },
+            { id: 'INV006', customerId: 'CUST001', totalAmount: 250, balanceDue: 250, status: 'Overdue', issueDate: '2025-05-10', linkedBookingId: 'BOOK006' },
+            { id: 'INV007', customerId: 'CUST003', totalAmount: 2700, balanceDue: 0, status: 'Paid', issueDate: '2025-06-30', linkedBookingId: 'BOOK007' },
+            { id: 'INV008', customerId: 'CUST001', totalAmount: 750, balanceDue: 750, status: 'Sent', issueDate: '2025-07-15', linkedBookingId: 'BOOK008' },
+        ];
+    }
+
+    let customerData = window.customerData;
+    let equipmentData = window.equipmentData;
+    let bookingData = window.bookingData;
+    let invoicesData = window.invoicesData;
+
+    // Chart instances (to be destroyed/recreated)
+    let dailyAnalyticsChartInstance = null;
+    let monthlyRevenueBookingsChartInstance = null;
+
+    // Get elements
+    const analyticsTabs = document.querySelectorAll('.analytics-tab');
+    const analyticsContentViews = document.querySelectorAll('.analytics-content-view');
+
+    // Overview elements
+    const overviewTotalBookings = document.getElementById('overviewTotalBookings');
+    const overviewAvgBookingValue = document.getElementById('overviewAvgBookingValue');
+    const overviewNewCustomers = document.getElementById('overviewNewCustomers');
+    const overviewEquipmentUtilization = document.getElementById('overviewEquipmentUtilization');
+
+    // Reports elements
+    const analyticsReportOutput = document.getElementById('analyticsReportOutput');
+    const analyticsReportTitle = document.getElementById('analyticsReportTitle');
+    const analyticsReportContent = document.getElementById('analyticsReportContent');
+
+    // --- Tab Switching ---
+    function switchAnalyticsView(tabName) {
+        analyticsContentViews.forEach(view => view.classList.add('hidden'));
+        document.getElementById(`analytics-tab-${tabName}`).classList.remove('hidden');
+
+        // Update active tab styling
+        analyticsTabs.forEach(tab => {
+            tab.classList.remove('text-[#EA3A26]', 'border-[#EA3A26]');
+            tab.classList.add('text-gray-500', 'border-transparent');
+        });
+        const activeTab = Array.from(analyticsTabs).find(tab => tab.dataset.tab === tabName);
+        if (activeTab) {
+            activeTab.classList.add('text-[#EA3A26]', 'border-[#EA3A26]');
+            activeTab.classList.remove('text-gray-500', 'border-transparent');
+        }
+
+        // Render content for the active view
+        if (tabName === 'overview') {
+            renderAnalyticsOverview();
+        } else if (tabName === 'trends') {
+            renderAnalyticsCharts();
+        } else if (tabName === 'reports') {
+            analyticsReportOutput.classList.add('hidden'); // Hide report output initially
+        }
+        // Performance tab has static content for now
+    }
+
+    // --- Overview Tab Functions ---
+    function renderAnalyticsOverview() {
+        const currentYear = new Date().getFullYear().toString();
+        
+        // Total Bookings (YTD)
+        const totalBookingsYTD = bookingData.filter(b => b.rentalStartDate.startsWith(currentYear)).length;
+        overviewTotalBookings.textContent = totalBookingsYTD.toString();
+
+        // Avg. Booking Value (YTD)
+        let totalBookingValueYTD = 0;
+        let countedBookings = 0;
+        bookingData.filter(b => b.rentalStartDate.startsWith(currentYear)).forEach(b => {
+            if (b.totalPrice) {
+                totalBookingValueYTD += b.totalPrice;
+                countedBookings++;
+            }
+        });
+        overviewAvgBookingValue.textContent = `$${(totalBookingValueYTD / (countedBookings || 1)).toFixed(2)}`;
+
+        // New Customers (YTD) - Basic logic: count unique customers who first booked this year
+        const newCustomersYTD = new Set();
+        const existingCustomers = new Set();
+        customerData.forEach(c => existingCustomers.add(c.id)); // All existing customers
+
+        bookingData.forEach(booking => {
+            if (booking.rentalStartDate.startsWith(currentYear)) {
+                // If this is the customer's first booking and it's this year, count them as new for simplicity
+                // In a real app, you'd check customer creation date or their first ever booking.
+                const customerBookingsBeforeThisYear = bookingData.filter(b => b.customerId === booking.customerId && new Date(b.rentalStartDate).getFullYear() < parseInt(currentYear)).length;
+                if (customerBookingsBeforeThisYear === 0) {
+                    newCustomersYTD.add(booking.customerId);
+                }
+            }
+        });
+        overviewNewCustomers.textContent = newCustomersYTD.size.toString();
+
+
+        // Equipment Utilization (Conceptual/Simplified)
+        // For simplicity, let's say "total rental days / (total equipment count * days in period)"
+        const totalEquipmentUnits = equipmentData.length;
+        const daysInYear = 365; // Simplified for YTD
+        let totalRentalDays = 0;
+        bookingData.forEach(booking => {
+            const start = new Date(booking.rentalStartDate);
+            const end = new Date(booking.rentalEndDate);
+            const diffTime = Math.abs(end - start);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) +1;
+            totalRentalDays += diffDays;
+        });
+
+        const maxPossibleRentalDays = totalEquipmentUnits * daysInYear;
+        const utilizationRate = maxPossibleRentalDays > 0 ? (totalRentalDays / maxPossibleRentalDays) * 100 : 0;
+        overviewEquipmentUtilization.textContent = `${utilizationRate.toFixed(1)}%`;
+    }
+
+    // --- Trends Tab Functions (Charts) ---
+    function renderAnalyticsCharts() {
+        // Destroy existing chart instances if they exist to prevent duplicates
+        if (dailyAnalyticsChartInstance) {
+            dailyAnalyticsChartInstance.destroy();
+        }
+        if (monthlyRevenueBookingsChartInstance) {
+            monthlyRevenueBookingsChartInstance.destroy();
+        }
+
+        // Daily Engagement & Bookings Chart Data
+        const dailyDataMap = new Map(); // Date -> { visitors, socialClicks, bookings }
+        // Populate with dummy data for 7 days
+        const today = new Date();
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date(today);
+            d.setDate(today.getDate() - i);
+            const dateStr = d.toISOString().split('T')[0];
+            dailyDataMap.set(dateStr, { visitors: Math.floor(Math.random() * 20) + 10, socialClicks: Math.floor(Math.random() * 15) + 5, bookings: 0 });
+        }
+
+        // Aggregate actual booking data for the last 7 days
+        bookingData.forEach(booking => {
+            const bookingDate = booking.rentalStartDate; // Assuming start date is relevant for daily bookings
+            if (dailyDataMap.has(bookingDate)) {
+                dailyDataMap.get(bookingDate).bookings++;
+            }
+        });
+
+        const dailyLabels = Array.from(dailyDataMap.keys()).map(dateStr => {
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+        });
+        const dailyVisitors = Array.from(dailyDataMap.values()).map(d => d.visitors);
+        const dailySocialClicks = Array.from(dailyDataMap.values()).map(d => d.socialClicks);
+        const dailyBookings = Array.from(dailyDataMap.values()).map(d => d.bookings);
+
+
+        const dailyAnalyticsData = {
+            labels: dailyLabels,
+            datasets: [
+                {
+                    label: 'Visitors',
+                    data: dailyVisitors,
+                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                    borderColor: 'rgba(0, 0, 0, 1)',
+                    borderWidth: 1,
+                    borderRadius: 5
+                },
+                {
+                    label: 'Social Clicks',
+                    data: dailySocialClicks,
+                    backgroundColor: 'rgba(234, 58, 38, 0.7)',
+                    borderColor: 'rgba(234, 58, 38, 1)',
+                    borderWidth: 1,
+                    borderRadius: 5
+                },
+                {
+                    label: 'Bookings',
+                    data: dailyBookings,
+                    backgroundColor: 'rgba(255, 134, 0, 0.7)',
+                    borderColor: 'rgba(255, 134, 0, 1)',
+                    borderWidth: 1,
+                    borderRadius: 5
+                }
+            ]
+        };
+
+        const dailyCtx = document.getElementById('dailyAnalyticsChartAnalytics').getContext('2d');
+        dailyAnalyticsChartInstance = new Chart(dailyCtx, {
+            type: 'bar',
+            data: dailyAnalyticsData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    title: { display: false }
+                },
+                scales: { x: { grid: { display: false } }, y: { beginAtZero: true, grid: { color: 'rgba(0, 0, 0, 0.05)' } } }
+            }
+        });
+
+        // Monthly Revenue & Bookings Chart Data
+        const monthlyLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const monthlyRevenue = new Array(12).fill(0);
+        const monthlyBookings = new Array(12).fill(0);
+
+        invoicesData.forEach(invoice => {
+            const invoiceMonth = new Date(invoice.issueDate).getMonth(); // 0-11
+            if (invoice.status === 'Paid' || invoice.status === 'Partially Paid') {
+                monthlyRevenue[invoiceMonth] += (invoice.totalAmount - invoice.balanceDue);
+            }
+        });
+        bookingData.forEach(booking => {
+            const bookingMonth = new Date(booking.rentalStartDate).getMonth(); // 0-11
+            monthlyBookings[bookingMonth]++;
+        });
+
+        const monthlyRevenueBookingsData = {
+            labels: monthlyLabels,
+            datasets: [
+                {
+                    label: 'Total Revenue',
+                    data: monthlyRevenue,
+                    borderColor: 'rgba(234, 58, 38, 1)',
+                    backgroundColor: 'rgba(234, 58, 38, 0.2)',
+                    fill: true,
+                    tension: 0.4,
+                    yAxisID: 'y'
+                },
+                {
+                    label: 'Bookings Count',
+                    data: monthlyBookings,
+                    borderColor: 'rgba(0, 0, 0, 1)',
+                    backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    yAxisID: 'y1' // Use a second Y-axis
+                }
+            ]
+        };
+
+        const monthlyCtx = document.getElementById('monthlyRevenueBookingsChart').getContext('2d');
+        monthlyRevenueBookingsChartInstance = new Chart(monthlyCtx, {
+            type: 'line',
+            data: monthlyRevenueBookingsData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    title: { display: false }
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Revenue ($)'
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Bookings'
+                        },
+                        grid: {
+                            drawOnChartArea: false // Only draw grids for the left Y axis
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // --- Reports Tab Functions ---
+    function generateAnalyticsReport(reportType) {
+        analyticsReportOutput.classList.remove('hidden');
+        analyticsReportContent.innerHTML = '';
+        let tableHtml = '';
+
+        if (reportType === 'bookingsByCustomerType') {
+            analyticsReportTitle.textContent = 'Bookings by Customer Type';
+            const bookingsByType = new Map(); // CustomerType -> count
+
+            bookingData.forEach(booking => {
+                const customer = customerData.find(c => c.id === booking.customerId);
+                const type = customer ? customer.customerType : 'Unknown';
+                bookingsByType.set(type, (bookingsByType.get(type) || 0) + 1);
+            });
+
+            tableHtml = `
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer Type</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Bookings</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+            `;
+            bookingsByType.forEach((count, type) => {
+                tableHtml += `
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${type}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${count}</td>
+                    </tr>
+                `;
+            });
+            tableHtml += `</tbody></table>`;
+        } else if (reportType === 'revenueByCustomerType') {
+            analyticsReportTitle.textContent = 'Revenue by Customer Type';
+            const revenueByType = new Map(); // CustomerType -> totalRevenue
+
+            invoicesData.filter(inv => inv.status === 'Paid' || inv.status === 'Partially Paid').forEach(inv => {
+                const customer = customerData.find(c => c.id === inv.customerId);
+                const type = customer ? customer.customerType : 'Unknown';
+                const amountPaid = inv.totalAmount - inv.balanceDue;
+                revenueByType.set(type, (revenueByType.get(type) || 0) + amountPaid);
+            });
+
+            tableHtml = `
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer Type</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+            `;
+            revenueByType.forEach((revenue, type) => {
+                tableHtml += `
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${type}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$${revenue.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            tableHtml += `</tbody></table>`;
+        } else if (reportType === 'topCustomers') {
+            analyticsReportTitle.textContent = 'Top Customers by Revenue';
+            const customerRevenue = new Map();
+
+            invoicesData.filter(inv => inv.status === 'Paid' || inv.status === 'Partially Paid').forEach(inv => {
+                const amountPaid = inv.totalAmount - inv.balanceDue;
+                customerRevenue.set(inv.customerId, (customerRevenue.get(inv.customerId) || 0) + amountPaid);
+            });
+
+            const sortedCustomers = Array.from(customerRevenue.entries()).sort((a, b) => b[1] - a[1]).slice(0, 5); // Top 5
+
+            tableHtml = `
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer Name</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+            `;
+            sortedCustomers.forEach(([custId, revenue]) => {
+                const customer = customerData.find(c => c.id === custId);
+                tableHtml += `
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${customer ? customer.name : 'Unknown'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$${revenue.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            tableHtml += `</tbody></table>`;
+        } else if (reportType === 'bookingsByEquipmentType') {
+            analyticsReportTitle.textContent = 'Bookings by Equipment Type';
+            const bookingsByType = new Map(); // EquipmentType -> count
+
+            bookingData.forEach(booking => {
+                const equipment = equipmentData.find(eq => eq.id === booking.equipmentId);
+                const type = equipment ? equipment.type : 'Unknown';
+                bookingsByType.set(type, (bookingsByType.get(type) || 0) + 1);
+            });
+
+            tableHtml = `
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Equipment Type</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Bookings</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+            `;
+            bookingsByType.forEach((count, type) => {
+                tableHtml += `
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${type}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${count}</td>
+                    </tr>
+                `;
+            });
+            tableHtml += `</tbody></table>`;
+        } else if (reportType === 'revenueByEquipmentType') {
+            analyticsReportTitle.textContent = 'Revenue by Equipment Type';
+            const revenueByType = new Map(); // EquipmentType -> totalRevenue
+
+            invoicesData.filter(inv => inv.status === 'Paid' || inv.status === 'Partially Paid').forEach(invoice => {
+                const paidAmountRatio = (invoice.totalAmount - invoice.balanceDue) / invoice.totalAmount;
+                invoice.items.forEach(item => {
+                    let equipmentType = 'Other Service';
+                    const matchedEq = equipmentData.find(eq => item.description.includes(eq.type) || item.description.includes(eq.size));
+                    if (matchedEq) {
+                        equipmentType = matchedEq.type;
+                    }
+                    revenueByType.set(equipmentType, (revenueByType.get(equipmentType) || 0) + (item.amount * paidAmountRatio));
+                });
+            });
+
+            tableHtml = `
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Equipment Type / Service</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+            `;
+            revenueByType.forEach((revenue, type) => {
+                tableHtml += `
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${type}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$${revenue.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            tableHtml += `</tbody></table>`;
+        } else if (reportType === 'equipmentUtilization') {
+            analyticsReportTitle.textContent = 'Equipment Utilization Rates (Conceptual)';
+            tableHtml = `
+                <p class="text-gray-600 mb-4">
+                    This report would calculate the percentage of time each individual equipment unit or type is rented versus its total availability.
+                </p>
+                <p class="text-gray-600"><strong>Dummy Data:</strong> Overall Dumpster Utilization: 75%; Toilet Utilization: 60%; Container Utilization: 80%.</p>
+            `;
+        }
+        else {
+            reportTitle.textContent = 'Report Not Found';
+            tableHtml = '<p class="text-gray-600">Select a report to generate its output here.</p>';
+        }
+
+        analyticsReportContent.innerHTML = tableHtml;
+    }
+
+
+    // --- Initial Render ---
+    document.addEventListener('DOMContentLoaded', () => {
+        // Attach event listeners for tabs
+        analyticsTabs.forEach(tab => {
+            tab.addEventListener('click', (event) => {
+                switchAnalyticsView(event.target.dataset.tab);
+            });
+        });
+
+        // Set initial view to Overview
+        switchAnalyticsView('overview');
+    });
+
+    // Ensure initial render on dynamic module load
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        switchAnalyticsView('overview');
+    } else {
+        document.addEventListener('DOMContentLoaded', () => switchAnalyticsView('overview'));
+    }
+
+</script>

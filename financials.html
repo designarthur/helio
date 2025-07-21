@@ -1,0 +1,674 @@
+<div class="p-8">
+    <h2 class="text-3xl font-bold text-gray-900 mb-6">Financials</h2>
+
+    <div class="flex border-b border-gray-200 mb-8 space-x-6">
+        <span class="finance-tab py-2 px-0 cursor-pointer font-bold text-gray-500 transition-colors duration-300 hover:text-gray-800 border-b-2 border-transparent text-[#EA3A26] border-[#EA3A26]" data-tab="overview">Overview</span>
+        <span class="finance-tab py-2 px-0 cursor-pointer font-bold text-gray-500 transition-colors duration-300 hover:text-gray-800 border-b-2 border-transparent" data-tab="reports">Reports</span>
+        <span class="finance-tab py-2 px-0 cursor-pointer font-bold text-gray-500 transition-colors duration-300 hover:text-gray-800 border-b-2 border-transparent" data-tab="expenses">Expenses</span>
+        <span class="finance-tab py-2 px-0 cursor-pointer font-bold text-gray-500 transition-colors duration-300 hover:text-gray-800 border-b-2 border-transparent" data-tab="settings">Settings (Conceptual)</span>
+    </div>
+
+    <div id="finance-tab-overview" class="finance-content-view">
+        <h3 class="text-2xl font-bold text-gray-800 mb-4">Financial Overview</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                <h4 class="text-lg text-gray-500 mb-2">Total Revenue (YTD)</h4>
+                <p id="overviewTotalRevenue" class="text-4xl font-bold text-green-600">$0.00</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                <h4 class="text-lg text-gray-500 mb-2">Outstanding A/R</h4>
+                <p id="overviewOutstandingAR" class="text-4xl font-bold text-[#FF8600]">$0.00</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md text-center">
+                <h4 class="text-lg text-gray-500 mb-2">Total Expenses (YTD)</h4>
+                <p id="overviewTotalExpenses" class="text-4xl font-bold text-red-600">$0.00</p>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h4 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2 border-gray-300">Quick Insights</h4>
+            <p class="text-gray-600">
+                This section would offer a quick visual summary of financial trends, top customers by revenue, and most profitable equipment.
+                (In a real application, interactive charts and graphs would be displayed here for quick financial insights.)
+            </p>
+        </div>
+    </div>
+
+    <div id="finance-tab-reports" class="finance-content-view hidden">
+        <h3 class="text-2xl font-bold text-gray-800 mb-4">Financial Reports</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h4 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2 border-gray-300">Revenue Reports</h4>
+                <div class="space-y-4">
+                    <button class="w-full text-left px-4 py-3 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors" onclick="generateReport('revenueByCustomer')">Revenue by Customer</button>
+                    <button class="w-full text-left px-4 py-3 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors" onclick="generateReport('revenueByEquipment')">Revenue by Equipment Type</button>
+                    <button class="w-full text-left px-4 py-3 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors" onclick="generateReport('salesTax')">Sales Tax Collected</button>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h4 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2 border-gray-300">Accounts Receivable (A/R)</h4>
+                <div class="space-y-4">
+                    <button class="w-full text-left px-4 py-3 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors" onclick="generateReport('arAging')">A/R Aging Report</button>
+                    <button class="w-full text-left px-4 py-3 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors" onclick="generateReport('customerStatements')">Customer Statements (Summary)</button>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md col-span-1 md:col-span-2">
+                <h4 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2 border-gray-300">Other Reports (Conceptual)</h4>
+                <div class="space-y-4">
+                    <p class="text-gray-600">This section would include advanced reports like:</p>
+                    <ul class="list-disc list-inside ml-4 text-sm space-y-1">
+                        <li>Profit & Loss (P&L) Statement</li>
+                        <li>Cash Flow Statement</li>
+                        <li>Equipment Utilization Report</li>
+                        <li>Maintenance Cost Analysis per Unit</li>
+                        <li>Cancellation & Refund Reports</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div id="reportOutput" class="bg-white p-6 rounded-lg shadow-md mt-6 hidden">
+            <h4 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2 border-gray-300" id="reportTitle">Report Output</h4>
+            <div id="reportContent" class="overflow-x-auto">
+                </div>
+        </div>
+    </div>
+
+    <div id="finance-tab-expenses" class="finance-content-view hidden">
+        <h3 class="text-2xl font-bold text-gray-800 mb-4">Expense Management</h3>
+        <div class="flex flex-wrap items-center justify-between mb-6 gap-4">
+            <button id="addExpenseBtn" class="px-6 py-3 bg-[#EA3A26] text-white rounded-md font-semibold hover:bg-[#F54F1D] transition-colors duration-200 flex items-center gap-2">
+                <i class="fas fa-plus-circle"></i> Add New Expense
+            </button>
+            <input type="text" id="expenseSearch" placeholder="Search by Description, Category..." onkeyup="filterExpenses()"
+                   class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#EA3A26] w-full md:w-auto">
+            <select id="expenseCategoryFilter" onchange="filterExpenses()"
+                    class="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#EA3A26] w-full md:w-auto">
+                <option value="">All Categories</option>
+                <option value="Fuel">Fuel</option>
+                <option value="Maintenance">Maintenance</option>
+                <option value="Salaries">Salaries</option>
+                <option value="Office Supplies">Office Supplies</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Utilities">Utilities</option>
+                <option value="Other">Other</option>
+            </select>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md overflow-x-auto mb-8">
+            <table class="min-w-full divide-y divide-gray-200" id="expensesTable">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="finance-tab-settings" class="finance-content-view hidden">
+        <h3 class="text-2xl font-bold text-gray-800 mb-4">Financial Settings & Integrations</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h4 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2 border-gray-300">Sales Tax Configuration (Conceptual)</h4>
+                <p class="text-gray-600">
+                    Configure sales tax rates based on jurisdiction (state, county, city) and define taxability rules for different equipment types and services.
+                    (Requires robust tax calculation engine or integration with tax APIs like Avalara/TaxJar.)
+                </p>
+                <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" onclick="alert('Simulating Tax Settings configuration...')">Configure Tax Settings</button>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h4 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2 border-gray-300">Accounting Software Integration (Conceptual)</h4>
+                <p class="text-gray-600">
+                    Seamlessly sync your financial data (invoices, payments, expenses) with popular accounting software.
+                </p>
+                <div class="mt-4 space-y-2">
+                    <button class="w-full text-left px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700" onclick="alert('Simulating QuickBooks Online Integration...')">Connect to QuickBooks Online</button>
+                    <button class="w-full text-left px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700" onclick="alert('Simulating Xero Integration...')">Connect to Xero</button>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-md col-span-1 md:col-span-2">
+                <h4 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2 border-gray-300">Payout & Commission Management (Conceptual)</h4>
+                <p class="text-gray-600">
+                    Define commission rates for your platform (if multi-vendor) and manage automated payouts to vendors.
+                    Track platform revenue vs. vendor payouts.
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="expenseModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-8 rounded-lg shadow-xl w-11/12 max-w-md relative max-h-[90vh] overflow-y-auto">
+            <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold" onclick="closeModal('expenseModal')">&times;</button>
+            <h3 id="expenseModalTitle" class="text-2xl font-bold text-[#EA3A26] mb-6 border-b pb-3 border-gray-200">Add New Expense</h3>
+            <form id="expenseForm" class="space-y-4">
+                <input type="hidden" id="expenseId">
+                <div>
+                    <label for="expenseDate" class="block text-sm font-medium text-gray-700 mb-1">Date:</label>
+                    <input type="date" id="expenseDate" required value=""
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+                <div>
+                    <label for="expenseDescription" class="block text-sm font-medium text-gray-700 mb-1">Description:</label>
+                    <input type="text" id="expenseDescription" placeholder="e.g., Fuel for Truck 101" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+                <div>
+                    <label for="expenseCategory" class="block text-sm font-medium text-gray-700 mb-1">Category:</label>
+                    <select id="expenseCategory" required
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                        <option value="">Select Category</option>
+                        <option value="Fuel">Fuel</option>
+                        <option value="Maintenance">Maintenance</option>
+                        <option value="Salaries">Salaries</option>
+                        <option value="Office Supplies">Office Supplies</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Utilities">Utilities</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="expenseAmount" class="block text-sm font-medium text-gray-700 mb-1">Amount ($):</label>
+                    <input type="number" id="expenseAmount" min="0.01" step="0.01" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+                <div>
+                    <label for="expenseNotes" class="block text-sm font-medium text-gray-700 mb-1">Notes (Optional):</label>
+                    <textarea id="expenseNotes" rows="2"
+                              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26] resize-y"></textarea>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" class="px-6 py-2 bg-gray-300 text-gray-800 rounded-md font-semibold hover:bg-gray-400 transition-colors duration-200" onclick="closeModal('expenseModal')">Cancel</button>
+                    <button type="submit" class="px-6 py-2 bg-[#EA3A26] text-white rounded-md font-semibold hover:bg-[#F54F1D] transition-colors duration-200">Save Expense</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="viewExpenseModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-8 rounded-lg shadow-xl w-11/12 max-w-md relative">
+            <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold" onclick="closeModal('viewExpenseModal')">&times;</button>
+            <h3 class="text-2xl font-bold text-[#EA3A26] mb-6 border-b pb-3 border-gray-200">Expense Details: <span id="detailExpenseId"></span></h3>
+            <div class="space-y-4 text-gray-700">
+                <p><strong>Date:</strong> <span id="detailExpenseDate"></span></p>
+                <p><strong>Description:</strong> <span id="detailExpenseDescription"></span></p>
+                <p><strong>Category:</strong> <span id="detailExpenseCategory"></span></p>
+                <p><strong>Amount:</strong> $<span id="detailExpenseAmount"></span></p>
+                <p><strong>Notes:</strong> <span id="detailExpenseNotes"></span></p>
+            </div>
+            <div class="mt-6 flex justify-end">
+                <button type="button" class="px-6 py-2 bg-gray-300 text-gray-800 rounded-md font-semibold hover:bg-gray-400 transition-colors duration-200" onclick="closeModal('viewExpenseModal')">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Ensure global data is accessible or provide minimal fallbacks
+    if (typeof window.customerData === 'undefined' || !Array.isArray(window.customerData)) {
+        window.customerData = [{ id: 'CUST001', name: 'Alice Smith' }];
+    }
+    if (typeof window.equipmentData === 'undefined' || !Array.isArray(window.equipmentData)) {
+        window.equipmentData = [{ id: 'EQ001', type: 'Dumpster', size: '20-yard', baseDailyRate: 150 }];
+    }
+    if (typeof window.bookingData === 'undefined' || !Array.isArray(window.bookingData)) {
+        window.bookingData = [{ id: 'BOOK001', customerId: 'CUST001', equipmentId: 'EQ001', rentalStartDate: '2025-07-01', rentalEndDate: '2025-07-05', totalPrice: 750 }];
+    }
+    if (typeof window.quotesData === 'undefined' || !Array.isArray(window.quotesData)) {
+        window.quotesData = [{ id: 'QUO001', customerId: 'CUST001', totalAmount: 850, status: 'Accepted' }];
+    }
+    if (typeof window.invoicesData === 'undefined' || !Array.isArray(window.invoicesData)) {
+        window.invoicesData = [
+            { id: 'INV001', customerId: 'CUST001', totalAmount: 1000, balanceDue: 0, status: 'Paid', issueDate: '2025-06-01', dueDate: '2025-07-01' },
+            { id: 'INV002', customerId: 'CUST001', totalAmount: 500, balanceDue: 250, status: 'Partially Paid', issueDate: '2025-07-15', dueDate: '2025-08-15' },
+            { id: 'INV003', customerId: 'CUST001', totalAmount: 700, balanceDue: 700, status: 'Overdue', issueDate: '2025-06-01', dueDate: '2025-07-01' }
+        ];
+    }
+    if (typeof window.paymentsData === 'undefined' || !Array.isArray(window.paymentsData)) {
+        window.paymentsData = [
+            { id: 'PAY001', invoiceId: 'INV001', customerId: 'CUST001', amount: 1000, paymentDate: '2025-06-28', method: 'Credit Card' }
+        ];
+    }
+
+    // New: Expense Data
+    if (typeof window.expenseData === 'undefined' || !Array.isArray(window.expenseData)) {
+        window.expenseData = [
+            { id: 'EXP001', date: '2025-07-10', description: 'Diesel Refill - Truck 101', category: 'Fuel', amount: 120.50, notes: 'Full tank' },
+            { id: 'EXP002', date: '2025-07-12', description: 'Office Paper & Pens', category: 'Office Supplies', amount: 45.75, notes: '' },
+            { id: 'EXP003', date: '2025-07-15', description: 'Dumpster EQ001 Repair', category: 'Maintenance', amount: 300.00, notes: 'Gate hinge replacement' },
+            { id: 'EXP004', date: '2025-07-20', description: 'Digital Ad Campaign', category: 'Marketing', amount: 500.00, notes: 'Google Ads for July' }
+        ];
+    }
+
+
+    let customerData = window.customerData;
+    let equipmentData = window.equipmentData;
+    let quotesData = window.quotesData;
+    let invoicesData = window.invoicesData;
+    let paymentsData = window.paymentsData;
+    let bookingData = window.bookingData;
+    let expenseData = window.expenseData;
+
+    let currentExpenseId = null;
+
+    // Get elements
+    const financeTabs = document.querySelectorAll('.finance-tab');
+    const financeContentViews = document.querySelectorAll('.finance-content-view');
+
+    // Overview Tab elements
+    const overviewTotalRevenue = document.getElementById('overviewTotalRevenue');
+    const overviewOutstandingAR = document.getElementById('overviewOutstandingAR');
+    const overviewTotalExpenses = document.getElementById('overviewTotalExpenses');
+
+    // Reports Tab elements
+    const reportOutput = document.getElementById('reportOutput');
+    const reportTitle = document.getElementById('reportTitle');
+    const reportContent = document.getElementById('reportContent');
+
+    // Expenses Tab elements
+    const addExpenseBtn = document.getElementById('addExpenseBtn');
+    const expensesTableBody = document.querySelector('#expensesTable tbody');
+    const expenseModal = document.getElementById('expenseModal');
+    const expenseModalTitle = document.getElementById('expenseModalTitle');
+    const expenseForm = document.getElementById('expenseForm');
+    const expenseIdField = document.getElementById('expenseId');
+    const expenseDateInput = document.getElementById('expenseDate');
+    const expenseDescriptionInput = document.getElementById('expenseDescription');
+    const expenseCategorySelect = document.getElementById('expenseCategory');
+    const expenseAmountInput = document.getElementById('expenseAmount');
+    const expenseNotesInput = document.getElementById('expenseNotes');
+
+    const viewExpenseModal = document.getElementById('viewExpenseModal');
+    const detailExpenseId = document.getElementById('detailExpenseId');
+    const detailExpenseDate = document.getElementById('detailExpenseDate');
+    const detailExpenseDescription = document.getElementById('detailExpenseDescription');
+    const detailExpenseCategory = document.getElementById('detailExpenseCategory');
+    const detailExpenseAmount = document.getElementById('detailExpenseAmount');
+    const detailExpenseNotes = document.getElementById('detailExpenseNotes');
+
+    // --- General Modal Functions ---
+    function openModal(modalId) {
+        document.getElementById(modalId).classList.remove('hidden');
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).classList.add('hidden');
+        if (modalId === 'expenseModal') {
+            expenseForm.reset();
+            currentExpenseId = null;
+            expenseDateInput.valueAsDate = new Date(); // Reset date to today
+        }
+    }
+
+    // --- Tab Switching ---
+    function switchFinanceView(tabName) {
+        financeContentViews.forEach(view => view.classList.add('hidden'));
+        document.getElementById(`finance-tab-${tabName}`).classList.remove('hidden');
+
+        financeTabs.forEach(tab => {
+            tab.classList.remove('text-[#EA3A26]', 'border-[#EA3A26]');
+            tab.classList.add('text-gray-500', 'border-transparent');
+        });
+        const activeTab = Array.from(financeTabs).find(tab => tab.dataset.tab === tabName);
+        if (activeTab) {
+            activeTab.classList.add('text-[#EA3A26]', 'border-[#EA3A26]');
+            activeTab.classList.remove('text-gray-500', 'border-transparent');
+        }
+
+        // Render content for the active tab
+        if (tabName === 'overview') {
+            renderOverview();
+        } else if (tabName === 'reports') {
+            // Keep reportOutput hidden until a report is generated
+            reportOutput.classList.add('hidden');
+        } else if (tabName === 'expenses') {
+            renderExpensesTable();
+            expenseDateInput.valueAsDate = new Date(); // Set default date for add form
+        }
+        // Settings tab has static content
+    }
+
+    // --- Overview Tab Functions ---
+    function renderOverview() {
+        let totalRevenue = 0;
+        invoicesData.filter(inv => inv.status === 'Paid' || inv.status === 'Partially Paid').forEach(inv => {
+            totalRevenue += (inv.totalAmount - inv.balanceDue); // Sum of amounts actually paid
+        });
+        overviewTotalRevenue.textContent = `$${totalRevenue.toFixed(2)}`;
+
+        let outstandingAR = 0;
+        invoicesData.filter(inv => inv.status !== 'Paid' && inv.status !== 'Voided').forEach(inv => {
+            outstandingAR += inv.balanceDue;
+        });
+        overviewOutstandingAR.textContent = `$${outstandingAR.toFixed(2)}`;
+
+        let totalExpenses = expenseData.reduce((sum, expense) => sum + expense.amount, 0);
+        overviewTotalExpenses.textContent = `$${totalExpenses.toFixed(2)}`;
+    }
+
+    // --- Reports Tab Functions ---
+    function generateReport(reportType) {
+        reportOutput.classList.remove('hidden');
+        reportContent.innerHTML = '';
+        let tableHtml = '';
+
+        if (reportType === 'revenueByCustomer') {
+            reportTitle.textContent = 'Revenue by Customer Report';
+            const revenueMap = new Map(); // customerId -> totalRevenue
+
+            invoicesData.filter(inv => inv.status === 'Paid' || inv.status === 'Partially Paid').forEach(inv => {
+                const amountPaid = inv.totalAmount - inv.balanceDue;
+                revenueMap.set(inv.customerId, (revenueMap.get(inv.customerId) || 0) + amountPaid);
+            });
+
+            tableHtml = `
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer Name</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+            `;
+            revenueMap.forEach((revenue, custId) => {
+                const customer = customerData.find(c => c.id === custId);
+                tableHtml += `
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${customer ? customer.name : 'Unknown Customer'}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$${revenue.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            tableHtml += `</tbody></table>`;
+
+        } else if (reportType === 'revenueByEquipment') {
+            reportTitle.textContent = 'Revenue by Equipment Type Report';
+            const revenueMap = new Map(); // equipmentId (or type) -> totalRevenue
+
+            // Iterate through paid/partially paid invoices
+            invoicesData.filter(inv => inv.status === 'Paid' || inv.status === 'Partially Paid').forEach(invoice => {
+                const paidAmountRatio = (invoice.totalAmount - invoice.balanceDue) / invoice.totalAmount;
+                invoice.items.forEach(item => {
+                    let equipmentType = 'Other Service';
+                    // Try to link item description to equipment for type
+                    // This is a simplification; in a real system, invoice items would link directly to source bookings/equipment
+                    const matchedEq = equipmentData.find(eq => item.description.includes(eq.type) || item.description.includes(eq.size));
+                    if (matchedEq) {
+                        equipmentType = matchedEq.type;
+                    }
+
+                    revenueMap.set(equipmentType, (revenueMap.get(equipmentType) || 0) + (item.amount * paidAmountRatio));
+                });
+            });
+
+            tableHtml = `
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Equipment Type / Service</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+            `;
+            revenueMap.forEach((revenue, type) => {
+                tableHtml += `
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${type}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$${revenue.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+            tableHtml += `</tbody></table>`;
+        } else if (reportType === 'salesTax') {
+             reportTitle.textContent = 'Sales Tax Collected Report (Conceptual)';
+             tableHtml = `
+                <p class="text-gray-600 mb-4">
+                    In a real system, this report would accurately calculate and summarize sales tax collected per jurisdiction (state, county, city) based on invoice line items.
+                </p>
+                <p class="text-gray-600"><strong>Dummy Data:</strong> Total Sales Tax Collected: $500.00 (Example only)</p>
+             `;
+        }
+        else if (reportType === 'arAging') {
+            reportTitle.textContent = 'Accounts Receivable Aging Report';
+            const agingBuckets = { 'Current': [], '1-30 Days': [], '31-60 Days': [], '61-90 Days': [], '90+ Days': [] };
+            const today = new Date();
+
+            invoicesData.filter(inv => inv.balanceDue > 0).forEach(invoice => {
+                const dueDate = new Date(invoice.dueDate);
+                const daysOverdue = Math.floor((today - dueDate) / (1000 * 60 * 60 * 24));
+
+                if (daysOverdue <= 0) agingBuckets['Current'].push(invoice);
+                else if (daysOverdue >= 1 && daysOverdue <= 30) agingBuckets['1-30 Days'].push(invoice);
+                else if (daysOverdue >= 31 && daysOverdue <= 60) agingBuckets['31-60 Days'].push(invoice);
+                else if (daysOverdue >= 61 && daysOverdue <= 90) agingBuckets['61-90 Days'].push(invoice);
+                else if (daysOverdue > 90) agingBuckets['90+ Days'].push(invoice);
+            });
+
+            tableHtml = `
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aging Bucket</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount Due</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+            `;
+            for (const bucket in agingBuckets) {
+                if (agingBuckets[bucket].length > 0) {
+                    agingBuckets[bucket].forEach(invoice => {
+                        const customer = customerData.find(c => c.id === invoice.customerId);
+                        tableHtml += `
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${bucket}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${invoice.id}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${customer ? customer.name : 'Unknown'}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">$${invoice.balanceDue.toFixed(2)}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${invoice.dueDate}</td>
+                            </tr>
+                        `;
+                    });
+                }
+            }
+            tableHtml += `</tbody></table>`;
+        } else if (reportType === 'customerStatements') {
+            reportTitle.textContent = 'Customer Statements (Summary) - Conceptual';
+            tableHtml = `
+                <p class="text-gray-600 mb-4">
+                    This report would generate a detailed statement for each customer, showing all their invoices, payments received, and current outstanding balances over a selected period.
+                </p>
+                <p class="text-gray-600">
+                    (Requires robust transaction logging and aggregation. For demo, consider viewing individual customer financial overviews in the Customer Management module.)
+                </p>
+            `;
+        } else {
+            reportTitle.textContent = 'Report Not Found';
+            tableHtml = '<p class="text-gray-600">Select a report to generate its output here.</p>';
+        }
+
+        reportContent.innerHTML = tableHtml;
+    }
+
+
+    // --- Expenses Tab Functions ---
+    addExpenseBtn.addEventListener('click', openAddExpenseModal);
+    expenseForm.addEventListener('submit', saveExpense);
+
+    function renderExpensesTable(dataToRender = expenseData) {
+        expensesTableBody.innerHTML = '';
+        if (!Array.isArray(dataToRender) || dataToRender.length === 0) {
+            const row = expensesTableBody.insertRow();
+            row.innerHTML = '<td colspan="5" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">No expenses found.</td>';
+            return;
+        }
+        dataToRender.forEach(expense => {
+            const row = expensesTableBody.insertRow();
+            row.classList.add('hover:bg-gray-50');
+
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'font-medium', 'text-gray-900').textContent = expense.date;
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-500').textContent = expense.description;
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-500').textContent = expense.category;
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-500').textContent = `$${expense.amount.toFixed(2)}`;
+
+            const actionsCell = row.insertCell();
+            actionsCell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-right', 'text-sm', 'font-medium');
+            const viewBtn = document.createElement('button');
+            viewBtn.textContent = 'View';
+            viewBtn.classList.add('text-indigo-600', 'hover:text-indigo-900', 'mr-3', 'transition-colors', 'duration-200');
+            viewBtn.onclick = () => viewExpenseDetails(expense.id);
+            actionsCell.appendChild(viewBtn);
+
+            const editBtn = document.createElement('button');
+            editBtn.textContent = 'Edit';
+            editBtn.classList.add('text-[#EA3A26]', 'hover:text-[#F54F1D]', 'mr-3', 'transition-colors', 'duration-200');
+            editBtn.onclick = () => openEditExpenseModal(expense.id);
+            actionsCell.appendChild(editBtn);
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.classList.add('text-red-600', 'hover:text-red-900', 'transition-colors', 'duration-200');
+            deleteBtn.onclick = () => deleteExpense(expense.id);
+            actionsCell.appendChild(deleteBtn);
+        });
+    }
+
+    function openAddExpenseModal() {
+        expenseModalTitle.textContent = 'Add New Expense';
+        expenseIdField.value = '';
+        expenseForm.reset();
+        currentExpenseId = null;
+        expenseDateInput.valueAsDate = new Date(); // Set to current date
+        openModal('expenseModal');
+    }
+
+    function openEditExpenseModal(id) {
+        const expense = expenseData.find(e => e.id === id);
+        if (expense) {
+            expenseModalTitle.textContent = `Edit Expense: ${expense.id}`;
+            expenseIdField.value = expense.id;
+            expenseDateInput.value = expense.date;
+            expenseDescriptionInput.value = expense.description;
+            expenseCategorySelect.value = expense.category;
+            expenseAmountInput.value = expense.amount;
+            expenseNotesInput.value = expense.notes || '';
+            currentExpenseId = id;
+            openModal('expenseModal');
+        } else {
+            alert('Expense not found for editing.');
+        }
+    }
+
+    function saveExpense(event) {
+        event.preventDefault();
+        const id = expenseIdField.value;
+        const date = expenseDateInput.value;
+        const description = expenseDescriptionInput.value;
+        const category = expenseCategorySelect.value;
+        const amount = parseFloat(expenseAmountInput.value) || 0;
+        const notes = expenseNotesInput.value;
+
+        if (!date || !description || !category || isNaN(amount) || amount <= 0) {
+            alert('Please fill in all required expense fields (Date, Description, Category, Amount).');
+            return;
+        }
+
+        let newExpense = {
+            id: id,
+            date: date,
+            description: description,
+            category: category,
+            amount: amount,
+            notes: notes
+        };
+
+        if (id) {
+            const index = expenseData.findIndex(e => e.id === id);
+            if (index !== -1) {
+                expenseData[index] = newExpense;
+                alert(`Expense ${id} updated successfully!`);
+            } else {
+                alert(`Error: Expense ${id} not found for update.`);
+            }
+        } else {
+            newExpense.id = 'EXP' + (expenseData.length + 1).toString().padStart(3, '0');
+            expenseData.push(newExpense);
+            alert(`New expense ${newExpense.id} added successfully!`);
+        }
+        renderExpensesTable();
+        closeModal('expenseModal');
+        // Update overview totals after saving an expense
+        renderOverview(); 
+    }
+
+    function deleteExpense(id) {
+        if (confirm(`Are you sure you want to delete Expense ID: ${id}?`)) {
+            expenseData = expenseData.filter(e => e.id !== id);
+            renderExpensesTable();
+            alert(`Expense ${id} deleted.`);
+            // Update overview totals after deleting an expense
+            renderOverview();
+        }
+    }
+
+    function viewExpenseDetails(id) {
+        const expense = expenseData.find(e => e.id === id);
+        if (expense) {
+            detailExpenseId.textContent = expense.id;
+            detailExpenseDate.textContent = expense.date;
+            detailExpenseDescription.textContent = expense.description;
+            detailExpenseCategory.textContent = expense.category;
+            detailExpenseAmount.textContent = expense.amount.toFixed(2);
+            detailExpenseNotes.textContent = expense.notes || 'N/A';
+            openModal('viewExpenseModal');
+        } else {
+            alert('Expense details not found.');
+        }
+    }
+
+    function filterExpenses() {
+        const searchTerm = document.getElementById('expenseSearch').value.toLowerCase();
+        const categoryFilter = document.getElementById('expenseCategoryFilter').value;
+
+        const filteredData = expenseData.filter(expense => {
+            const matchesSearch = expense.description.toLowerCase().includes(searchTerm) ||
+                                  expense.id.toLowerCase().includes(searchTerm) ||
+                                  expense.notes.toLowerCase().includes(searchTerm);
+            const matchesCategory = categoryFilter === '' || expense.category === categoryFilter;
+
+            return matchesSearch && matchesCategory;
+        });
+        renderExpensesTable(filteredData);
+    }
+
+
+    // --- Initial Render ---
+    document.addEventListener('DOMContentLoaded', () => {
+        // Attach event listeners for tabs
+        financeTabs.forEach(tab => {
+            tab.addEventListener('click', (event) => {
+                switchFinanceView(event.target.dataset.tab);
+            });
+        });
+
+        // Set initial view to Overview
+        switchFinanceView('overview');
+    });
+
+    // Ensure initial render on dynamic module load
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        switchFinanceView('overview');
+    } else {
+        document.addEventListener('DOMContentLoaded', () => switchFinanceView('overview'));
+    }
+
+</script>

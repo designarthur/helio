@@ -1,0 +1,503 @@
+<div class="p-8">
+    <h2 class="text-3xl font-bold text-gray-900 mb-6">Driver Management</h2>
+
+    <div class="flex flex-wrap items-center justify-between mb-6 gap-4">
+        <button id="addDriverBtn" class="px-6 py-3 bg-[#EA3A26] text-white rounded-md font-semibold hover:bg-[#F54F1D] transition-colors duration-200 flex items-center gap-2">
+            <i class="fas fa-plus-circle"></i> Add New Driver
+        </button>
+        <div class="flex flex-wrap items-center gap-4">
+            <input type="text" id="driverSearch" placeholder="Search by Name, ID..." onkeyup="filterDrivers()"
+                   class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#EA3A26] w-full md:w-auto">
+            <select id="driverStatusFilter" onchange="filterDrivers()"
+                    class="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#EA3A26] w-full md:w-auto">
+                <option value="">All Statuses</option>
+                <option value="Active">Active</option>
+                <option value="On Leave">On Leave</option>
+                <option value="Inactive">Inactive</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md overflow-x-auto mb-8">
+        <table class="min-w-full divide-y divide-gray-200" id="driverTable">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Driver ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">License Expiry</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assigned Vehicle</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                <!-- Driver data will be rendered here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Add/Edit Driver Modal -->
+    <div id="driverModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-8 rounded-lg shadow-xl w-11/12 max-w-3xl relative max-h-[90vh] overflow-y-auto">
+            <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold" onclick="closeModal('driverModal')">&times;</button>
+            <h3 id="modalTitle" class="text-2xl font-bold text-[#EA3A26] mb-6 border-b pb-3 border-gray-200">Add New Driver</h3>
+            <form id="driverForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input type="hidden" id="driverId">
+
+                <div>
+                    <label for="driverName" class="block text-sm font-medium text-gray-700 mb-1">Full Name:</label>
+                    <input type="text" id="driverName" placeholder="Michael Scott" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+                <div>
+                    <label for="driverEmail" class="block text-sm font-medium text-gray-700 mb-1">Email:</label>
+                    <input type="email" id="driverEmail" placeholder="michael.scott@example.com"
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:focus:border-[#EA3A26]">
+                </div>
+                <div>
+                    <label for="driverPhone" class="block text-sm font-medium text-gray-700 mb-1">Phone:</label>
+                    <input type="tel" id="driverPhone" placeholder="(111) 222-3333" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+                <div>
+                    <label for="licenseNumber" class="block text-sm font-medium text-gray-700 mb-1">License Number:</label>
+                    <input type="text" id="licenseNumber" placeholder="MS123456" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+                <div>
+                    <label for="licenseExpiry" class="block text-sm font-medium text-gray-700 mb-1">License Expiry Date:</label>
+                    <input type="date" id="licenseExpiry" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+                <div>
+                    <label for="cdlClass" class="block text-sm font-medium text-gray-700 mb-1">CDL Class (Optional):</label>
+                    <input type="text" id="cdlClass" placeholder="Class A, B, C"
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+                <div>
+                    <label for="driverStatus" class="block text-sm font-medium text-gray-700 mb-1">Status:</label>
+                    <select id="driverStatus" required
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                        <option value="Active">Active</option>
+                        <option value="On Leave">On Leave</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="assignedVehicle" class="block text-sm font-medium text-gray-700 mb-1">Assigned Vehicle:</label>
+                    <input type="text" id="assignedVehicle" placeholder="Truck 101"
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+                <div class="col-span-1 md:col-span-2">
+                    <label for="driverNotes" class="block text-sm font-medium text-gray-700 mb-1">Driver Notes (Internal):</label>
+                    <textarea id="driverNotes" rows="3" placeholder="Notes about driver preferences, skills, or warnings."
+                              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26] resize-y"></textarea>
+                </div>
+
+                <div class="col-span-1 md:col-span-2 flex justify-end gap-3 mt-6">
+                    <button type="button" class="px-6 py-2 bg-gray-300 text-gray-800 rounded-md font-semibold hover:bg-gray-400 transition-colors duration-200" onclick="closeModal('driverModal')">Cancel</button>
+                    <button type="submit" class="px-6 py-2 bg-[#EA3A26] text-white rounded-md font-semibold hover:bg-[#F54F1D] transition-colors duration-200">Save Driver</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- View Driver Detail Modal -->
+    <div id="viewDriverModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-8 rounded-lg shadow-xl w-11/12 max-w-3xl relative max-h-[90vh] overflow-y-auto">
+            <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold" onclick="closeModal('viewDriverModal')">&times;</button>
+            <h3 class="text-2xl font-bold text-[#EA3A26] mb-6 border-b pb-3 border-gray-200">Driver Details: <span id="detailDriverId"></span></h3>
+            <div class="space-y-4 text-gray-700">
+                <div class="bg-gray-50 p-4 rounded-md shadow-sm">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">General Information</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <p><strong>Name:</strong> <span id="detailDriverName"></span></p>
+                        <p><strong>Email:</strong> <span id="detailDriverEmail"></span></p>
+                        <p><strong>Phone:</strong> <span id="detailDriverPhone"></span></p>
+                        <p><strong>License Number:</strong> <span id="detailLicenseNumber"></span></p>
+                        <p><strong>License Expiry:</strong> <span id="detailLicenseExpiry"></span></p>
+                        <p><strong>CDL Class:</strong> <span id="detailCdlClass"></span></p>
+                        <p><strong>Status:</strong> <span id="detailDriverStatus"></span></p>
+                        <p><strong>Assigned Vehicle:</strong> <span id="detailAssignedVehicle"></span></p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-md shadow-sm hidden" id="detailDriverNotesGroup">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Internal Notes</h4>
+                    <p><span id="detailDriverNotes"></span></p>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-md shadow-sm">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Assigned Bookings (Current Day/Upcoming)</h4>
+                    <div id="assignedBookingsList" class="space-y-2">
+                        <p class="text-gray-500 italic">No assigned bookings for this driver for the upcoming days. (This would show dynamic booking details.)</p>
+                        <!-- Assigned bookings will be dynamically inserted here -->
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-md shadow-sm">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Performance Metrics (Conceptual)</h4>
+                    <p class="text-gray-600">This section would show driver-specific performance metrics such as:
+                        <ul class="list-disc list-inside ml-4 text-sm mt-2">
+                            <li>On-time delivery rate.</li>
+                            <li>Average service time per job.</li>
+                            <li>Miles driven and fuel consumed.</li>
+                            <li>Customer feedback/ratings.</li>
+                        </ul>
+                    </p>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-end gap-3">
+                <button type="button" class="px-6 py-2 bg-gray-300 text-gray-800 rounded-md font-semibold hover:bg-gray-400 transition-colors duration-200" onclick="closeModal('viewDriverModal')">Close</button>
+                <button type="button" class="px-6 py-2 bg-[#EA3A26] text-white rounded-md font-semibold hover:bg-[#F54F1D] transition-colors duration-200" id="editFromDetailBtn">Edit Driver</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Ensure window.driverData exists and is an array, otherwise initialize it.
+    if (typeof window.driverData === 'undefined' || !Array.isArray(window.driverData)) {
+        window.driverData = [
+            {
+                id: 'DRV001',
+                name: 'Michael Scott',
+                email: 'michael.s@example.com',
+                phone: '(111) 222-3333',
+                licenseNumber: 'MS123456',
+                licenseExpiry: '2026-12-31',
+                cdlClass: 'Class A',
+                status: 'Active',
+                assignedVehicle: 'Truck 101',
+                driverNotes: 'Excellent performance, very reliable.'
+            },
+            {
+                id: 'DRV002',
+                name: 'Dwight Schrute',
+                email: 'dwight.s@example.com',
+                phone: '(222) 333-4444',
+                licenseNumber: 'DS987654',
+                licenseExpiry: '2025-06-15',
+                cdlClass: 'Class B',
+                status: 'Active',
+                assignedVehicle: 'Truck 102',
+                driverNotes: 'Always follows protocols, sometimes too literal.'
+            },
+            {
+                id: 'DRV003',
+                name: 'Pam Beesly',
+                email: 'pam.b@example.com',
+                phone: '(333) 444-5555',
+                licenseNumber: 'PB010101',
+                licenseExpiry: '2027-01-01',
+                cdlClass: 'Class C',
+                status: 'On Leave',
+                assignedVehicle: 'None',
+                driverNotes: 'On maternity leave until next quarter.'
+            }
+        ];
+    }
+
+    // Ensure window.bookingData is accessible (from Booking & Scheduling module)
+    if (typeof window.bookingData === 'undefined' || !Array.isArray(window.bookingData)) {
+        console.warn("bookingData not found. Using minimal fallback dummy data for bookings.");
+        window.bookingData = [
+            { id: 'BOOK001', customerId: 'CUST001', equipmentId: 'EQ001', rentalStartDate: '2025-07-25', status: 'Confirmed', driverId: 'DRV001', deliveryAddress: '123 Main St' },
+            { id: 'BOOK002', customerId: 'CUST002', equipmentId: 'EQ002', rentalStartDate: '2025-08-01', status: 'Pending', driverId: '', deliveryAddress: '789 Oak Ave' }, // Unassigned
+        ];
+    }
+    // Also ensure window.customerData and window.equipmentData are accessible for displaying booking details
+    if (typeof window.customerData === 'undefined' || !Array.isArray(window.customerData)) {
+        console.warn("customerData not found. Using minimal fallback dummy data for customers.");
+        window.customerData = [
+            { id: 'CUST001', name: 'Alice Smith' },
+            { id: 'CUST002', name: 'Bob Johnson' },
+        ];
+    }
+    if (typeof window.equipmentData === 'undefined' || !Array.isArray(window.equipmentData)) {
+        console.warn("equipmentData not found. Using minimal fallback dummy data for equipment.");
+        window.equipmentData = [
+            { id: 'EQ001', type: 'Dumpster', size: '20-yard' },
+            { id: 'EQ002', type: 'Temporary Toilet', size: 'Standard' },
+            { id: 'EQ003', type: 'Storage Container', size: '40ft' }
+        ];
+    }
+
+
+    let driverData = window.driverData;
+    let bookingData = window.bookingData; // Reference global booking data
+    let customerData = window.customerData; // Reference global customer data
+    let equipmentData = window.equipmentData; // Reference global equipment data
+
+    let currentDriverId = null;
+
+    // Get elements
+    const driverTableBody = document.querySelector('#driverTable tbody');
+    const addDriverBtn = document.getElementById('addDriverBtn');
+    const driverModal = document.getElementById('driverModal');
+    const viewDriverModal = document.getElementById('viewDriverModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const driverForm = document.getElementById('driverForm');
+    const driverIdField = document.getElementById('driverId');
+
+    // Detail view elements
+    const detailDriverId = document.getElementById('detailDriverId');
+    const detailDriverName = document.getElementById('detailDriverName');
+    const detailDriverEmail = document.getElementById('detailDriverEmail');
+    const detailDriverPhone = document.getElementById('detailDriverPhone');
+    const detailLicenseNumber = document.getElementById('detailLicenseNumber');
+    const detailLicenseExpiry = document.getElementById('detailLicenseExpiry');
+    const detailCdlClass = document.getElementById('detailCdlClass');
+    const detailDriverStatus = document.getElementById('detailDriverStatus');
+    const detailAssignedVehicle = document.getElementById('detailAssignedVehicle');
+    const detailDriverNotes = document.getElementById('detailDriverNotes');
+    const detailDriverNotesGroup = document.getElementById('detailDriverNotesGroup');
+    const assignedBookingsList = document.getElementById('assignedBookingsList');
+
+    const editFromDetailBtn = document.getElementById('editFromDetailBtn');
+
+    // Event Listeners
+    addDriverBtn.addEventListener('click', () => openAddModal());
+    driverForm.addEventListener('submit', (e) => saveDriver(e));
+    editFromDetailBtn.addEventListener('click', () => {
+        closeModal('viewDriverModal');
+        openEditModal(currentDriverId);
+    });
+
+    // --- Modal Functions ---
+    function openModal(modalId) {
+        document.getElementById(modalId).classList.remove('hidden');
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).classList.add('hidden');
+        if (modalId === 'driverModal') {
+            driverForm.reset();
+            currentDriverId = null;
+        }
+    }
+
+    // --- CRUD Operations ---
+    function renderDriversTable(dataToRender = driverData) {
+        console.log("Rendering driver table with data:", dataToRender);
+        driverTableBody.innerHTML = '';
+        if (!Array.isArray(dataToRender) || dataToRender.length === 0) {
+            const row = driverTableBody.insertRow();
+            row.innerHTML = '<td colspan="7" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">No drivers found.</td>';
+            return;
+        }
+        dataToRender.forEach(driver => {
+            const row = driverTableBody.insertRow();
+            row.classList.add('hover:bg-gray-50');
+
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'font-medium', 'text-gray-900');
+            row.cells[0].textContent = driver.id;
+
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-500');
+            row.cells[1].textContent = driver.name;
+
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-500');
+            row.cells[2].textContent = driver.phone;
+
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-500');
+            row.cells[3].textContent = driver.licenseExpiry;
+
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-500');
+            row.cells[4].textContent = driver.status;
+
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-500');
+            row.cells[5].textContent = driver.assignedVehicle || 'N/A';
+
+            const actionsCell = row.insertCell();
+            actionsCell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-right', 'text-sm', 'font-medium');
+
+            const viewBtn = document.createElement('button');
+            viewBtn.textContent = 'View';
+            viewBtn.classList.add('text-indigo-600', 'hover:text-indigo-900', 'mr-3', 'transition-colors', 'duration-200');
+            viewBtn.onclick = () => viewDriverDetails(driver.id);
+            actionsCell.appendChild(viewBtn);
+
+            const editBtn = document.createElement('button');
+            editBtn.textContent = 'Edit';
+            editBtn.classList.add('text-[#EA3A26]', 'hover:text-[#F54F1D]', 'mr-3', 'transition-colors', 'duration-200');
+            editBtn.onclick = () => openEditModal(driver.id);
+            actionsCell.appendChild(editBtn);
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.classList.add('text-red-600', 'hover:text-red-900', 'transition-colors', 'duration-200');
+            deleteBtn.onclick = () => deleteDriver(driver.id);
+            actionsCell.appendChild(deleteBtn);
+        });
+    }
+
+    function openAddModal() {
+        modalTitle.textContent = 'Add New Driver';
+        driverIdField.value = '';
+        driverForm.reset();
+        currentDriverId = null;
+        openModal('driverModal');
+    }
+
+    function openEditModal(id) {
+        const driver = driverData.find(d => d.id === id);
+        if (driver) {
+            modalTitle.textContent = `Edit Driver: ${driver.name}`;
+            driverIdField.value = driver.id;
+            document.getElementById('driverName').value = driver.name;
+            document.getElementById('driverEmail').value = driver.email || '';
+            document.getElementById('driverPhone').value = driver.phone;
+            document.getElementById('licenseNumber').value = driver.licenseNumber;
+            document.getElementById('licenseExpiry').value = driver.licenseExpiry;
+            document.getElementById('cdlClass').value = driver.cdlClass || '';
+            document.getElementById('driverStatus').value = driver.status;
+            document.getElementById('assignedVehicle').value = driver.assignedVehicle || '';
+            document.getElementById('driverNotes').value = driver.driverNotes || '';
+
+            currentDriverId = id;
+            openModal('driverModal');
+        } else {
+            alert('Driver not found for editing.');
+        }
+    }
+
+    function saveDriver(event) {
+        event.preventDefault();
+
+        const id = driverIdField.value;
+        const name = document.getElementById('driverName').value;
+        const email = document.getElementById('driverEmail').value;
+        const phone = document.getElementById('driverPhone').value;
+        const licenseNumber = document.getElementById('licenseNumber').value;
+        const licenseExpiry = document.getElementById('licenseExpiry').value;
+        const cdlClass = document.getElementById('cdlClass').value;
+        const status = document.getElementById('driverStatus').value;
+        const assignedVehicle = document.getElementById('assignedVehicle').value;
+        const driverNotes = document.getElementById('driverNotes').value;
+
+        if (!name || !phone || !licenseNumber || !licenseExpiry || !status) {
+            alert('Please fill in all required driver fields (Name, Phone, License Number, Expiry, Status).');
+            return;
+        }
+
+        let newDriver = {
+            id: id,
+            name: name,
+            email: email,
+            phone: phone,
+            licenseNumber: licenseNumber,
+            licenseExpiry: licenseExpiry,
+            cdlClass: cdlClass,
+            status: status,
+            assignedVehicle: assignedVehicle,
+            driverNotes: driverNotes
+        };
+
+        if (id) {
+            const index = driverData.findIndex(d => d.id === id);
+            if (index !== -1) {
+                driverData[index] = newDriver;
+                alert(`Driver ${name} updated successfully!`);
+            } else {
+                alert(`Error: Driver ${id} not found for update.`);
+            }
+        } else {
+            newDriver.id = 'DRV' + (driverData.length + 1).toString().padStart(3, '0');
+            driverData.push(newDriver);
+            alert(`New driver ${name} added successfully!`);
+        }
+
+        renderDriversTable();
+        closeModal('driverModal');
+    }
+
+    function deleteDriver(id) {
+        if (confirm(`Are you sure you want to delete driver ID: ${id}? This action cannot be undone.`)) {
+            driverData = driverData.filter(d => d.id !== id);
+            // Also unassign any bookings from this driver (optional, but good practice)
+            bookingData.forEach(booking => {
+                if (booking.driverId === id) {
+                    booking.driverId = ''; // Set to empty string for unassigned
+                }
+            });
+            renderDriversTable();
+            alert(`Driver ${id} deleted successfully.`);
+        }
+    }
+
+    function viewDriverDetails(id) {
+        const driver = driverData.find(d => d.id === id);
+        if (driver) {
+            detailDriverId.textContent = driver.id;
+            detailDriverName.textContent = driver.name;
+            detailDriverEmail.textContent = driver.email || 'N/A';
+            detailDriverPhone.textContent = driver.phone;
+            detailLicenseNumber.textContent = driver.licenseNumber;
+            detailLicenseExpiry.textContent = driver.licenseExpiry;
+            detailCdlClass.textContent = driver.cdlClass || 'N/A';
+            detailDriverStatus.textContent = driver.status;
+            detailAssignedVehicle.textContent = driver.assignedVehicle || 'N/A';
+
+            if (driver.driverNotes) {
+                detailDriverNotesGroup.classList.remove('hidden');
+                detailDriverNotes.textContent = driver.driverNotes;
+            } else {
+                detailDriverNotesGroup.classList.add('hidden');
+            }
+
+            // Populate Assigned Bookings
+            const assignedBookings = bookingData.filter(b => b.driverId === driver.id);
+            assignedBookingsList.innerHTML = ''; // Clear previous list
+
+            if (assignedBookings.length > 0) {
+                assignedBookings.forEach(booking => {
+                    const customer = customerData.find(c => c.id === booking.customerId);
+                    const equipment = equipmentData.find(e => e.id === booking.equipmentId);
+                    const bookingDiv = document.createElement('div');
+                    bookingDiv.classList.add('border-b', 'border-dashed', 'border-gray-300', 'pb-2', 'mb-2', 'last:border-b-0');
+                    bookingDiv.innerHTML = `
+                        <p class="font-medium"><strong>Booking ${booking.id}:</strong> ${customer ? customer.name : booking.customerId}</p>
+                        <p class="text-sm text-gray-600 ml-2">Equipment: ${equipment ? `${equipment.type} (${equipment.size})` : booking.equipmentId}</p>
+                        <p class="text-sm text-gray-600 ml-2">Date: ${booking.rentalStartDate}</p>
+                        <p class="text-sm text-gray-600 ml-2">Status: ${booking.status}</p>
+                    `;
+                    assignedBookingsList.appendChild(bookingDiv);
+                });
+            } else {
+                assignedBookingsList.innerHTML = '<p class="text-gray-500 italic">No assigned bookings for this driver for the upcoming days.</p>';
+            }
+
+            currentDriverId = id; // Set for edit button from detail view
+            openModal('viewDriverModal');
+        } else {
+            alert('Driver details not found.');
+        }
+    }
+
+    // --- Filtering and Searching ---
+    function filterDrivers() {
+        const searchTerm = document.getElementById('driverSearch').value.toLowerCase();
+        const statusFilter = document.getElementById('driverStatusFilter').value;
+
+        const filteredData = driverData.filter(driver => {
+            const matchesSearch = driver.id.toLowerCase().includes(searchTerm) ||
+                                  driver.name.toLowerCase().includes(searchTerm) ||
+                                  driver.phone.toLowerCase().includes(searchTerm) ||
+                                  (driver.assignedVehicle && driver.assignedVehicle.toLowerCase().includes(searchTerm));
+            const matchesStatus = statusFilter === '' || driver.status === statusFilter;
+
+            return matchesSearch && matchesStatus;
+        });
+
+        renderDriversTable(filteredData);
+    }
+
+    // Initial render when the module loads
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        renderDriversTable();
+    } else {
+        document.addEventListener('DOMContentLoaded', renderDriversTable);
+    }
+
+</script>

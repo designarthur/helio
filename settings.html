@@ -1,0 +1,561 @@
+<div class="p-8">
+    <h2 class="text-3xl font-bold text-gray-900 mb-6">Settings</h2>
+
+    <div class="flex border-b border-gray-200 mb-8 space-x-6">
+        <span class="settings-tab py-2 px-0 cursor-pointer font-bold text-gray-500 transition-colors duration-300 hover:text-gray-800 border-b-2 border-transparent text-[#EA3A26] border-[#EA3A26]" data-tab="profile">My Company Profile</span>
+        <span class="settings-tab py-2 px-0 cursor-pointer font-bold text-gray-500 transition-colors duration-300 hover:text-gray-800 border-b-2 border-transparent" data-tab="notifications">Notification Settings</span>
+        <span class="settings-tab py-2 px-0 cursor-pointer font-bold text-gray-500 transition-colors duration-300 hover:text-gray-800 border-b-2 border-transparent" data-tab="users">Manage Users</span>
+        <span class="settings-tab py-2 px-0 cursor-pointer font-bold text-gray-500 transition-colors duration-300 hover:text-gray-800 border-b-2 border-transparent" data-tab="integrations">Integrations (Conceptual)</span>
+        <span class="settings-tab py-2 px-0 cursor-pointer font-bold text-gray-500 transition-colors duration-300 hover:text-gray-800 border-b-2 border-transparent" data-tab="subscription">Subscription (Conceptual)</span>
+    </div>
+
+    <div id="settings-tab-profile" class="settings-content-view">
+        <h3 class="text-2xl font-bold text-gray-800 mb-4">My Company Profile</h3>
+        <div class="bg-white p-6 rounded-lg shadow-md space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="businessName" class="block text-sm font-medium text-gray-700 mb-1">Business Name:</label>
+                    <input type="text" id="businessName" placeholder="Your Company Rentals"
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+                <div>
+                    <label for="contactEmail" class="block text-sm font-medium text-gray-700 mb-1">Contact Email:</label>
+                    <input type="email" id="contactEmail" placeholder="info@yourcompany.com"
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+                <div>
+                    <label for="contactPhone" class="block text-sm font-medium text-gray-700 mb-1">Contact Phone:</label>
+                    <input type="tel" id="contactPhone" placeholder="(123) 456-7890"
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+                <div>
+                    <label for="primaryAddress" class="block text-sm font-medium text-gray-700 mb-1">Primary Business Address:</label>
+                    <input type="text" id="primaryAddress" placeholder="123 Corporate Blvd, City, State Zip"
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label for="operatingHours" class="block text-sm font-medium text-gray-700 mb-1">Operating Hours:</label>
+                    <input type="text" id="operatingHours" placeholder="Mon-Fri: 8AM-5PM, Sat: 9AM-1PM"
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+                <div>
+                    <label for="serviceAreas" class="block text-sm font-medium text-gray-700 mb-1">Service Areas (Zip codes/Cities, comma-separated):</label>
+                    <textarea id="serviceAreas" rows="2" placeholder="12345, 67890, Anytown, Othercity"
+                              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26] resize-y"></textarea>
+                </div>
+            </div>
+            <button onclick="saveCompanyProfile()" class="px-6 py-2 bg-green-600 text-white rounded-md font-semibold hover:bg-green-700 transition-colors duration-200">Save Profile</button>
+        </div>
+    </div>
+
+    <div id="settings-tab-notifications" class="settings-content-view hidden">
+        <h3 class="text-2xl font-bold text-gray-800 mb-4">Notification Settings</h3>
+        <div class="bg-white p-6 rounded-lg shadow-md space-y-6">
+            <p class="text-gray-700">Configure which automated notifications you receive and how.</p>
+            <div class="space-y-3">
+                <div class="flex items-center">
+                    <input type="checkbox" id="notifyNewBooking" class="h-4 w-4 text-[#EA3A26] focus:ring-[#EA3A26] border-gray-300 rounded">
+                    <label for="notifyNewBooking" class="ml-2 block text-sm text-gray-900">Email me on New Booking Request</label>
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="notifyPaymentReceived" class="h-4 w-4 text-[#EA3A26] focus:ring-[#EA3A26] border-gray-300 rounded">
+                    <label for="notifyPaymentReceived" class="ml-2 block text-sm text-gray-900">Email me when Payment is Received</label>
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="notifyOverdueInvoice" class="h-4 w-4 text-[#EA3A26] focus:ring-[#EA3A26] border-gray-300 rounded">
+                    <label for="notifyOverdueInvoice" class="ml-2 block text-sm text-gray-900">Email me for Overdue Invoices</label>
+                </div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="notifyDriverIssues" class="h-4 w-4 text-[#EA3A26] focus:ring-[#EA3A26] border-gray-300 rounded">
+                    <label for="notifyDriverIssues" class="ml-2 block text-sm text-gray-900">Alert me on Driver Issues (e.g., delays, breakdowns)</label>
+                </div>
+            </div>
+            <button onclick="saveNotificationSettings()" class="px-6 py-2 bg-green-600 text-white rounded-md font-semibold hover:bg-green-700 transition-colors duration-200">Save Settings</button>
+        </div>
+    </div>
+
+    <div id="settings-tab-users" class="settings-content-view hidden">
+        <h3 class="text-2xl font-bold text-gray-800 mb-4">Manage Internal Users (Staff Accounts)</h3>
+        <div class="flex flex-wrap items-center justify-between mb-6 gap-4">
+            <button id="addInternalUserBtn" class="px-6 py-3 bg-[#EA3A26] text-white rounded-md font-semibold hover:bg-[#F54F1D] transition-colors duration-200 flex items-center gap-2">
+                <i class="fas fa-user-plus"></i> Add New User
+            </button>
+        </div>
+        <div class="bg-white rounded-lg shadow-md overflow-x-auto mb-8">
+            <table class="min-w-full divide-y divide-gray-200" id="internalUsersTable">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="settings-tab-integrations" class="settings-content-view hidden">
+        <h3 class="text-2xl font-bold text-gray-800 mb-4">Integrations (Conceptual)</h3>
+        <div class="bg-white p-6 rounded-lg shadow-md space-y-6">
+            <p class="text-gray-700">Connect RentPro with your other essential business tools.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="p-4 bg-gray-50 rounded-md shadow-sm">
+                    <h4 class="font-semibold text-lg text-blue-700 mb-2">SMS Gateway</h4>
+                    <p class="text-gray-600 text-sm mb-3">Send automated SMS notifications to customers and drivers.</p>
+                    <label for="smsApiKey" class="block text-sm font-medium text-gray-700 mb-1">SMS API Key:</label>
+                    <input type="text" id="smsApiKey" placeholder="sk_live_XXXXXXXXXXXXXXXXXXXX"
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" onclick="alert('Simulating SMS Gateway integration setup...')">Connect SMS</button>
+                </div>
+                <div class="p-4 bg-gray-50 rounded-md shadow-sm">
+                    <h4 class="font-semibold text-lg text-blue-700 mb-2">Customer Support Chat</h4>
+                    <p class="text-gray-600 text-sm mb-3">Integrate your live chat widget onto the customer portal.</p>
+                    <label for="chatCode" class="block text-sm font-medium text-gray-700 mb-1">Chat Widget Code:</label>
+                    <textarea id="chatCode" rows="2" placeholder=""
+                              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26] font-mono text-sm resize-y"></textarea>
+                    <button class="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" onclick="alert('Simulating Chat Integration setup...')">Save Chat</button>
+                </div>
+            </div>
+            <p class="text-gray-600 italic text-sm mt-6">More integrations (e.g., marketing automation, CRM, advanced analytics) would be available here.</p>
+        </div>
+    </div>
+
+    <div id="settings-tab-subscription" class="settings-content-view hidden">
+        <h3 class="text-2xl font-bold text-gray-800 mb-4">Subscription & Billing</h3>
+        <div class="bg-white p-6 rounded-lg shadow-md space-y-6">
+            <p class="text-gray-700">Manage your RentPro subscription plan and billing information.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <h4 class="font-semibold text-lg text-gray-800 mb-2">Current Plan:</h4>
+                    <p class="text-gray-600"><strong>Professional Plan</strong></p>
+                    <p class="text-gray-600 text-sm">Monthly Cost: $199/month</p>
+                    <p class="text-gray-600 text-sm">Features: Unlimited Equipment, Unlimited Bookings, 5 Users, Standard Analytics</p>
+                    <button class="mt-3 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" onclick="alert('Simulating change plan options...')">Change Plan</button>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-lg text-gray-800 mb-2">Next Billing Date:</h4>
+                    <p class="text-gray-600">August 22, 2025</p>
+                    <h4 class="font-semibold text-lg text-gray-800 mt-4 mb-2">Payment Method:</h4>
+                    <p class="text-gray-600">Visa ending in **** 1234</p>
+                    <button class="mt-3 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700" onclick="alert('Simulating update payment method...')">Update Payment Method</button>
+                </div>
+            </div>
+            <h4 class="font-semibold text-lg text-gray-800 mb-2 mt-6 border-b pb-2">Billing History (Conceptual)</h4>
+            <p class="text-gray-600">
+                A list of all past invoices from RentPro for your subscription, with options to download.
+            </p>
+            <button class="px-6 py-2 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700" onclick="alert('Simulating viewing billing history...')">View Billing History</button>
+        </div>
+    </div>
+
+    <div id="internalUserModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-8 rounded-lg shadow-xl w-11/12 max-w-md relative max-h-[90vh] overflow-y-auto">
+            <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold" onclick="closeModal('internalUserModal')">&times;</button>
+            <h3 id="internalUserModalTitle" class="text-2xl font-bold text-[#EA3A26] mb-6 border-b pb-3 border-gray-200">Add New User</h3>
+            <form id="internalUserForm" class="space-y-4">
+                <input type="hidden" id="internalUserId">
+                <div>
+                    <label for="userName" class="block text-sm font-medium text-gray-700 mb-1">Full Name:</label>
+                    <input type="text" id="userName" placeholder="Jane Doe" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+                <div>
+                    <label for="userEmail" class="block text-sm font-medium text-gray-700 mb-1">Email:</label>
+                    <input type="email" id="userEmail" placeholder="jane.doe@yourcompany.com" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+                <div>
+                    <label for="userRole" class="block text-sm font-medium text-gray-700 mb-1">Role:</label>
+                    <select id="userRole" required
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                        <option value="">Select Role</option>
+                        <option value="Admin">Admin</option>
+                        <option value="Dispatcher">Dispatcher</option>
+                        <option value="Driver">Driver</option>
+                        <option value="Sales">Sales</option>
+                        <option value="Viewer">Viewer</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="userStatus" class="block text-sm font-medium text-gray-700 mb-1">Status:</label>
+                    <select id="userStatus" required
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" class="px-6 py-2 bg-gray-300 text-gray-800 rounded-md font-semibold hover:bg-gray-400 transition-colors duration-200" onclick="closeModal('internalUserModal')">Cancel</button>
+                    <button type="submit" class="px-6 py-2 bg-[#EA3A26] text-white rounded-md font-semibold hover:bg-[#F54F1D] transition-colors duration-200">Save User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="viewInternalUserModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-8 rounded-lg shadow-xl w-11/12 max-w-md relative">
+            <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold" onclick="closeModal('viewInternalUserModal')">&times;</button>
+            <h3 class="text-2xl font-bold text-[#EA3A26] mb-6 border-b pb-3 border-gray-200">User Details: <span id="detailInternalUserId"></span></h3>
+            <div class="space-y-4 text-gray-700">
+                <p><strong>Name:</strong> <span id="detailInternalUserName"></span></p>
+                <p><strong>Email:</strong> <span id="detailInternalUserEmail"></span></p>
+                <p><strong>Role:</strong> <span id="detailInternalUserRole"></span></p>
+                <p><strong>Status:</strong> <span id="detailInternalUserStatus"></span></p>
+            </div>
+            <div class="mt-6 flex justify-end">
+                <button type="button" class="px-6 py-2 bg-gray-300 text-gray-800 rounded-md font-semibold hover:bg-gray-400 transition-colors duration-200" onclick="closeModal('viewInternalUserModal')">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Ensure window.vendorSettings exists or initialize it
+    if (typeof window.vendorSettings === 'undefined' || typeof window.vendorSettings !== 'object') {
+        window.vendorSettings = {
+            businessName: 'Your Company Rentals Inc.', // Updated dummy
+            contactEmail: 'info@yourcompany.com',
+            contactPhone: '(123) 456-7890',
+            primaryAddress: '123 Corporate Blvd, Anytown, CA 90210', // Updated dummy
+            operatingHours: 'Mon-Fri: 8AM-5PM, Sat: 9AM-1PM',
+            serviceAreas: '90210, 90211, Anytown, Othercity', // Updated dummy
+            notifyNewBooking: true,
+            notifyPaymentReceived: true,
+            notifyOverdueInvoice: true,
+            notifyDriverIssues: false,
+            smsApiKey: 'sk_demo_123abc', // Dummy API key
+            chatCode: '// Dummy chat widget script: console.log("Chat widget loaded.");' // Dummy script
+        };
+    }
+
+    // Ensure window.internalUsersData exists or initialize it
+    if (typeof window.internalUsersData === 'undefined' || !Array.isArray(window.internalUsersData)) {
+        window.internalUsersData = [
+            { id: 'STAFF001', name: 'Vendor Admin', email: 'admin@yourcompany.com', role: 'Admin', status: 'Active' },
+            { id: 'STAFF002', name: 'Dispatcher One', email: 'dispatch@yourcompany.com', role: 'Dispatcher', status: 'Active' },
+            { id: 'STAFF003', name: 'Sales Manager', email: 'sales@yourcompany.com', role: 'Sales', status: 'Active' },
+            { id: 'STAFF004', name: 'Inactive User', email: 'inactive@yourcompany.com', role: 'Viewer', status: 'Inactive' }
+        ];
+    }
+
+    let vendorSettings = window.vendorSettings;
+    let internalUsersData = window.internalUsersData;
+
+    let currentInternalUserId = null;
+
+    // Get elements for tabs
+    const settingsTabs = document.querySelectorAll('.settings-tab');
+    const settingsContentViews = document.querySelectorAll('.settings-content-view');
+
+    // Company Profile elements
+    const businessNameInput = document.getElementById('businessName');
+    const contactEmailInput = document.getElementById('contactEmail');
+    const contactPhoneInput = document.getElementById('contactPhone');
+    const primaryAddressInput = document.getElementById('primaryAddress');
+    const operatingHoursInput = document.getElementById('operatingHours');
+    const serviceAreasInput = document.getElementById('serviceAreas');
+
+    // Notification Settings elements
+    const notifyNewBookingCheckbox = document.getElementById('notifyNewBooking');
+    const notifyPaymentReceivedCheckbox = document.getElementById('notifyPaymentReceived');
+    const notifyOverdueInvoiceCheckbox = document.getElementById('notifyOverdueInvoice');
+    const notifyDriverIssuesCheckbox = document.getElementById('notifyDriverIssues');
+
+    // Manage Users elements
+    const addInternalUserBtn = document.getElementById('addInternalUserBtn');
+    const internalUsersTableBody = document.querySelector('#internalUsersTable tbody');
+    const internalUserModal = document.getElementById('internalUserModal');
+    const internalUserModalTitle = document.getElementById('internalUserModalTitle');
+    const internalUserForm = document.getElementById('internalUserForm');
+    const internalUserIdField = document.getElementById('internalUserId');
+    const userNameInput = document.getElementById('userName');
+    const userEmailInput = document.getElementById('userEmail');
+    const userRoleSelect = document.getElementById('userRole');
+    const userStatusSelect = document.getElementById('userStatus');
+
+    const viewInternalUserModal = document.getElementById('viewInternalUserModal');
+    const detailInternalUserId = document.getElementById('detailInternalUserId');
+    const detailInternalUserName = document.getElementById('detailInternalUserName');
+    const detailInternalUserEmail = document.getElementById('detailInternalUserEmail');
+    const detailInternalUserRole = document.getElementById('detailInternalUserRole');
+    const detailInternalUserStatus = document.getElementById('detailInternalUserStatus');
+
+    // Integrations elements
+    const smsApiKeyInput = document.getElementById('smsApiKey');
+    const chatCodeInput = document.getElementById('chatCode');
+
+
+    // --- General Modal Functions ---
+    function openModal(modalId) {
+        document.getElementById(modalId).classList.remove('hidden');
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).classList.add('hidden');
+        if (modalId === 'internalUserModal') {
+            internalUserForm.reset();
+            currentInternalUserId = null;
+        }
+    }
+
+    // --- Tab Switching ---
+    function switchSettingsView(tabName) {
+        console.log(`Switching to settings tab: ${tabName}`);
+        settingsContentViews.forEach(view => view.classList.add('hidden'));
+        document.getElementById(`settings-tab-${tabName}`).classList.remove('hidden');
+
+        // Update active tab styling
+        settingsTabs.forEach(tab => {
+            tab.classList.remove('text-[#EA3A26]', 'border-[#EA3A26]');
+            tab.classList.add('text-gray-500', 'border-transparent');
+        });
+        const activeTab = Array.from(settingsTabs).find(tab => tab.dataset.tab === tabName);
+        if (activeTab) {
+            activeTab.classList.add('text-[#EA3A26]', 'border-[#EA3A26]');
+            activeTab.classList.remove('text-gray-500', 'border-transparent');
+        }
+
+        // Load/render content for the active tab
+        if (tabName === 'profile') {
+            loadCompanyProfile();
+        } else if (tabName === 'notifications') {
+            loadNotificationSettings();
+        } else if (tabName === 'users') {
+            renderInternalUsersTable();
+        } else if (tabName === 'integrations') {
+            loadIntegrationSettings();
+        }
+        // Subscription tab has static content
+    }
+
+    // --- My Company Profile Functions ---
+    function loadCompanyProfile() {
+        businessNameInput.value = vendorSettings.businessName;
+        contactEmailInput.value = vendorSettings.contactEmail;
+        contactPhoneInput.value = vendorSettings.contactPhone;
+        primaryAddressInput.value = vendorSettings.primaryAddress;
+        operatingHoursInput.value = vendorSettings.operatingHours;
+        serviceAreasInput.value = vendorSettings.serviceAreas;
+        console.log("Company Profile loaded:", vendorSettings);
+    }
+
+    function saveCompanyProfile() {
+        vendorSettings.businessName = businessNameInput.value;
+        vendorSettings.contactEmail = contactEmailInput.value;
+        vendorSettings.contactPhone = contactPhoneInput.value;
+        vendorSettings.primaryAddress = primaryAddressInput.value;
+        vendorSettings.operatingHours = operatingHoursInput.value;
+        vendorSettings.serviceAreas = serviceAreasInput.value;
+
+        alert('Company Profile saved successfully! (Note: Changes are client-side only and will reset on page reload.)');
+        console.log('Saved Company Profile:', vendorSettings);
+    }
+
+    // --- Notification Settings Functions ---
+    function loadNotificationSettings() {
+        notifyNewBookingCheckbox.checked = vendorSettings.notifyNewBooking;
+        notifyPaymentReceivedCheckbox.checked = vendorSettings.notifyPaymentReceived;
+        notifyOverdueInvoiceCheckbox.checked = vendorSettings.notifyOverdueInvoice;
+        notifyDriverIssuesCheckbox.checked = vendorSettings.notifyDriverIssues;
+        console.log("Notification Settings loaded:", vendorSettings);
+    }
+
+    function saveNotificationSettings() {
+        vendorSettings.notifyNewBooking = notifyNewBookingCheckbox.checked;
+        vendorSettings.notifyPaymentReceived = notifyPaymentReceivedCheckbox.checked;
+        vendorSettings.notifyOverdueInvoice = notifyOverdueInvoiceCheckbox.checked;
+        vendorSettings.notifyDriverIssues = notifyDriverIssuesCheckbox.checked;
+
+        alert('Notification settings saved successfully! (Note: Changes are client-side only and will reset on page reload.)');
+        console.log('Saved Notification Settings:', vendorSettings);
+    }
+
+    // --- Manage Internal Users Functions ---
+    addInternalUserBtn.addEventListener('click', openAddInternalUserModal);
+    internalUserForm.addEventListener('submit', saveInternalUser);
+
+    function renderInternalUsersTable(dataToRender = internalUsersData) {
+        console.log("Rendering internal users table with data:", dataToRender);
+        internalUsersTableBody.innerHTML = '';
+        if (!Array.isArray(dataToRender) || dataToRender.length === 0) {
+            const row = internalUsersTableBody.insertRow();
+            row.innerHTML = '<td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">No internal users found.</td>';
+            return;
+        }
+        dataToRender.forEach(user => {
+            const row = internalUsersTableBody.insertRow();
+            row.classList.add('hover:bg-gray-50');
+
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'font-medium', 'text-gray-900').textContent = user.id;
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-500').textContent = user.name;
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-500').textContent = user.email;
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-500').textContent = user.role;
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-500').textContent = user.status;
+
+            const actionsCell = row.insertCell();
+            actionsCell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-right', 'text-sm', 'font-medium');
+            const viewBtn = document.createElement('button');
+            viewBtn.textContent = 'View';
+            viewBtn.classList.add('text-indigo-600', 'hover:text-indigo-900', 'mr-3', 'transition-colors', 'duration-200');
+            viewBtn.onclick = () => viewInternalUserDetails(user.id);
+            actionsCell.appendChild(viewBtn);
+
+            const editBtn = document.createElement('button');
+            editBtn.textContent = 'Edit';
+            editBtn.classList.add('text-[#EA3A26]', 'hover:text-[#F54F1D]', 'mr-3', 'transition-colors', 'duration-200');
+            editBtn.onclick = () => openEditInternalUserModal(user.id);
+            actionsCell.appendChild(editBtn);
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.classList.add('text-red-600', 'hover:text-red-900', 'transition-colors', 'duration-200');
+            deleteBtn.onclick = () => deleteInternalUser(user.id);
+            actionsCell.appendChild(deleteBtn);
+        });
+    }
+
+    function openAddInternalUserModal() {
+        internalUserModalTitle.textContent = 'Add New User';
+        internalUserIdField.value = '';
+        internalUserForm.reset();
+        currentInternalUserId = null;
+        openModal('internalUserModal');
+    }
+
+    function openEditInternalUserModal(id) {
+        const user = internalUsersData.find(u => u.id === id);
+        if (user) {
+            internalUserModalTitle.textContent = `Edit User: ${user.name}`;
+            internalUserIdField.value = user.id;
+            userNameInput.value = user.name;
+            userEmailInput.value = user.email;
+            userRoleSelect.value = user.role;
+            userStatusSelect.value = user.status;
+            currentInternalUserId = id;
+            openModal('internalUserModal');
+        } else {
+            alert('User not found for editing.');
+        }
+    }
+
+    function saveInternalUser(event) {
+        event.preventDefault();
+        const id = internalUserIdField.value;
+        const name = userNameInput.value;
+        const email = userEmailInput.value;
+        const role = userRoleSelect.value;
+        const status = userStatusSelect.value;
+
+        if (!name || !email || !role || !status) {
+            alert('Please fill in all required user fields.');
+            return;
+        }
+
+        let newUser = {
+            id: id,
+            name: name,
+            email: email,
+            role: role,
+            status: status
+        };
+
+        if (id) {
+            const index = internalUsersData.findIndex(u => u.id === id);
+            if (index !== -1) {
+                internalUsersData[index] = newUser;
+                alert(`User ${name} updated successfully!`);
+            } else {
+                alert(`Error: User ${id} not found for update.`);
+            }
+        } else {
+            newUser.id = 'STAFF' + (internalUsersData.length + 1).toString().padStart(3, '0');
+            internalUsersData.push(newUser);
+            alert(`New user ${name} added successfully!`);
+        }
+        renderInternalUsersTable();
+        closeModal('internalUserModal');
+    }
+
+    function deleteInternalUser(id) {
+        if (confirm(`Are you sure you want to delete User ID: ${id}?`)) {
+            internalUsersData = internalUsersData.filter(u => u.id !== id);
+            renderInternalUsersTable();
+            alert(`User ${id} deleted.`);
+        }
+    }
+
+    function viewInternalUserDetails(id) {
+        const user = internalUsersData.find(u => u.id === id);
+        if (user) {
+            detailInternalUserId.textContent = user.id;
+            detailInternalUserName.textContent = user.name;
+            detailInternalUserEmail.textContent = user.email;
+            detailInternalUserRole.textContent = user.role;
+            detailInternalUserStatus.textContent = user.status;
+            openModal('viewInternalUserModal');
+        } else {
+            alert('User details not found.');
+        }
+    }
+
+    // --- Integrations Functions ---
+    function loadIntegrationSettings() {
+        smsApiKeyInput.value = vendorSettings.smsApiKey || '';
+        chatCodeInput.value = vendorSettings.chatCode || '';
+        console.log("Integration Settings loaded:", vendorSettings);
+    }
+
+    // This save function is specific to the integrations tab's inputs.
+    // For this demo, buttons have inline onclick handlers like alert/console.log.
+    // If we wanted to "save" their values, we'd add unique IDs and pass to this function.
+    function saveIntegrationSettings(event) {
+        // Prevent default form submission if this function is attached to a form submit
+        if (event) event.preventDefault(); 
+        
+        // Example of saving an individual field, assuming it's called from specific buttons
+        // For actual saving, you'd pull values from the relevant input fields
+        vendorSettings.smsApiKey = smsApiKeyInput.value;
+        vendorSettings.chatCode = chatCodeInput.value;
+
+        alert('Integration settings saved! (Note: Changes are client-side only.)');
+        console.log('Saved Integration Settings:', vendorSettings);
+    }
+    
+    // Attach event listeners for integration specific buttons if not using inline onclick
+    // For now, they use inline onclick="alert(...)". If we add Save buttons to these sections,
+    // we would attach their save handlers here.
+
+
+    // --- Initial Render ---
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log("Settings module DOMContentLoaded.");
+        settingsTabs.forEach(tab => {
+            tab.addEventListener('click', (event) => {
+                console.log(`Tab clicked: ${event.target.dataset.tab}`);
+                switchSettingsView(event.target.dataset.tab);
+            });
+        });
+
+        // Set initial view to Company Profile
+        switchSettingsView('profile');
+    });
+
+    // Ensure initial render on dynamic module load
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        console.log("Settings module readyState complete/interactive.");
+        switchSettingsView('profile');
+    } else {
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log("Settings module DOMContentLoaded (fallback).");
+            switchSettingsView('profile');
+        });
+    }
+
+</script>

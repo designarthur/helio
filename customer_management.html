@@ -1,0 +1,467 @@
+<div class="p-8">
+    <h2 class="text-3xl font-bold text-gray-900 mb-6">Customer Management</h2>
+
+    <div class="flex flex-wrap items-center justify-between mb-6 gap-4">
+        <button id="addCustomerBtn" class="px-6 py-3 bg-[#EA3A26] text-white rounded-md font-semibold hover:bg-[#F54F1D] transition-colors duration-200 flex items-center gap-2">
+            <i class="fas fa-user-plus"></i> Add New Customer
+        </button>
+        <div class="flex flex-wrap items-center gap-4">
+            <input type="text" id="customerSearch" placeholder="Search by Name, Email..." onkeyup="filterCustomers()"
+                   class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#EA3A26] w-full md:w-auto">
+            <select id="customerTypeFilter" onchange="filterCustomers()"
+                    class="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#EA3A26] w-full md:w-auto">
+                <option value="">All Types</option>
+                <option value="Residential">Residential</option>
+                <option value="Commercial">Commercial</option>
+            </select>
+            <select id="customerStatusFilter" onchange="filterCustomers()"
+                    class="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#EA3A26] w-full md:w-auto">
+                <option value="">All Statuses</option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+                <option value="On Hold">On Hold</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md overflow-x-auto mb-8">
+        <table class="min-w-full divide-y divide-gray-200" id="customerTable">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                <!-- Customer data will be rendered here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Add/Edit Customer Modal -->
+    <div id="customerModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-8 rounded-lg shadow-xl w-11/12 max-w-3xl relative max-h-[90vh] overflow-y-auto">
+            <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold" onclick="closeModal('customerModal')">&times;</button>
+            <h3 id="modalTitle" class="text-2xl font-bold text-[#EA3A26] mb-6 border-b pb-3 border-gray-200">Add New Customer</h3>
+            <form id="customerForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input type="hidden" id="customerId">
+
+                <div>
+                    <label for="customerName" class="block text-sm font-medium text-gray-700 mb-1">Full Name:</label>
+                    <input type="text" id="customerName" placeholder="John Doe" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+                <div>
+                    <label for="companyName" class="block text-sm font-medium text-gray-700 mb-1">Company Name (Optional):</label>
+                    <input type="text" id="companyName" placeholder="ABC Construction"
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+                <div>
+                    <label for="customerEmail" class="block text-sm font-medium text-gray-700 mb-1">Email:</label>
+                    <input type="email" id="customerEmail" placeholder="john.doe@example.com" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+                <div>
+                    <label for="customerPhone" class="block text-sm font-medium text-gray-700 mb-1">Phone:</label>
+                    <input type="tel" id="customerPhone" placeholder="(123) 456-7890" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+                <div class="col-span-1 md:col-span-2">
+                    <label for="billingAddress" class="block text-sm font-medium text-gray-700 mb-1">Billing Address:</label>
+                    <input type="text" id="billingAddress" placeholder="123 Main St, Anytown, USA 12345" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+                <div class="col-span-1 md:col-span-2">
+                    <label for="serviceAddresses" class="block text-sm font-medium text-gray-700 mb-1">Service Addresses (comma-separated):</label>
+                    <textarea id="serviceAddresses" rows="2" placeholder="456 Oak Ave, Anytown; 789 Pine Ln, Otherville"
+                              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26] resize-y"></textarea>
+                </div>
+                <div>
+                    <label for="customerType" class="block text-sm font-medium text-gray-700 mb-1">Customer Type:</label>
+                    <select id="customerType" required
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                        <option value="">Select Type</option>
+                        <option value="Residential">Residential</option>
+                        <option value="Commercial">Commercial</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="customerStatus" class="block text-sm font-medium text-gray-700 mb-1">Account Status:</label>
+                    <select id="customerStatus" required
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                        <option value="On Hold">On Hold</option>
+                    </select>
+                </div>
+                <div class="col-span-1 md:col-span-2">
+                    <label for="internalNotes" class="block text-sm font-medium text-gray-700 mb-1">Internal Notes:</label>
+                    <textarea id="internalNotes" rows="3" placeholder="Customer prefers calls after 3 PM."
+                              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26] resize-y"></textarea>
+                </div>
+
+                <div class="col-span-1 md:col-span-2 flex justify-end gap-3 mt-6">
+                    <button type="button" class="px-6 py-2 bg-gray-300 text-gray-800 rounded-md font-semibold hover:bg-gray-400 transition-colors duration-200" onclick="closeModal('customerModal')">Cancel</button>
+                    <button type="submit" class="px-6 py-2 bg-[#EA3A26] text-white rounded-md font-semibold hover:bg-[#F54F1D] transition-colors duration-200">Save Customer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- View Customer Detail Modal -->
+    <div id="viewCustomerModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-8 rounded-lg shadow-xl w-11/12 max-w-3xl relative max-h-[90vh] overflow-y-auto">
+            <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold" onclick="closeModal('viewCustomerModal')">&times;</button>
+            <h3 class="text-2xl font-bold text-[#EA3A26] mb-6 border-b pb-3 border-gray-200">Customer Details: <span id="detailCustomerId"></span></h3>
+            <div class="space-y-4 text-gray-700">
+                <div class="bg-gray-50 p-4 rounded-md shadow-sm">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">General Information</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <p><strong>Name:</strong> <span id="detailCustomerName"></span></p>
+                        <p><strong>Company:</strong> <span id="detailCompanyName"></span></p>
+                        <p><strong>Email:</strong> <span id="detailCustomerEmail"></span></p>
+                        <p><strong>Phone:</strong> <span id="detailCustomerPhone"></span></p>
+                        <p class="col-span-1 md:col-span-2"><strong>Billing Address:</strong> <span id="detailBillingAddress"></span></p>
+                        <p class="col-span-1 md:col-span-2"><strong>Service Addresses:</strong> <span id="detailServiceAddresses"></span></p>
+                        <p><strong>Customer Type:</strong> <span id="detailCustomerType"></span></p>
+                        <p><strong>Account Status:</strong> <span id="detailCustomerStatus"></span></p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-md shadow-sm hidden" id="detailInternalNotesGroup">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Internal Notes</h4>
+                    <p><span id="detailInternalNotes"></span></p>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-md shadow-sm">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Communication Log (Dummy)</h4>
+                    <p class="text-gray-600">No recent communication history. (In a real app, this would show calls, emails, etc.)</p>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-md shadow-sm">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Rental & Service History (Dummy)</h4>
+                    <p class="text-gray-600">No past rentals or services. (In a real app, this would list equipment rentals, junk removals, etc.)</p>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-md shadow-sm">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Financial Overview (Dummy)</h4>
+                    <p class="text-gray-600">Total Spent: $0.00 | Outstanding Balance: $0.00 (In a real app, this would show financial summaries.)</p>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-end gap-3">
+                <button type="button" class="px-6 py-2 bg-gray-300 text-gray-800 rounded-md font-semibold hover:bg-gray-400 transition-colors duration-200" onclick="closeModal('viewCustomerModal')">Close</button>
+                <button type="button" class="px-6 py-2 bg-[#EA3A26] text-white rounded-md font-semibold hover:bg-[#F54F1D] transition-colors duration-200" id="editFromDetailBtn">Edit Customer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Ensure window.customerData exists and is an array, otherwise initialize it.
+    if (typeof window.customerData === 'undefined' || !Array.isArray(window.customerData)) {
+        window.customerData = [
+            {
+                id: 'CUST001',
+                name: 'Alice Smith',
+                company: 'ABC Construction',
+                email: 'alice.smith@example.com',
+                phone: '(555) 123-4567',
+                billingAddress: '123 Main St, Springfield, IL 62701',
+                serviceAddresses: '123 Main St, Springfield, IL 62701; 456 Elm St, Springfield, IL 62704',
+                customerType: 'Commercial',
+                status: 'Active',
+                internalNotes: 'Prefers email communication. Always pays on time.'
+            },
+            {
+                id: 'CUST002',
+                name: 'Bob Johnson',
+                company: '',
+                email: 'bob.j@example.com',
+                phone: '(555) 987-6543',
+                billingAddress: '789 Oak Ave, Lincoln, NE 68501',
+                serviceAddresses: '789 Oak Ave, Lincoln, NE 68501',
+                customerType: 'Residential',
+                status: 'Active',
+                internalNotes: 'First-time renter. Needs clear instructions for dumpster use.'
+            },
+            {
+                id: 'CUST003',
+                name: 'Charlie Brown',
+                company: 'Brown Events',
+                email: 'charlie.b@events.com',
+                phone: '(555) 234-5678',
+                billingAddress: '101 Event Plaza, New York, NY 10001',
+                serviceAddresses: '101 Event Plaza, New York, NY 10001; 202 Convention Ctr, New York, NY 10002',
+                customerType: 'Commercial',
+                status: 'On Hold',
+                internalNotes: 'Large events client. Currently on hold due to pending contract renewal.'
+            },
+            {
+                id: 'CUST004',
+                name: 'Diana Prince',
+                company: 'Wonder Corp',
+                email: 'diana.p@wonder.com',
+                phone: '(555) 345-6789',
+                billingAddress: '321 Justice Way, Washington, DC 20001',
+                serviceAddresses: '321 Justice Way, Washington, DC 20001',
+                customerType: 'Commercial',
+                status: 'Active',
+                internalNotes: 'VIP client. Requires immediate attention for all requests.'
+            }
+        ];
+    }
+
+    let customerData = window.customerData;
+    let currentCustomerId = null;
+
+    // Get elements
+    const customerTableBody = document.querySelector('#customerTable tbody');
+    const addCustomerBtn = document.getElementById('addCustomerBtn');
+    const customerModal = document.getElementById('customerModal');
+    const viewCustomerModal = document.getElementById('viewCustomerModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const customerForm = document.getElementById('customerForm');
+    const customerIdField = document.getElementById('customerId');
+
+    // Detail view elements
+    const detailCustomerId = document.getElementById('detailCustomerId');
+    const detailCustomerName = document.getElementById('detailCustomerName');
+    const detailCompanyName = document.getElementById('detailCompanyName');
+    const detailCustomerEmail = document.getElementById('detailCustomerEmail');
+    const detailCustomerPhone = document.getElementById('detailCustomerPhone');
+    const detailBillingAddress = document.getElementById('detailBillingAddress');
+    const detailServiceAddresses = document.getElementById('detailServiceAddresses');
+    const detailCustomerType = document.getElementById('detailCustomerType');
+    const detailCustomerStatus = document.getElementById('detailCustomerStatus');
+    const detailInternalNotes = document.getElementById('detailInternalNotes');
+    const detailInternalNotesGroup = document.getElementById('detailInternalNotesGroup');
+
+    const editFromDetailBtn = document.getElementById('editFromDetailBtn');
+
+    // Event Listeners
+    addCustomerBtn.addEventListener('click', () => openAddModal());
+    customerForm.addEventListener('submit', (e) => saveCustomer(e));
+    editFromDetailBtn.addEventListener('click', () => {
+        closeModal('viewCustomerModal');
+        openEditModal(currentCustomerId);
+    });
+
+    // --- Modal Functions ---
+    function openModal(modalId) {
+        document.getElementById(modalId).classList.remove('hidden');
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).classList.add('hidden');
+        if (modalId === 'customerModal') {
+            customerForm.reset();
+            currentCustomerId = null;
+        }
+    }
+
+    // --- CRUD Operations ---
+    function renderCustomersTable(dataToRender = customerData) {
+        console.log("Rendering customer table with data:", dataToRender);
+        customerTableBody.innerHTML = '';
+        if (!Array.isArray(dataToRender) || dataToRender.length === 0) {
+            const row = customerTableBody.insertRow();
+            row.innerHTML = '<td colspan="8" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">No customers found.</td>';
+            return;
+        }
+        dataToRender.forEach(customer => {
+            const row = customerTableBody.insertRow();
+            row.classList.add('hover:bg-gray-50');
+
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'font-medium', 'text-gray-900');
+            row.cells[0].textContent = customer.id;
+
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-500');
+            row.cells[1].textContent = customer.name;
+
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-500');
+            row.cells[2].textContent = customer.company || 'N/A';
+
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-500');
+            row.cells[3].textContent = customer.email;
+
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-500');
+            row.cells[4].textContent = customer.phone;
+
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-500');
+            row.cells[5].textContent = customer.customerType;
+
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-500');
+            row.cells[6].textContent = customer.status;
+
+            const actionsCell = row.insertCell();
+            actionsCell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-right', 'text-sm', 'font-medium');
+
+            const viewBtn = document.createElement('button');
+            viewBtn.textContent = 'View';
+            viewBtn.classList.add('text-indigo-600', 'hover:text-indigo-900', 'mr-3', 'transition-colors', 'duration-200');
+            viewBtn.onclick = () => viewCustomerDetails(customer.id);
+            actionsCell.appendChild(viewBtn);
+
+            const editBtn = document.createElement('button');
+            editBtn.textContent = 'Edit';
+            editBtn.classList.add('text-[#EA3A26]', 'hover:text-[#F54F1D]', 'mr-3', 'transition-colors', 'duration-200');
+            editBtn.onclick = () => openEditModal(customer.id);
+            actionsCell.appendChild(editBtn);
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.classList.add('text-red-600', 'hover:text-red-900', 'transition-colors', 'duration-200');
+            deleteBtn.onclick = () => deleteCustomer(customer.id);
+            actionsCell.appendChild(deleteBtn);
+        });
+    }
+
+    function openAddModal() {
+        modalTitle.textContent = 'Add New Customer';
+        customerIdField.value = '';
+        customerForm.reset();
+        currentCustomerId = null;
+        openModal('customerModal');
+    }
+
+    function openEditModal(id) {
+        const customer = customerData.find(c => c.id === id);
+        if (customer) {
+            modalTitle.textContent = `Edit Customer: ${customer.name}`;
+            customerIdField.value = customer.id;
+            document.getElementById('customerName').value = customer.name;
+            document.getElementById('companyName').value = customer.company || '';
+            document.getElementById('customerEmail').value = customer.email;
+            document.getElementById('customerPhone').value = customer.phone;
+            document.getElementById('billingAddress').value = customer.billingAddress;
+            document.getElementById('serviceAddresses').value = customer.serviceAddresses || '';
+            document.getElementById('customerType').value = customer.customerType;
+            document.getElementById('customerStatus').value = customer.status;
+            document.getElementById('internalNotes').value = customer.internalNotes || '';
+
+            currentCustomerId = id;
+            openModal('customerModal');
+        } else {
+            alert('Customer not found for editing.');
+        }
+    }
+
+    function saveCustomer(event) {
+        event.preventDefault();
+
+        const id = customerIdField.value;
+        const name = document.getElementById('customerName').value;
+        const company = document.getElementById('companyName').value;
+        const email = document.getElementById('customerEmail').value;
+        const phone = document.getElementById('customerPhone').value;
+        const billingAddress = document.getElementById('billingAddress').value;
+        const serviceAddresses = document.getElementById('serviceAddresses').value;
+        const customerType = document.getElementById('customerType').value;
+        const status = document.getElementById('customerStatus').value;
+        const internalNotes = document.getElementById('internalNotes').value;
+
+        if (!name || !email || !phone || !billingAddress || !customerType || !status) {
+            alert('Please fill in all required fields (Name, Email, Phone, Billing Address, Customer Type, Status).');
+            return;
+        }
+
+        let newCustomer = {
+            id: id,
+            name: name,
+            company: company,
+            email: email,
+            phone: phone,
+            billingAddress: billingAddress,
+            serviceAddresses: serviceAddresses,
+            customerType: customerType,
+            status: status,
+            internalNotes: internalNotes
+        };
+
+        if (id) {
+            const index = customerData.findIndex(c => c.id === id);
+            if (index !== -1) {
+                customerData[index] = newCustomer;
+                alert(`Customer ${name} updated successfully!`);
+            } else {
+                alert(`Error: Customer ${id} not found for update.`);
+            }
+        } else {
+            newCustomer.id = 'CUST' + (customerData.length + 1).toString().padStart(3, '0');
+            customerData.push(newCustomer);
+            alert(`New customer ${name} added successfully!`);
+        }
+
+        renderCustomersTable();
+        closeModal('customerModal');
+    }
+
+    function deleteCustomer(id) {
+        if (confirm(`Are you sure you want to delete customer ID: ${id}? This action cannot be undone.`)) {
+            customerData = customerData.filter(c => c.id !== id);
+            renderCustomersTable();
+            alert(`Customer ${id} deleted successfully.`);
+        }
+    }
+
+    function viewCustomerDetails(id) {
+        const customer = customerData.find(c => c.id === id);
+        if (customer) {
+            detailCustomerId.textContent = customer.id;
+            detailCustomerName.textContent = customer.name;
+            detailCompanyName.textContent = customer.company || 'N/A';
+            detailCustomerEmail.textContent = customer.email;
+            detailCustomerPhone.textContent = customer.phone;
+            detailBillingAddress.textContent = customer.billingAddress;
+            detailServiceAddresses.textContent = customer.serviceAddresses || 'N/A';
+            detailCustomerType.textContent = customer.customerType;
+            detailCustomerStatus.textContent = customer.status;
+
+            if (customer.internalNotes) {
+                detailInternalNotesGroup.classList.remove('hidden');
+                detailInternalNotes.textContent = customer.internalNotes;
+            } else {
+                detailInternalNotesGroup.classList.add('hidden');
+            }
+
+            currentCustomerId = id; // Set for edit button from detail view
+            openModal('viewCustomerModal');
+        } else {
+            alert('Customer details not found.');
+        }
+    }
+
+    // --- Filtering and Searching ---
+    function filterCustomers() {
+        const searchTerm = document.getElementById('customerSearch').value.toLowerCase();
+        const typeFilter = document.getElementById('customerTypeFilter').value;
+        const statusFilter = document.getElementById('customerStatusFilter').value;
+
+        const filteredData = customerData.filter(customer => {
+            const matchesSearch = customer.name.toLowerCase().includes(searchTerm) ||
+                                  (customer.company && customer.company.toLowerCase().includes(searchTerm)) ||
+                                  customer.email.toLowerCase().includes(searchTerm) ||
+                                  customer.phone.toLowerCase().includes(searchTerm);
+            const matchesType = typeFilter === '' || customer.customerType === typeFilter;
+            const matchesStatus = statusFilter === '' || customer.status === statusFilter;
+
+            return matchesSearch && matchesType && matchesStatus;
+        });
+
+        renderCustomersTable(filteredData);
+    }
+
+    // Initial render when the module loads
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+        renderCustomersTable();
+    } else {
+        document.addEventListener('DOMContentLoaded', renderCustomersTable);
+    }
+
+</script>
