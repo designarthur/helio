@@ -36,12 +36,10 @@
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-                <!-- Booking data will be rendered here -->
-            </tbody>
+                </tbody>
         </table>
     </div>
 
-    <!-- Create/Edit Booking Modal -->
     <div id="bookingModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
         <div class="bg-white p-8 rounded-lg shadow-xl w-11/12 max-w-3xl relative max-h-[90vh] overflow-y-auto">
             <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold" onclick="closeModal('bookingModal')">&times;</button>
@@ -54,8 +52,7 @@
                     <select id="customerIdSelect" required
                             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
                         <option value="">Select Customer</option>
-                        <!-- Options populated by JS -->
-                    </select>
+                        </select>
                 </div>
 
                 <div class="col-span-1 md:col-span-2">
@@ -63,8 +60,7 @@
                     <select id="equipmentIdSelect" required onchange="handleEquipmentSelection()"
                             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
                         <option value="">Select Equipment</option>
-                        <!-- Options populated by JS -->
-                    </select>
+                        </select>
                 </div>
 
                 <div>
@@ -91,7 +87,6 @@
                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
                 </div>
 
-                <!-- Type-Specific Booking Fields -->
                 <div id="dumpsterBookingFields" class="col-span-1 md:col-span-2 border-t border-gray-200 pt-4 mt-4 hidden">
                     <h4 class="text-lg font-semibold text-gray-800 mb-4">Dumpster Specific Details</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -143,8 +138,6 @@
                         </div>
                     </div>
                 </div>
-                <!-- End Type-Specific Booking Fields -->
-
                 <div class="col-span-1 md:col-span-2">
                     <label for="bookingStatus" class="block text-sm font-medium text-gray-700 mb-1">Status:</label>
                     <select id="bookingStatus" required
@@ -177,7 +170,6 @@
         </div>
     </div>
 
-    <!-- View Booking Detail Modal -->
     <div id="viewBookingModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
         <div class="bg-white p-8 rounded-lg shadow-xl w-11/12 max-w-3xl relative max-h-[90vh] overflow-y-auto">
             <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold" onclick="closeModal('viewBookingModal')">&times;</button>
@@ -197,7 +189,6 @@
                     </div>
                 </div>
 
-                <!-- Type-Specific Booking Details for View Modal -->
                 <div id="detailDumpsterBookingFields" class="bg-gray-50 p-4 rounded-md shadow-sm hidden">
                     <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Dumpster Booking Specifics</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -221,8 +212,6 @@
                         <p class="col-span-1 md:col-span-2"><strong>Security/Access:</strong> <span id="detailContainerSecurityAccess"></span></p>
                     </div>
                 </div>
-                <!-- End Type-Specific Booking Details for View Modal -->
-
                 <div class="bg-gray-50 p-4 rounded-md shadow-sm hidden" id="detailBookingNotesGroup">
                     <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Booking Notes (General)</h4>
                     <p><span id="detailBookingNotes"></span></p>
@@ -237,79 +226,14 @@
 </div>
 
 <script>
-    // Ensure window.customerData and window.equipmentData exist from other modules
-    if (typeof window.customerData === 'undefined' || !Array.isArray(window.customerData)) {
-        console.warn("customerData not found, initializing fallback dummy data.");
-        window.customerData = [
-            { id: 'CUST001', name: 'Alice Smith', company: 'ABC Construction' },
-            { id: 'CUST002', name: 'Bob Johnson', company: '' },
-        ];
-    }
-    if (typeof window.equipmentData === 'undefined' || !Array.isArray(window.equipmentData)) {
-        console.warn("equipmentData not found, initializing fallback dummy data.");
-        window.equipmentData = [
-            { id: 'EQ001', type: 'Dumpster', size: '20-yard', baseDailyRate: 150, deliveryFee: 75, pickupFee: 75, damageWaiverCost: 25, overagePerTonFee: 75, disposalRatePerTon: 50, maxTonnage: 3 },
-            { id: 'EQ002', type: 'Temporary Toilet', size: 'Standard', baseDailyRate: 25, deliveryFee: 50, pickupFee: 50, damageWaiverCost: 10, serviceFrequency: 'Weekly' },
-            { id: 'EQ003', type: 'Storage Container', size: '40ft', baseDailyRate: 90, deliveryFee: 100, pickupFee: 100, damageWaiverCost: 30 },
-        ];
-    }
-
-    // Ensure window.bookingData exists and is an array, otherwise initialize it.
-    if (typeof window.bookingData === 'undefined' || !Array.isArray(window.bookingData)) {
-        window.bookingData = [
-            {
-                id: 'BOOK001',
-                customerId: 'CUST001',
-                equipmentId: 'EQ001', // Dumpster
-                rentalStartDate: '2025-07-25',
-                rentalEndDate: '2025-07-30',
-                deliveryAddress: '123 Main St, Springfield, IL',
-                pickupAddress: '123 Main St, Springfield, IL',
-                status: 'Confirmed',
-                totalPrice: 750.00,
-                bookingNotes: 'Customer prefers early morning delivery.',
-                estimatedTonnage: 2.5,
-                prohibitedMaterialsAck: 'Acknowledged: Tires, Batteries',
-                driverId: 'DRV001' // Assigned to Michael Scott
-            },
-            {
-                id: 'BOOK002',
-                customerId: 'CUST002',
-                equipmentId: 'EQ002', // Temporary Toilet
-                rentalStartDate: '2025-08-01',
-                rentalEndDate: '2025-08-29', // 4 weeks
-                deliveryAddress: '789 Oak Ave, Lincoln, NE',
-                pickupAddress: '789 Oak Ave, Lincoln, NE',
-                status: 'Pending',
-                totalPrice: 100.00,
-                bookingNotes: 'New residential client, confirm access before delivery.',
-                requestedServiceFreq: 'Weekly',
-                toiletSpecialRequests: 'Place behind garage.',
-                driverId: '' // Unassigned
-            },
-            {
-                id: 'BOOK003',
-                customerId: 'CUST001',
-                equipmentId: 'EQ003', // Storage Container
-                rentalStartDate: '2025-07-20',
-                rentalEndDate: '2025-08-20',
-                deliveryAddress: '456 Elm St, Springfield, IL',
-                pickupAddress: '456 Elm St, Springfield, IL',
-                status: 'Delivered',
-                totalPrice: 2700.00,
-                bookingNotes: 'Long-term storage container for new project.',
-                containerPlacementNotes: 'Needs to be on concrete slab, path is narrow.',
-                containerSecurityAccess: 'Gate code: 7890, call 1hr prior.',
-                driverId: 'DRV002' // Assigned to Dwight Schrute
-            }
-        ];
-    }
-
-    let bookingData = window.bookingData;
-    let customerData = window.customerData; // Reference global customer data
-    let equipmentData = window.equipmentData; // Reference global equipment data
+(function() { // Wrap in IIFE
+    // Access global data directly from the window object
+    const customerData = window.customerData;
+    const equipmentData = window.equipmentData;
+    let bookingData = window.bookingData; // Use 'let' if you reassign this array (e.g., after filter/delete)
 
     let currentBookingId = null;
+    let currentSelectedEquipmentIdForEdit = null; // To keep track for edit modal
 
     // Get elements
     const bookingTableBody = document.querySelector('#bookingTable tbody');
@@ -428,8 +352,6 @@
     }
 
     // --- Dynamic Type-Specific Fields ---
-    let currentSelectedEquipmentIdForEdit = null; // To keep track for edit modal
-
     function hideAllTypeSpecificBookingFields() {
         dumpsterBookingFields.classList.add('hidden');
         toiletBookingFields.classList.add('hidden');
@@ -720,7 +642,7 @@
 
             // Status styling
             detailBookingStatus.textContent = booking.status;
-            detailBookingStatus.classList.remove('bg-green-600', 'bg-[#FF8600]', 'bg-gray-500', 'bg-blue-600', 'bg-red-600'); // Remove previous colors
+            detailBookingStatus.classList.remove('bg-green-600', 'bg-[#FF8600]', 'bg-gray-500', 'bg-blue-600', 'bg-red-600');
             if (booking.status === 'Confirmed') {
                 detailBookingStatus.classList.add('bg-green-600');
             } else if (booking.status === 'Pending') {
@@ -795,15 +717,8 @@
         renderBookingsTable(filteredData);
     }
 
-    // Initial render when the module loads
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        populateDropdowns();
-        renderBookingsTable();
-    } else {
-        document.addEventListener('DOMContentLoaded', () => {
-            populateDropdowns();
-            renderBookingsTable();
-        });
-    }
-
+    // Initial render when the module loads - ensures it's called once
+    populateDropdowns();
+    renderBookingsTable();
+})(); // End of IIFE
 </script>

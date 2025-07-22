@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RentPro - Customer Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'chili-red': '#EA3A26',
+                        'ut-orange': '#FF8600',
+                        'chili-red-2': '#EA3D2A',
+                        'chili-red-3': '#EA3D24',
+                        'tangelo': '#F54F1D',
+                        'custom-red': '#FF2424',
+                        'custom-red-2': '#FF0000',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.6s ease-in-out',
+                        'slide-up': 'slideUp 0.6s ease-out',
+                        'pulse-custom': 'pulse 0.5s ease-in-out',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes ripple {
+            to { transform: scale(4); opacity: 0; }
+        }
+        .ripple-effect {
+            animation: ripple 0.6s linear;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 font-sans">
+    <!-- Mobile Navigation Toggle -->
+    <button 
+        id="mobileNavToggle" 
+        class="lg:hidden fixed top-4 left-4 z-50 bg-chili-red text-white p-3 rounded-lg shadow-lg hover:bg-chili-red-2 transition-colors duration-300"
+    >
+        <i class="fas fa-bars text-lg"></i>
+    </button>
+
+    <!-- Sidebar Overlay for Mobile -->
+    <div 
+        id="sidebarOverlay" 
+        class="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40 opacity-0 invisible transition-all duration-300"
+    ></div>
+
+    <!-- Container -->
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <nav 
+            id="sidebar" 
+            class="fixed lg:relative bg-gradient-to-b from-black to-gray-800 w-72 h-screen overflow-y-auto z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out"
+        >
+            <!-- Logo -->
+            <div class="text-center py-8 px-6">
+                <h1 class="text-chili-red text-3xl font-bold drop-shadow-lg">
+                    <i class="fas fa-truck mr-2"></i>RentPro
+                </h1>
+            </div>
+
+            <!-- Navigation Menu -->
+            <ul class="space-y-2 px-4">
+                <li>
+                    <a href="#" class="nav-link active flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange relative">
+                        <i class="fas fa-tachometer-alt mr-4 text-lg"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange relative">
+                        <i class="fas fa-calendar-alt mr-4 text-lg"></i>
+                        Bookings
+                        <span class="absolute -top-1 -right-1 bg-custom-red-2 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">3</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange relative">
+                        <i class="fas fa-file-invoice mr-4 text-lg"></i>
+                        Invoices
+                        <span class="absolute -top-1 -right-1 bg-custom-red-2 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">2</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange relative">
+                        <i class="fas fa-quote-left mr-4 text-lg"></i>
+                        Quotes
+                        <span class="absolute -top-1 -right-1 bg-custom-red-2 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">1</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange relative">
+                        <i class="fas fa-bell mr-4 text-lg"></i>
+                        Notifications
+                        <span class="absolute -top-1 -right-1 bg-custom-red-2 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">5</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange">
+                        <i class="fas fa-credit-card mr-4 text-lg"></i>
+                        Payment Methods
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange">
+                        <i class="fas fa-user-circle mr-4 text-lg"></i>
+                        Profile
+                    </a>
+                </li>
+                <li class="mt-8">
+                    <a href="#" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange">
+                        <i class="fas fa-sign-out-alt mr-4 text-lg"></i>
+                        Logout
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="flex-1 lg:ml-0 p-4 lg:p-8 mt-16 lg:mt-0">
+            <!-- Header -->
+            <header class="bg-white rounded-2xl shadow-lg p-6 lg:p-8 mb-8 flex flex-col lg:flex-row justify-between items-center space-y-4 lg:space-y-0">
+                <div class="text-center lg:text-left">
+                    <h2 class="text-chili-red text-2xl lg:text-3xl font-bold mb-2">Welcome back, John!</h2>
+                    <p class="text-gray-600 text-lg">Here's what's happening with your rentals today</p>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+                    <button class="btn-primary bg-gradient-to-r from-chili-red to-tangelo text-white px-6 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl hover:transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center">
+                        <i class="fas fa-plus mr-2"></i>
+                        New Rental Request
+                    </button>
+                    <button class="btn-outline border-2 border-chili-red text-chili-red px-6 py-3 rounded-lg font-semibold hover:bg-chili-red hover:text-white transition-all duration-300 flex items-center justify-center">
+                        <i class="fas fa-headset mr-2"></i>
+                        Contact Support
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard Summary Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+                <!-- Current Rentals Card -->
+                <div class="dashboard-card bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl hover:transform hover:-translate-y-2 transition-all duration-300 border-l-4 border-chili-red">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center text-chili-red text-xl font-bold">
+                            <i class="fas fa-box mr-3"></i>
+                            Current Rentals
+                        </div>
+                    </div>
+                    <div class="text-4xl font-bold text-gray-800 mb-2">4</div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-semibold">3 Active</span>
+                        <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold">1 Scheduled</span>
+                    </div>
+                </div>
+
+                <!-- Upcoming Bookings Card -->
+                <div class="dashboard-card bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl hover:transform hover:-translate-y-2 transition-all duration-300 border-l-4 border-chili-red">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center text-chili-red text-xl font-bold">
+                            <i class="fas fa-calendar-check mr-3"></i>
+                            Upcoming Bookings
+                        </div>
+                    </div>
+                    <div class="text-4xl font-bold text-gray-800 mb-2">2</div>
+                    <div class="text-gray-600">
+                        Next delivery: Tomorrow, 9:00 AM
+                    </div>
+                </div>
+
+                <!-- Outstanding Balance Card -->
+                <div class="dashboard-card bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl hover:transform hover:-translate-y-2 transition-all duration-300 border-l-4 border-chili-red">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center text-chili-red text-xl font-bold">
+                            <i class="fas fa-dollar-sign mr-3"></i>
+                            Outstanding Balance
+                        </div>
+                    </div>
+                    <div class="text-4xl font-bold text-gray-800 mb-2">$1,847</div>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-semibold">1 Overdue</span>
+                        <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-semibold">2 Pending</span>
+                    </div>
+                </div>
+
+                <!-- Monthly Stats Card -->
+                <div class="dashboard-card bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl hover:transform hover:-translate-y-2 transition-all duration-300 border-l-4 border-chili-red">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center text-chili-red text-xl font-bold">
+                            <i class="fas fa-chart-line mr-3"></i>
+                            This Month
+                        </div>
+                    </div>
+                    <div class="text-4xl font-bold text-gray-800 mb-2">$5,420</div>
+                    <div class="text-gray-600">
+                        Total spent • 8 completed rentals
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <section class="bg-white rounded-2xl shadow-lg p-6 lg:p-8 mb-8">
+                <h3 class="flex items-center text-chili-red text-2xl font-bold mb-6">
+                    <i class="fas fa-clock mr-3"></i>
+                    Recent Activity
+                </h3>
+                <ul class="space-y-4">
+                    <li class="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 border-b border-gray-100 last:border-b-0">
+                        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center text-white flex-shrink-0">
+                            <i class="fas fa-truck text-lg"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-semibold text-gray-800 mb-1">20-yard Dumpster Delivered</div>
+                            <div class="text-gray-600 text-sm">
+                                Booking #BOOK123 • 123 Main St, Springfield • 2 hours ago
+                            </div>
+                        </div>
+                    </li>
+                    <li class="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 border-b border-gray-100 last:border-b-0">
+                        <div class="w-12 h-12 bg-gradient-to-br from-chili-red to-tangelo rounded-full flex items-center justify-center text-white flex-shrink-0">
+                            <i class="fas fa-credit-card text-lg"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-semibold text-gray-800 mb-1">Payment Processed</div>
+                            <div class="text-gray-600 text-sm">
+                                Invoice #INV456 • $425.00 • 1 day ago
+                            </div>
+                        </div>
+                    </li>
+                    <li class="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4 border-b border-gray-100 last:border-b-0">
+                        <div class="w-12 h-12 bg-gradient-to-br from-ut-orange to-yellow-500 rounded-full flex items-center justify-center text-white flex-shrink-0">
+                            <i class="fas fa-file-alt text-lg"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-semibold text-gray-800 mb-1">New Quote Received</div>
+                            <div class="text-gray-600 text-sm">
+                                Quote #QT789 • Storage Container Rental • 2 days ago
+                            </div>
+                        </div>
+                    </li>
+                    <li class="flex flex-col sm:flex-row items-start sm:items-center gap-4 p-4">
+                        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center text-white flex-shrink-0">
+                            <i class="fas fa-calendar-check text-lg"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-semibold text-gray-800 mb-1">Booking Confirmed</div>
+                            <div class="text-gray-600 text-sm">
+                                Booking #BOOK124 • Temporary Toilet • Scheduled for Jul 25
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Quick Actions -->
+            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="action-card bg-white rounded-2xl p-6 text-center shadow-lg hover:shadow-xl hover:transform hover:-translate-y-1 transition-all duration-300 cursor-pointer border-2 border-transparent hover:border-chili-red" onclick="showModal('newRental')">
+                    <div class="w-16 h-16 bg-gradient-to-br from-chili-red to-tangelo rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-4">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <div class="font-semibold text-gray-800 mb-2">Request New Rental</div>
+                    <div class="text-gray-600 text-sm">Get a quote for dumpsters, containers, or toilets</div>
+                </div>
+                
+                <div class="action-card bg-white rounded-2xl p-6 text-center shadow-lg hover:shadow-xl hover:transform hover:-translate-y-1 transition-all duration-300 cursor-pointer border-2 border-transparent hover:border-chili-red" onclick="showModal('payInvoice')">
+                    <div class="w-16 h-16 bg-gradient-to-br from-chili-red to-tangelo rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-4">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <div class="font-semibold text-gray-800 mb-2">Pay Invoice</div>
+                    <div class="text-gray-600 text-sm">Pay outstanding invoices quickly and securely</div>
+                </div>
+                
+                <div class="action-card bg-white rounded-2xl p-6 text-center shadow-lg hover:shadow-xl hover:transform hover:-translate-y-1 transition-all duration-300 cursor-pointer border-2 border-transparent hover:border-chili-red" onclick="showModal('requestService')">
+                    <div class="w-16 h-16 bg-gradient-to-br from-chili-red to-tangelo rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-4">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <div class="font-semibold text-gray-800 mb-2">Request Service</div>
+                    <div class="text-gray-600 text-sm">Schedule pickup, swap, or additional services</div>
+                </div>
+                
+                <div class="action-card bg-white rounded-2xl p-6 text-center shadow-lg hover:shadow-xl hover:transform hover:-translate-y-1 transition-all duration-300 cursor-pointer border-2 border-transparent hover:border-chili-red" onclick="showModal('trackDelivery')">
+                    <div class="w-16 h-16 bg-gradient-to-br from-chili-red to-tangelo rounded-full flex items-center justify-center text-white text-2xl mx-auto mb-4">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="font-semibold text-gray-800 mb-2">Track Delivery</div>
+                    <div class="text-gray-600 text-sm">See real-time location of your driver</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Mobile navigation functionality
+        const mobileNavToggle = document.getElementById('mobileNavToggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        function toggleMobileNav() {
+            sidebar.classList.toggle('translate-x-0');
+            sidebar.classList.toggle('-translate-x-full');
+            sidebarOverlay.classList.toggle('opacity-0');
+            sidebarOverlay.classList.toggle('invisible');
+            sidebarOverlay.classList.toggle('opacity-100');
+            sidebarOverlay.classList.toggle('visible');
+            
+            // Toggle hamburger icon
+            const icon = mobileNavToggle.querySelector('i');
+            if (sidebar.classList.contains('translate-x-0')) {
+                icon.className = 'fas fa-times text-lg';
+            } else {
+                icon.className = 'fas fa-bars text-lg';
+            }
+        }
+
+        mobileNavToggle.addEventListener('click', toggleMobileNav);
+        sidebarOverlay.addEventListener('click', toggleMobileNav);
+
+        // Close mobile nav when clicking on nav links
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 1024) {
+                    toggleMobileNav();
+                }
+            });
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) {
+                sidebar.classList.remove('-translate-x-full');
+                sidebar.classList.add('translate-x-0');
+                sidebarOverlay.classList.add('opacity-0', 'invisible');
+                sidebarOverlay.classList.remove('opacity-100', 'visible');
+                mobileNavToggle.querySelector('i').className = 'fas fa-bars text-lg';
+            }
+        });
+
+        // Touch gesture support for mobile
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const swipeThreshold = 100;
+            const swipeDistance = touchEndX - touchStartX;
+
+            if (window.innerWidth < 1024) {
+                // Swipe right to open sidebar
+                if (swipeDistance > swipeThreshold && touchStartX < 50) {
+                    if (sidebar.classList.contains('-translate-x-full')) {
+                        toggleMobileNav();
+                    }
+                }
+                // Swipe left to close sidebar
+                if (swipeDistance < -swipeThreshold && sidebar.classList.contains('translate-x-0')) {
+                    toggleMobileNav();
+                }
+            }
+        }
+
+        // Add interactive functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate cards on load
+            const cards = document.querySelectorAll('.dashboard-card, .action-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // Add click effects to action cards
+            const actionCards = document.querySelectorAll('.action-card');
+            actionCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // Add ripple effect
+                    const ripple = document.createElement('div');
+                    ripple.className = 'absolute rounded-full bg-chili-red bg-opacity-30 ripple-effect pointer-events-none';
+                    
+                    const rect = card.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    ripple.style.width = ripple.style.height = size + 'px';
+                    ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+                    ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+                    ripple.style.transform = 'scale(0)';
+                    
+                    card.style.position = 'relative';
+                    card.appendChild(ripple);
+                    
+                    setTimeout(() => {
+                        ripple.remove();
+                    }, 600);
+                });
+            });
+
+            // Update notification counts dynamically
+            updateNotificationCounts();
+        });
+
+        function showModal(type) {
+            // Placeholder for modal functionality
+            const messages = {
+                newRental: 'Opening new rental request form...',
+                payInvoice: 'Redirecting to payment page...',
+                requestService: 'Opening service request form...',
+                trackDelivery: 'Opening tracking map...'
+            };
+            
+            alert(messages[type] || 'Feature coming soon!');
+        }
+
+        function updateNotificationCounts() {
+            // Simulate real-time updates
+            setTimeout(() => {
+                const badges = document.querySelectorAll('.nav-link span');
+                badges.forEach(badge => {
+                    const currentCount = parseInt(badge.textContent);
+                    if (Math.random() > 0.7) { // 30% chance to update
+                        badge.textContent = currentCount + Math.floor(Math.random() * 2);
+                        badge.classList.add('animate-pulse-custom');
+                        setTimeout(() => badge.classList.remove('animate-pulse-custom'), 500);
+                    }
+                });
+                // Recursive call for continuous updates
+                updateNotificationCounts();
+            }, 10000); // Update every 10 seconds
+        }
+
+        // Set active navigation state
+        document.querySelector('.nav-link.active').classList.add('bg-gradient-to-r', 'from-chili-red', 'to-tangelo', 'border-ut-orange', 'transform', 'translate-x-2');
+    </script>
+</body>
+</html>

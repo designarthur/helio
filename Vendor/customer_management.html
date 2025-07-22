@@ -39,12 +39,10 @@
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-                <!-- Customer data will be rendered here -->
-            </tbody>
+                </tbody>
         </table>
     </div>
 
-    <!-- Add/Edit Customer Modal -->
     <div id="customerModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
         <div class="bg-white p-8 rounded-lg shadow-xl w-11/12 max-w-3xl relative max-h-[90vh] overflow-y-auto">
             <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold" onclick="closeModal('customerModal')">&times;</button>
@@ -114,7 +112,6 @@
         </div>
     </div>
 
-    <!-- View Customer Detail Modal -->
     <div id="viewCustomerModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
         <div class="bg-white p-8 rounded-lg shadow-xl w-11/12 max-w-3xl relative max-h-[90vh] overflow-y-auto">
             <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold" onclick="closeModal('viewCustomerModal')">&times;</button>
@@ -163,64 +160,15 @@
 </div>
 
 <script>
-    // Ensure window.customerData exists and is an array, otherwise initialize it.
-    if (typeof window.customerData === 'undefined' || !Array.isArray(window.customerData)) {
-        window.customerData = [
-            {
-                id: 'CUST001',
-                name: 'Alice Smith',
-                company: 'ABC Construction',
-                email: 'alice.smith@example.com',
-                phone: '(555) 123-4567',
-                billingAddress: '123 Main St, Springfield, IL 62701',
-                serviceAddresses: '123 Main St, Springfield, IL 62701; 456 Elm St, Springfield, IL 62704',
-                customerType: 'Commercial',
-                status: 'Active',
-                internalNotes: 'Prefers email communication. Always pays on time.'
-            },
-            {
-                id: 'CUST002',
-                name: 'Bob Johnson',
-                company: '',
-                email: 'bob.j@example.com',
-                phone: '(555) 987-6543',
-                billingAddress: '789 Oak Ave, Lincoln, NE 68501',
-                serviceAddresses: '789 Oak Ave, Lincoln, NE 68501',
-                customerType: 'Residential',
-                status: 'Active',
-                internalNotes: 'First-time renter. Needs clear instructions for dumpster use.'
-            },
-            {
-                id: 'CUST003',
-                name: 'Charlie Brown',
-                company: 'Brown Events',
-                email: 'charlie.b@events.com',
-                phone: '(555) 234-5678',
-                billingAddress: '101 Event Plaza, New York, NY 10001',
-                serviceAddresses: '101 Event Plaza, New York, NY 10001; 202 Convention Ctr, New York, NY 10002',
-                customerType: 'Commercial',
-                status: 'On Hold',
-                internalNotes: 'Large events client. Currently on hold due to pending contract renewal.'
-            },
-            {
-                id: 'CUST004',
-                name: 'Diana Prince',
-                company: 'Wonder Corp',
-                email: 'diana.p@wonder.com',
-                phone: '(555) 345-6789',
-                billingAddress: '321 Justice Way, Washington, DC 20001',
-                serviceAddresses: '321 Justice Way, Washington, DC 20001',
-                customerType: 'Commercial',
-                status: 'Active',
-                internalNotes: 'VIP client. Requires immediate attention for all requests.'
-            }
-        ];
-    }
-
+(function() { // Wrap in IIFE to create a private scope
+    // Access global data directly from the window object
+    // Use 'let' if you intend to reassign the array itself (e.g., after filter/delete)
+    // Otherwise, 'const' is fine if you only modify its content (push, splice, etc.)
     let customerData = window.customerData;
-    let currentCustomerId = null;
 
-    // Get elements
+    let currentCustomerId = null; // Local variable, safe within IIFE
+
+    // Get elements (all declared with 'const' or 'let' inside this IIFE scope)
     const customerTableBody = document.querySelector('#customerTable tbody');
     const addCustomerBtn = document.getElementById('addCustomerBtn');
     const customerModal = document.getElementById('customerModal');
@@ -248,15 +196,18 @@
     addCustomerBtn.addEventListener('click', () => openAddModal());
     customerForm.addEventListener('submit', (e) => saveCustomer(e));
     editFromDetailBtn.addEventListener('click', () => {
-        closeModal('viewCustomerModal');
+        closeModal('viewCustomerModal'); // Use the local closeModal
         openEditModal(currentCustomerId);
     });
 
-    // --- Modal Functions ---
+    // --- Modal Functions (referencing global functions or defining local ones) ---
+    // Assuming openModal and closeModal are defined globally in index.html,
+    // they are accessed via `window.openModal` and `window.closeModal` or just `openModal/closeModal` if they are truly global.
+    // For consistency, I will assume they are globally accessible or local if defined within this IIFE.
+    // The previous implementation implied they were global, so I'll keep that assumption here.
     function openModal(modalId) {
         document.getElementById(modalId).classList.remove('hidden');
     }
-
     function closeModal(modalId) {
         document.getElementById(modalId).classList.add('hidden');
         if (modalId === 'customerModal') {
@@ -444,7 +395,8 @@
         const statusFilter = document.getElementById('customerStatusFilter').value;
 
         const filteredData = customerData.filter(customer => {
-            const matchesSearch = customer.name.toLowerCase().includes(searchTerm) ||
+            const matchesSearch = customer.id.toLowerCase().includes(searchTerm) ||
+                                  customer.name.toLowerCase().includes(searchTerm) ||
                                   (customer.company && customer.company.toLowerCase().includes(searchTerm)) ||
                                   customer.email.toLowerCase().includes(searchTerm) ||
                                   customer.phone.toLowerCase().includes(searchTerm);
@@ -457,11 +409,7 @@
         renderCustomersTable(filteredData);
     }
 
-    // Initial render when the module loads
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        renderCustomersTable();
-    } else {
-        document.addEventListener('DOMContentLoaded', renderCustomersTable);
-    }
-
+    // Initial render when the module loads - ensures it's called once
+    renderCustomersTable();
+})(); // End of IIFE
 </script>

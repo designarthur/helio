@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RentPro - My Profile</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'chili-red': '#EA3A26',
+                        'ut-orange': '#FF8600',
+                        'chili-red-2': '#EA3D2A',
+                        'chili-red-3': '#EA3D24',
+                        'tangelo': '#F54F1D',
+                        'custom-red': '#FF2424',
+                        'custom-red-2': '#FF0000',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.6s ease-in-out',
+                        'slide-up': 'slideUp 0.6s ease-out',
+                        'pulse-custom': 'pulse 0.5s ease-in-out',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-backdrop {
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 font-sans">
+    <button
+        id="mobileNavToggle"
+        class="lg:hidden fixed top-4 left-4 z-50 bg-chili-red text-white p-3 rounded-lg shadow-lg hover:bg-chili-red-2 transition-colors duration-300"
+    >
+        <i class="fas fa-bars text-lg"></i>
+    </button>
+
+    <div
+        id="sidebarOverlay"
+        class="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40 opacity-0 invisible transition-all duration-300"
+    ></div>
+
+    <div class="flex min-h-screen">
+        <nav
+            id="sidebar"
+            class="fixed lg:relative bg-gradient-to-b from-black to-gray-800 w-72 h-screen overflow-y-auto z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out"
+        >
+            <div class="text-center py-8 px-6">
+                <h1 class="text-chili-red text-3xl font-bold drop-shadow-lg">
+                    <i class="fas fa-truck mr-2"></i>RentPro
+                </h1>
+            </div>
+
+            <ul class="space-y-2 px-4">
+                <li>
+                    <a href="customer_index.html" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange">
+                        <i class="fas fa-tachometer-alt mr-4 text-lg"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="bookings_page.html" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange">
+                        <i class="fas fa-calendar-alt mr-4 text-lg"></i>
+                        Bookings
+                        <span class="absolute -top-1 -right-1 bg-custom-red-2 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">3</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="invoices_page.html" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange relative">
+                        <i class="fas fa-file-invoice mr-4 text-lg"></i>
+                        Invoices
+                        <span class="absolute -top-1 -right-1 bg-custom-red-2 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">2</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="quotes_page.html" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange relative">
+                        <i class="fas fa-quote-left mr-4 text-lg"></i>
+                        Quotes
+                        <span class="absolute -top-1 -right-1 bg-custom-red-2 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">1</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="notifications_page.html" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange relative">
+                        <i class="fas fa-bell mr-4 text-lg"></i>
+                        Notifications
+                        <span class="absolute -top-1 -right-1 bg-custom-red-2 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">5</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="payment_methods_page.html" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange">
+                        <i class="fas fa-credit-card mr-4 text-lg"></i>
+                        Payment Methods
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link active bg-gradient-to-r from-chili-red to-tangelo border-ut-orange transform translate-x-2 flex items-center px-6 py-4 text-white transition-all duration-300 rounded-lg border-l-4">
+                        <i class="fas fa-user-circle mr-4 text-lg"></i>
+                        Profile
+                    </a>
+                </li>
+                <li class="mt-8">
+                    <a href="#" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange">
+                        <i class="fas fa-sign-out-alt mr-4 text-lg"></i>
+                        Logout
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="flex-1 lg:ml-0 p-4 lg:p-8 mt-16 lg:mt-0">
+            <header class="bg-white rounded-2xl shadow-lg p-6 lg:p-8 mb-8">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0">
+                    <div>
+                        <h1 class="text-chili-red text-3xl lg:text-4xl font-bold mb-2">My Profile</h1>
+                        <p class="text-gray-600 text-lg">Manage your personal details, company info, and addresses</p>
+                    </div>
+                </div>
+            </header>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <div class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-chili-red text-2xl font-bold flex items-center">
+                            <i class="fas fa-user mr-3"></i>Personal Information
+                        </h3>
+                        <button onclick="openEditProfileModal('personal')" class="text-blue-600 hover:text-blue-800 font-semibold">
+                            <i class="fas fa-edit mr-1"></i>Edit
+                        </button>
+                    </div>
+                    <div class="space-y-3 text-gray-700">
+                        <div><span class="font-semibold text-gray-600">Name:</span> <span id="profileName"></span></div>
+                        <div><span class="font-semibold text-gray-600">Email:</span> <span id="profileEmail"></span></div>
+                        <div><span class="font-semibold text-gray-600">Phone:</span> <span id="profilePhone"></span></div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-chili-red text-2xl font-bold flex items-center">
+                            <i class="fas fa-building mr-3"></i>Company Information
+                        </h3>
+                        <button onclick="openEditProfileModal('company')" class="text-blue-600 hover:text-blue-800 font-semibold">
+                            <i class="fas fa-edit mr-1"></i>Edit
+                        </button>
+                    </div>
+                    <div class="space-y-3 text-gray-700">
+                        <div><span class="font-semibold text-gray-600">Company Name:</span> <span id="profileCompany"></span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-lg p-6 lg:p-8 mb-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-chili-red text-2xl font-bold flex items-center">
+                        <i class="fas fa-map-marker-alt mr-3"></i>Addresses
+                    </h3>
+                    <button onclick="openEditAddressModal('new')" class="bg-gradient-to-r from-chili-red to-tangelo text-white px-4 py-2 rounded-lg font-semibold shadow-md hover:shadow-lg hover:transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center">
+                        <i class="fas fa-plus mr-2"></i>
+                        Add New Address
+                    </button>
+                </div>
+
+                <div class="border border-gray-200 rounded-xl p-4 mb-6 relative bg-red-50/50">
+                    <div class="absolute top-0 right-0 -mt-3 -mr-3 bg-chili-red text-white text-xs px-3 py-1 rounded-full font-semibold shadow-md">
+                        Primary Billing
+                    </div>
+                    <h4 class="font-bold text-gray-800 mb-2 flex items-center">
+                        <i class="fas fa-home mr-2 text-chili-red"></i><span id="billingAddressNickname"></span>
+                    </h4>
+                    <p class="text-gray-700" id="billingAddressFull"></p>
+                    <div class="mt-3 text-right">
+                        <button onclick="openEditAddressModal('primary')" class="text-blue-600 hover:text-blue-800 font-semibold text-sm">
+                            <i class="fas fa-edit mr-1"></i>Edit Primary Address
+                        </button>
+                    </div>
+                </div>
+
+                <h4 class="font-bold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-truck-loading mr-2 text-gray-500"></i>Service Addresses
+                </h4>
+                <div class="space-y-4" id="serviceAddressesList">
+                    </div>
+                <p id="noServiceAddressesMessage" class="text-center text-gray-500 py-8 hidden">You have no saved service addresses.</p>
+            </div>
+        </main>
+    </div>
+
+    <div id="editProfileModal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop z-50 flex items-center justify-center opacity-0 invisible transition-all duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-screen overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-2xl font-bold text-chili-red" id="editProfileModalTitle">Edit Personal Information</h3>
+                    <button onclick="closeEditProfileModal()" class="text-gray-400 hover:text-gray-600 text-2xl">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6">
+                <form id="personalInfoForm" onsubmit="saveProfileInfo(event)">
+                    <input type="hidden" id="editProfileType">
+                    <div id="personalFields" class="space-y-4">
+                        <div>
+                            <label for="editFirstName" class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                            <input type="text" id="editFirstName" name="firstName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-chili-red focus:border-chili-red" required>
+                        </div>
+                        <div>
+                            <label for="editLastName" class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                            <input type="text" id="editLastName" name="lastName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-chili-red focus:border-chili-red" required>
+                        </div>
+                        <div>
+                            <label for="editEmail" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                            <input type="email" id="editEmail" name="email" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-chili-red focus:border-chili-red" required>
+                        </div>
+                        <div>
+                            <label for="editPhoneNumber" class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                            <input type="tel" id="editPhoneNumber" name="phoneNumber" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-chili-red focus:border-chili-red">
+                        </div>
+                    </div>
+                    <div id="companyFields" class="space-y-4 hidden">
+                        <div>
+                            <label for="editCompanyName" class="block text-sm font-medium text-gray-700 mb-2">Company Name</label>
+                            <input type="text" id="editCompanyName" name="companyName" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-chili-red focus:border-chili-red">
+                        </div>
+                    </div>
+                    <div class="flex gap-3 justify-end mt-6">
+                        <button type="button" onclick="closeEditProfileModal()" class="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors duration-300">Cancel</button>
+                        <button type="submit" class="bg-chili-red text-white px-6 py-3 rounded-lg hover:bg-chili-red-2 transition-colors duration-300">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="editAddressModal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop z-50 flex items-center justify-center opacity-0 invisible transition-all duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-screen overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-2xl font-bold text-chili-red" id="editAddressModalTitle">Add New Address</h3>
+                    <button onclick="closeEditAddressModal()" class="text-gray-400 hover:text-gray-600 text-2xl">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6">
+                <form id="addressForm" onsubmit="saveAddress(event)">
+                    <input type="hidden" id="addressType">
+                    <input type="hidden" id="addressId">
+                    <div id="nicknameField" class="mb-4 hidden">
+                        <label for="editAddressNickname" class="block text-sm font-medium text-gray-700 mb-2">Address Nickname (e.g., "Job Site A", "Home Office")</label>
+                        <input type="text" id="editAddressNickname" name="nickname" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-chili-red focus:border-chili-red" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="editAddressStreet" class="block text-sm font-medium text-gray-700 mb-2">Street Address</label>
+                        <input type="text" id="editAddressStreet" name="street" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-chili-red focus:border-chili-red" required>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label for="editAddressCity" class="block text-sm font-medium text-gray-700 mb-2">City</label>
+                            <input type="text" id="editAddressCity" name="city" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-chili-red focus:border-chili-red" required>
+                        </div>
+                        <div>
+                            <label for="editAddressState" class="block text-sm font-medium text-gray-700 mb-2">State / Province</label>
+                            <input type="text" id="editAddressState" name="state" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-chili-red focus:border-chili-red" required>
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <label for="editAddressZip" class="block text-sm font-medium text-gray-700 mb-2">Zip / Postal Code</label>
+                        <input type="text" id="editAddressZip" name="zip" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-chili-red focus:border-chili-red" required>
+                    </div>
+                    <div class="flex gap-3 justify-end">
+                        <button type="button" onclick="closeEditAddressModal()" class="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors duration-300">Cancel</button>
+                        <button type="submit" class="bg-chili-red text-white px-6 py-3 rounded-lg hover:bg-chili-red-2 transition-colors duration-300">Save Address</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // Dummy Profile Data
+        let userProfile = {
+            firstName: "John",
+            lastName: "Doe",
+            email: "john.doe@example.com",
+            phoneNumber: "(555) 123-4567",
+            companyName: "Springfield Construction Inc.",
+            primaryBillingAddress: {
+                id: 'primary', // Unique ID for primary address
+                street: "123 Main St",
+                city: "Springfield",
+                state: "IL",
+                zip: "62704"
+            },
+            serviceAddresses: [
+                { id: 1, nickname: "Main Job Site", street: "456 Oak Ave", city: "Springfield", state: "IL", zip: "62704" },
+                { id: 2, nickname: "Warehouse", street: "789 Elm St", city: "Springfield", state: "IL", zip: "62704" },
+                { id: 3, nickname: "Temporary Project", street: "101 Bridge Rd", city: "Springfield", state: "IL", zip: "62704" }
+            ]
+        };
+
+        function renderProfile() {
+            // Personal & Company Info
+            document.getElementById('profileName').textContent = `${userProfile.firstName} ${userProfile.lastName}`;
+            document.getElementById('profileEmail').textContent = userProfile.email;
+            document.getElementById('profilePhone').textContent = userProfile.phoneNumber;
+            document.getElementById('profileCompany').textContent = userProfile.companyName || 'N/A';
+
+            // Primary Billing Address
+            const primaryAddress = userProfile.primaryBillingAddress;
+            document.getElementById('billingAddressNickname').textContent = 'Billing Address'; // Static nickname for primary
+            document.getElementById('billingAddressFull').textContent = `${primaryAddress.street}, ${primaryAddress.city}, ${primaryAddress.state} ${primaryAddress.zip}`;
+
+            // Service Addresses
+            const serviceAddressesList = document.getElementById('serviceAddressesList');
+            serviceAddressesList.innerHTML = '';
+            const noServiceAddressesMessage = document.getElementById('noServiceAddressesMessage');
+
+            if (userProfile.serviceAddresses.length === 0) {
+                noServiceAddressesMessage.classList.remove('hidden');
+            } else {
+                noServiceAddressesMessage.classList.add('hidden');
+                userProfile.serviceAddresses.forEach(addr => {
+                    const item = document.createElement('div');
+                    item.className = `border border-gray-200 rounded-xl p-4 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-gray-50`;
+                    item.innerHTML = `
+                        <div class="flex-1 mb-3 sm:mb-0">
+                            <h4 class="font-bold text-gray-800 mb-1">${addr.nickname}</h4>
+                            <p class="text-gray-700 text-sm">${addr.street}, ${addr.city}, ${addr.state} ${addr.zip}</p>
+                        </div>
+                        <div class="flex flex-wrap justify-end gap-2">
+                            <button onclick="editServiceAddress(${addr.id})" class="text-blue-600 hover:text-blue-800 font-semibold text-sm">
+                                <i class="fas fa-edit mr-1"></i>Edit
+                            </button>
+                            <button onclick="removeServiceAddress(${addr.id})" class="text-red-600 hover:text-red-800 font-semibold text-sm">
+                                <i class="fas fa-trash-alt mr-1"></i>Remove
+                            </button>
+                        </div>
+                    `;
+                    serviceAddressesList.appendChild(item);
+                });
+            }
+        }
+
+        // Edit Profile Modal (Personal & Company)
+        function openEditProfileModal(type) {
+            const modal = document.getElementById('editProfileModal');
+            document.getElementById('editProfileType').value = type;
+
+            document.getElementById('personalFields').classList.add('hidden');
+            document.getElementById('companyFields').classList.add('hidden');
+
+            if (type === 'personal') {
+                document.getElementById('editProfileModalTitle').textContent = 'Edit Personal Information';
+                document.getElementById('personalFields').classList.remove('hidden');
+                document.getElementById('editFirstName').value = userProfile.firstName;
+                document.getElementById('editLastName').value = userProfile.lastName;
+                document.getElementById('editEmail').value = userProfile.email;
+                document.getElementById('editPhoneNumber').value = userProfile.phoneNumber;
+            } else if (type === 'company') {
+                document.getElementById('editProfileModalTitle').textContent = 'Edit Company Information';
+                document.getElementById('companyFields').classList.remove('hidden');
+                document.getElementById('editCompanyName').value = userProfile.companyName;
+            }
+
+            modal.classList.remove('opacity-0', 'invisible');
+            modal.classList.add('opacity-100', 'visible');
+        }
+
+        function closeEditProfileModal() {
+            const modal = document.getElementById('editProfileModal');
+            modal.classList.add('opacity-0', 'invisible');
+            modal.classList.remove('opacity-100', 'visible');
+        }
+
+        function saveProfileInfo(event) {
+            event.preventDefault();
+            const type = document.getElementById('editProfileType').value;
+
+            if (type === 'personal') {
+                userProfile.firstName = document.getElementById('editFirstName').value;
+                userProfile.lastName = document.getElementById('editLastName').value;
+                userProfile.email = document.getElementById('editEmail').value;
+                userProfile.phoneNumber = document.getElementById('editPhoneNumber').value;
+                showNotification('Personal information updated successfully!', 'success');
+            } else if (type === 'company') {
+                userProfile.companyName = document.getElementById('editCompanyName').value;
+                showNotification('Company information updated successfully!', 'success');
+            }
+
+            closeEditProfileModal();
+            renderProfile(); // Re-render the profile display
+        }
+
+        // Edit Address Modal (Primary Billing & Service Addresses)
+        function openEditAddressModal(type, addressId = null) {
+            const modal = document.getElementById('editAddressModal');
+            document.getElementById('addressType').value = type;
+            document.getElementById('addressId').value = addressId; // For service addresses
+
+            document.getElementById('nicknameField').classList.add('hidden'); // Hide nickname by default
+
+            if (type === 'primary') {
+                document.getElementById('editAddressModalTitle').textContent = 'Edit Primary Billing Address';
+                const addr = userProfile.primaryBillingAddress;
+                document.getElementById('editAddressStreet').value = addr.street;
+                document.getElementById('editAddressCity').value = addr.city;
+                document.getElementById('editAddressState').value = addr.state;
+                document.getElementById('editAddressZip').value = addr.zip;
+            } else if (type === 'new') {
+                document.getElementById('editAddressModalTitle').textContent = 'Add New Service Address';
+                document.getElementById('nicknameField').classList.remove('hidden');
+                // Clear fields for new entry
+                document.getElementById('editAddressNickname').value = '';
+                document.getElementById('editAddressStreet').value = '';
+                document.getElementById('editAddressCity').value = '';
+                document.getElementById('editAddressState').value = '';
+                document.getElementById('editAddressZip').value = '';
+            } else if (type === 'service' && addressId !== null) {
+                document.getElementById('editAddressModalTitle').textContent = 'Edit Service Address';
+                document.getElementById('nicknameField').classList.remove('hidden');
+                const addr = userProfile.serviceAddresses.find(a => a.id === addressId);
+                if (addr) {
+                    document.getElementById('editAddressNickname').value = addr.nickname;
+                    document.getElementById('editAddressStreet').value = addr.street;
+                    document.getElementById('editAddressCity').value = addr.city;
+                    document.getElementById('editAddressState').value = addr.state;
+                    document.getElementById('editAddressZip').value = addr.zip;
+                }
+            }
+
+            modal.classList.remove('opacity-0', 'invisible');
+            modal.classList.add('opacity-100', 'visible');
+        }
+
+        function closeEditAddressModal() {
+            const modal = document.getElementById('editAddressModal');
+            modal.classList.add('opacity-0', 'invisible');
+            modal.classList.remove('opacity-100', 'visible');
+        }
+
+        function saveAddress(event) {
+            event.preventDefault();
+            const type = document.getElementById('addressType').value;
+            const id = document.getElementById('addressId').value;
+
+            const newAddress = {
+                street: document.getElementById('editAddressStreet').value,
+                city: document.getElementById('editAddressCity').value,
+                state: document.getElementById('editAddressState').value,
+                zip: document.getElementById('editAddressZip').value
+            };
+
+            if (type === 'primary') {
+                userProfile.primaryBillingAddress = { ...userProfile.primaryBillingAddress, ...newAddress };
+                showNotification('Primary billing address updated successfully!', 'success');
+            } else if (type === 'new') {
+                const newId = userProfile.serviceAddresses.length > 0 ? Math.max(...userProfile.serviceAddresses.map(a => a.id)) + 1 : 1;
+                newAddress.id = newId;
+                newAddress.nickname = document.getElementById('editAddressNickname').value;
+                userProfile.serviceAddresses.push(newAddress);
+                showNotification('New service address added successfully!', 'success');
+            } else if (type === 'service') {
+                const index = userProfile.serviceAddresses.findIndex(a => a.id === parseInt(id));
+                if (index > -1) {
+                    userProfile.serviceAddresses[index] = {
+                        ...userProfile.serviceAddresses[index],
+                        ...newAddress,
+                        nickname: document.getElementById('editAddressNickname').value
+                    };
+                    showNotification('Service address updated successfully!', 'success');
+                }
+            }
+
+            closeEditAddressModal();
+            renderProfile();
+        }
+
+        function editServiceAddress(id) {
+            openEditAddressModal('service', id);
+        }
+
+        function removeServiceAddress(id) {
+            if (confirm('Are you sure you want to remove this service address?')) {
+                userProfile.serviceAddresses = userProfile.serviceAddresses.filter(addr => addr.id !== id);
+                renderProfile();
+                showNotification('Service address removed.', 'success');
+            }
+        }
+
+        // Notification system (copied for consistency)
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm transition-all duration-300 transform translate-x-full`;
+
+            const colors = {
+                success: 'bg-green-500 text-white',
+                error: 'bg-red-500 text-white',
+                info: 'bg-blue-500 text-white',
+                warning: 'bg-yellow-500 text-white'
+            };
+
+            notification.className += ` ${colors[type]}`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <span class="flex-1">${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Mobile navigation functionality (copied from provided files for consistency)
+        const mobileNavToggle = document.getElementById('mobileNavToggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        function toggleMobileNav() {
+            sidebar.classList.toggle('translate-x-0');
+            sidebar.classList.toggle('-translate-x-full');
+            sidebarOverlay.classList.toggle('opacity-0');
+            sidebarOverlay.classList.toggle('invisible');
+            sidebarOverlay.classList.toggle('opacity-100');
+            sidebarOverlay.classList.toggle('visible');
+
+            const icon = mobileNavToggle.querySelector('i');
+            if (sidebar.classList.contains('translate-x-0')) {
+                icon.className = 'fas fa-times text-lg';
+            } else {
+                icon.className = 'fas fa-bars text-lg';
+            }
+        }
+
+        mobileNavToggle.addEventListener('click', toggleMobileNav);
+        sidebarOverlay.addEventListener('click', toggleMobileNav);
+
+        // Close mobile nav when clicking on nav links
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 1024) {
+                    toggleMobileNav();
+                }
+            });
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) {
+                sidebar.classList.remove('-translate-x-full');
+                sidebar.classList.add('translate-x-0');
+                sidebarOverlay.classList.add('opacity-0', 'invisible');
+                sidebarOverlay.classList.remove('opacity-100', 'visible');
+                mobileNavToggle.querySelector('i').className = 'fas fa-bars text-lg';
+            }
+        });
+
+        // Initial load functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            renderProfile();
+        });
+    </script>
+</body>
+</html>

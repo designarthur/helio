@@ -32,12 +32,10 @@
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-                <!-- Driver data will be rendered here -->
-            </tbody>
+                </tbody>
         </table>
     </div>
 
-    <!-- Add/Edit Driver Modal -->
     <div id="driverModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
         <div class="bg-white p-8 rounded-lg shadow-xl w-11/12 max-w-3xl relative max-h-[90vh] overflow-y-auto">
             <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold" onclick="closeModal('driverModal')">&times;</button>
@@ -103,7 +101,6 @@
         </div>
     </div>
 
-    <!-- View Driver Detail Modal -->
     <div id="viewDriverModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
         <div class="bg-white p-8 rounded-lg shadow-xl w-11/12 max-w-3xl relative max-h-[90vh] overflow-y-auto">
             <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold" onclick="closeModal('viewDriverModal')">&times;</button>
@@ -132,8 +129,7 @@
                     <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Assigned Bookings (Current Day/Upcoming)</h4>
                     <div id="assignedBookingsList" class="space-y-2">
                         <p class="text-gray-500 italic">No assigned bookings for this driver for the upcoming days. (This would show dynamic booking details.)</p>
-                        <!-- Assigned bookings will be dynamically inserted here -->
-                    </div>
+                        </div>
                 </div>
 
                 <div class="bg-gray-50 p-4 rounded-md shadow-sm">
@@ -142,7 +138,7 @@
                         <ul class="list-disc list-inside ml-4 text-sm mt-2">
                             <li>On-time delivery rate.</li>
                             <li>Average service time per job.</li>
-                            <li>Miles driven and fuel consumed.</li>
+                            <li>Fuel efficiency comparisons.</li>
                             <li>Customer feedback/ratings.</li>
                         </ul>
                     </p>
@@ -157,78 +153,12 @@
 </div>
 
 <script>
-    // Ensure window.driverData exists and is an array, otherwise initialize it.
-    if (typeof window.driverData === 'undefined' || !Array.isArray(window.driverData)) {
-        window.driverData = [
-            {
-                id: 'DRV001',
-                name: 'Michael Scott',
-                email: 'michael.s@example.com',
-                phone: '(111) 222-3333',
-                licenseNumber: 'MS123456',
-                licenseExpiry: '2026-12-31',
-                cdlClass: 'Class A',
-                status: 'Active',
-                assignedVehicle: 'Truck 101',
-                driverNotes: 'Excellent performance, very reliable.'
-            },
-            {
-                id: 'DRV002',
-                name: 'Dwight Schrute',
-                email: 'dwight.s@example.com',
-                phone: '(222) 333-4444',
-                licenseNumber: 'DS987654',
-                licenseExpiry: '2025-06-15',
-                cdlClass: 'Class B',
-                status: 'Active',
-                assignedVehicle: 'Truck 102',
-                driverNotes: 'Always follows protocols, sometimes too literal.'
-            },
-            {
-                id: 'DRV003',
-                name: 'Pam Beesly',
-                email: 'pam.b@example.com',
-                phone: '(333) 444-5555',
-                licenseNumber: 'PB010101',
-                licenseExpiry: '2027-01-01',
-                cdlClass: 'Class C',
-                status: 'On Leave',
-                assignedVehicle: 'None',
-                driverNotes: 'On maternity leave until next quarter.'
-            }
-        ];
-    }
-
-    // Ensure window.bookingData is accessible (from Booking & Scheduling module)
-    if (typeof window.bookingData === 'undefined' || !Array.isArray(window.bookingData)) {
-        console.warn("bookingData not found. Using minimal fallback dummy data for bookings.");
-        window.bookingData = [
-            { id: 'BOOK001', customerId: 'CUST001', equipmentId: 'EQ001', rentalStartDate: '2025-07-25', status: 'Confirmed', driverId: 'DRV001', deliveryAddress: '123 Main St' },
-            { id: 'BOOK002', customerId: 'CUST002', equipmentId: 'EQ002', rentalStartDate: '2025-08-01', status: 'Pending', driverId: '', deliveryAddress: '789 Oak Ave' }, // Unassigned
-        ];
-    }
-    // Also ensure window.customerData and window.equipmentData are accessible for displaying booking details
-    if (typeof window.customerData === 'undefined' || !Array.isArray(window.customerData)) {
-        console.warn("customerData not found. Using minimal fallback dummy data for customers.");
-        window.customerData = [
-            { id: 'CUST001', name: 'Alice Smith' },
-            { id: 'CUST002', name: 'Bob Johnson' },
-        ];
-    }
-    if (typeof window.equipmentData === 'undefined' || !Array.isArray(window.equipmentData)) {
-        console.warn("equipmentData not found. Using minimal fallback dummy data for equipment.");
-        window.equipmentData = [
-            { id: 'EQ001', type: 'Dumpster', size: '20-yard' },
-            { id: 'EQ002', type: 'Temporary Toilet', size: 'Standard' },
-            { id: 'EQ003', type: 'Storage Container', size: '40ft' }
-        ];
-    }
-
-
-    let driverData = window.driverData;
-    let bookingData = window.bookingData; // Reference global booking data
-    let customerData = window.customerData; // Reference global customer data
-    let equipmentData = window.equipmentData; // Reference global equipment data
+(function() { // Wrap in IIFE
+    // Access global data directly from the window object
+    let driverData = window.driverData; // Use 'let' if you reassign this array (e.g., after filter/delete)
+    const bookingData = window.bookingData; // Use 'const' as we only access its contents
+    const customerData = window.customerData; // Use 'const'
+    const equipmentData = window.equipmentData; // Use 'const'
 
     let currentDriverId = null;
 
@@ -266,10 +196,10 @@
     });
 
     // --- Modal Functions ---
+    // Assuming openModal and closeModal are defined globally in index.html and accessed via window.
     function openModal(modalId) {
         document.getElementById(modalId).classList.remove('hidden');
     }
-
     function closeModal(modalId) {
         document.getElementById(modalId).classList.add('hidden');
         if (modalId === 'driverModal') {
@@ -416,7 +346,7 @@
         if (confirm(`Are you sure you want to delete driver ID: ${id}? This action cannot be undone.`)) {
             driverData = driverData.filter(d => d.id !== id);
             // Also unassign any bookings from this driver (optional, but good practice)
-            bookingData.forEach(booking => {
+            window.bookingData.forEach(booking => { // Access global bookingData
                 if (booking.driverId === id) {
                     booking.driverId = ''; // Set to empty string for unassigned
                 }
@@ -447,13 +377,13 @@
             }
 
             // Populate Assigned Bookings
-            const assignedBookings = bookingData.filter(b => b.driverId === driver.id);
+            const assignedBookings = window.bookingData.filter(b => b.driverId === driver.id); // Access global bookingData
             assignedBookingsList.innerHTML = ''; // Clear previous list
 
             if (assignedBookings.length > 0) {
                 assignedBookings.forEach(booking => {
-                    const customer = customerData.find(c => c.id === booking.customerId);
-                    const equipment = equipmentData.find(e => e.id === booking.equipmentId);
+                    const customer = window.customerData.find(c => c.id === booking.customerId); // Access global customerData
+                    const equipment = window.equipmentData.find(e => e.id === booking.equipmentId); // Access global equipmentData
                     const bookingDiv = document.createElement('div');
                     bookingDiv.classList.add('border-b', 'border-dashed', 'border-gray-300', 'pb-2', 'mb-2', 'last:border-b-0');
                     bookingDiv.innerHTML = `
@@ -494,10 +424,6 @@
     }
 
     // Initial render when the module loads
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        renderDriversTable();
-    } else {
-        document.addEventListener('DOMContentLoaded', renderDriversTable);
-    }
-
+    renderDriversTable();
+})(); // End of IIFE
 </script>

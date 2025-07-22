@@ -20,7 +20,7 @@
             </select>
             <select id="typeFilter" onchange="filterEquipment()"
                     class="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#EA3A26] w-full md:w-auto">
-                <option value="">All Types</option>
+                <option value="">Select All Types</option>
                 <option value="Dumpster">Dumpster</option>
                 <option value="Temporary Toilet">Temporary Toilet</option>
                 <option value="Storage Container">Storage Container</option>
@@ -42,12 +42,10 @@
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-                <!-- Equipment data will be rendered here -->
-            </tbody>
+                </tbody>
         </table>
     </div>
 
-    <!-- Add/Edit Equipment Modal -->
     <div id="equipmentModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
         <div class="bg-white p-8 rounded-lg shadow-xl w-11/12 max-w-3xl relative max-h-[90vh] overflow-y-auto">
             <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold" onclick="closeModal('equipmentModal')">&times;</button>
@@ -121,7 +119,6 @@
                     <p class="text-xs text-gray-500 mt-1">Note: File upload is for demo purposes; actual files won't be stored.</p>
                 </div>
 
-                <!-- Type-Specific Fields - Initially hidden -->
                 <div id="dumpsterFields" class="col-span-1 md:col-span-2 border-t border-gray-200 pt-4 mt-4 hidden">
                     <h4 class="text-lg font-semibold text-gray-800 mb-4">Dumpster Specifics</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -174,6 +171,7 @@
                             <label for="serviceFrequency" class="block text-sm font-medium text-gray-700 mb-1">Default Service Frequency:</label>
                             <select id="serviceFrequency"
                                     class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                                <option value="">Select</option>
                                 <option value="Weekly">Weekly</option>
                                 <option value="Bi-weekly">Bi-weekly</option>
                                 <option value="Event-specific">Event-specific</option>
@@ -229,7 +227,6 @@
                     </div>
                 </div>
 
-                <!-- Rental Pricing & Rules -->
                 <div class="col-span-1 md:col-span-2 border-t border-gray-200 pt-4 mt-4">
                     <h4 class="text-lg font-semibold text-gray-800 mb-4">Rental Pricing & Rules</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -289,7 +286,6 @@
         </div>
     </div>
 
-    <!-- View Equipment Detail Modal -->
     <div id="viewEquipmentModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
         <div class="bg-white p-8 rounded-lg shadow-xl w-11/12 max-w-3xl relative max-h-[90vh] overflow-y-auto">
             <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold" onclick="closeModal('viewEquipmentModal')">&times;</button>
@@ -377,185 +373,11 @@
 </div>
 
 <script>
-    // Ensure window.equipmentData exists and is an array, otherwise initialize it.
-    if (typeof window.equipmentData === 'undefined' || !Array.isArray(window.equipmentData)) {
-        window.equipmentData = [
-            {
-                id: 'EQ001',
-                type: 'Dumpster',
-                size: '20-yard',
-                status: 'Available',
-                location: 'Yard A',
-                description: 'Standard 20-yard dumpster, good condition.',
-                purchaseDate: '2022-01-15',
-                purchaseCost: 3500.00,
-                supplierManufacturer: 'Waste Solutions Inc.',
-                dumpsterDimensions: '20x8x5 ft',
-                maxTonnage: 3,
-                dumpsterContainerType: 'Roll-off', // Corrected ID
-                gateType: 'Walk-in Door',
-                prohibitedMaterials: 'Tires, Batteries',
-                baseDailyRate: 150.00,
-                defaultRentalPeriod: 7,
-                minRentalPeriod: 1,
-                extendedDailyRate: 15.00,
-                deliveryFee: 75.00,
-                pickupFee: 75.00,
-                overagePerTonFee: 75.00,
-                disposalRatePerTon: 50.00,
-                damageWaiverCost: 25.00
-            },
-            {
-                id: 'EQ002',
-                type: 'Temporary Toilet',
-                size: 'Standard',
-                status: 'On Rent',
-                location: 'Job Site Alpha',
-                description: 'Basic portable toilet, serviced weekly.',
-                purchaseDate: '2023-03-01',
-                purchaseCost: 800.00,
-                supplierManufacturer: 'Porta-Loo Co.',
-                toiletCapacity: '60 Gallons',
-                serviceFrequency: 'Weekly',
-                toiletFeatures: 'Urinal, Toilet Paper Dispenser',
-                baseDailyRate: 25.00,
-                defaultRentalPeriod: 28, // 4 weeks
-                minRentalPeriod: 7,
-                extendedDailyRate: 5.00,
-                deliveryFee: 50.00,
-                pickupFee: 50.00,
-                overagePerTonFee: 0,
-                disposalRatePerTon: 0,
-                damageWaiverCost: 10.00
-            },
-            {
-                id: 'EQ003',
-                type: 'Storage Container',
-                size: '40ft',
-                status: 'In Maintenance',
-                location: 'Repair Shop',
-                description: 'Needs door repair.',
-                purchaseDate: '2021-06-20',
-                purchaseCost: 6000.00,
-                supplierManufacturer: 'Container Solutions',
-                storageContainerType: 'Standard', // Corrected ID
-                doorType: 'Swing-out',
-                condition: 'As-Is',
-                securityFeatures: 'Lockbox',
-                baseDailyRate: 90.00,
-                defaultRentalPeriod: 30,
-                minRentalPeriod: 14,
-                extendedDailyRate: 20.00,
-                deliveryFee: 100.00,
-                pickupFee: 100.00,
-                overagePerTonFee: 0,
-                disposalRatePerTon: 0,
-                damageWaiverCost: 30.00
-            },
-            {
-                id: 'EQ004',
-                type: 'Dumpster',
-                size: '30-yard',
-                status: 'Available',
-                location: 'Yard B',
-                description: 'Larger capacity dumpster, heavy duty.',
-                purchaseDate: '2023-09-10',
-                purchaseCost: 4500.00,
-                supplierManufacturer: 'MegaBins Inc.',
-                dumpsterDimensions: '22x8x6 ft',
-                maxTonnage: 5,
-                dumpsterContainerType: 'Roll-off', // Corrected ID
-                gateType: 'No Door',
-                prohibitedMaterials: 'Asbestos, Chemicals',
-                baseDailyRate: 200.00,
-                defaultRentalPeriod: 10,
-                minRentalPeriod: 3,
-                extendedDailyRate: 20.00,
-                deliveryFee: 100.00,
-                pickupFee: 100.00,
-                overagePerTonFee: 85.00,
-                disposalRatePerTon: 60.00,
-                damageWaiverCost: 35.00
-            },
-            {
-                id: 'EQ005',
-                type: 'Temporary Toilet',
-                size: 'ADA Compliant',
-                status: 'Available',
-                location: 'Yard A',
-                description: 'ADA compliant unit with handrails.',
-                purchaseDate: '2024-01-05',
-                purchaseCost: 1200.00,
-                supplierManufacturer: 'Accessible Loos',
-                toiletCapacity: '80 Gallons',
-                serviceFrequency: 'Weekly',
-                toiletFeatures: 'Handrails, Wider Door, Interior Light',
-                baseDailyRate: 35.00,
-                defaultRentalPeriod: 28,
-                minRentalPeriod: 7,
-                extendedDailyRate: 7.00,
-                deliveryFee: 60.00,
-                pickupFee: 60.00,
-                overagePerTonFee: 0,
-                disposalRatePerTon: 0,
-                damageWaiverCost: 15.00
-            },
-            {
-                id: 'EQ006',
-                type: 'Storage Container',
-                size: '20ft',
-                status: 'On Rent',
-                location: 'Customer Warehouse',
-                description: 'Secure storage for tools and equipment.',
-                purchaseDate: '2022-11-01',
-                purchaseCost: 4000.00,
-                supplierManufacturer: 'Secure Storage Units',
-                storageContainerType: 'Standard', // Corrected ID
-                doorType: 'Roll-up',
-                condition: 'Wind & Watertight',
-                securityFeatures: 'Reinforced Doors',
-                baseDailyRate: 60.00,
-                defaultRentalPeriod: 30,
-                minRentalPeriod: 7,
-                extendedDailyRate: 12.00,
-                deliveryFee: 80.00,
-                pickupFee: 80.00,
-                overagePerTonFee: 0,
-                disposalRatePerTon: 0,
-                damageWaiverCost: 20.00
-            },
-            {
-                id: 'EQ007',
-                type: 'Dumpster',
-                size: '10-yard',
-                status: 'Reserved',
-                location: 'Yard A',
-                description: 'Small dumpster for residential cleanouts.',
-                purchaseDate: '2023-05-20',
-                purchaseCost: 2500.00,
-                supplierManufacturer: 'EcoBins',
-                dumpsterDimensions: '12x8x3.5 ft',
-                maxTonnage: 1.5,
-                dumpsterContainerType: 'Roll-off', // Corrected ID
-                gateType: 'Walk-in Door',
-                prohibitedMaterials: 'Paint, Oils',
-                baseDailyRate: 100.00,
-                defaultRentalPeriod: 5,
-                minRentalPeriod: 1,
-                extendedDailyRate: 10.00,
-                deliveryFee: 60.00,
-                pickupFee: 60.00,
-                overagePerTonFee: 60.00,
-                disposalRatePerTon: 40.00,
-                damageWaiverCost: 15.00
-            }
-        ];
-    }
+(function() { // Wrap in IIFE
+    // Access global data directly.
+    let equipmentData = window.equipmentData; // Use 'let' because you might reassign this array (e.g., after filter/delete)
 
-    // Use a local reference for convenience, but it points to the window.equipmentData
-    let equipmentData = window.equipmentData;
-
-    let currentEquipmentId = null;
+    let currentEquipmentId = null; // Local variable, safe within IIFE
 
     // Get elements
     const equipmentTableBody = document.querySelector('#equipmentTable tbody');
@@ -588,7 +410,7 @@
     const detailDumpsterFields = document.getElementById('detailDumpsterFields');
     const detailDumpsterDimensions = document.getElementById('detailDumpsterDimensions');
     const detailMaxTonnage = document.getElementById('detailMaxTonnage');
-    const detailDumpsterContainerType = document.getElementById('detailDumpsterContainerType'); // Corrected ID
+    const detailDumpsterContainerType = document.getElementById('detailDumpsterContainerType');
     const detailGateType = document.getElementById('detailGateType');
     const detailProhibitedMaterials = document.getElementById('detailProhibitedMaterials');
 
@@ -600,7 +422,7 @@
 
     // Container specific detail elements
     const detailContainerFields = document.getElementById('detailContainerFields');
-    const detailStorageContainerType = document.getElementById('detailStorageContainerType'); // Corrected ID
+    const detailStorageContainerType = document.getElementById('detailStorageContainerType');
     const detailDoorType = document.getElementById('detailDoorType');
     const detailCondition = document.getElementById('detailCondition');
     const detailSecurityFeatures = document.getElementById('detailSecurityFeatures');
@@ -627,6 +449,7 @@
     });
 
     // --- Modal Functions ---
+    // Assuming openModal and closeModal are defined globally in index.html
     function openModal(modalId) {
         document.getElementById(modalId).classList.remove('hidden');
     }
@@ -738,7 +561,7 @@
             if (equipment.type === 'Dumpster') {
                 document.getElementById('dumpsterDimensions').value = equipment.dumpsterDimensions || '';
                 document.getElementById('maxTonnage').value = equipment.maxTonnage || '';
-                document.getElementById('dumpsterContainerType').value = equipment.dumpsterContainerType || ''; // Corrected ID
+                document.getElementById('dumpsterContainerType').value = equipment.dumpsterContainerType || '';
                 document.getElementById('gateType').value = equipment.gateType || '';
                 document.getElementById('prohibitedMaterials').value = equipment.prohibitedMaterials || '';
             } else if (equipment.type === 'Temporary Toilet') {
@@ -746,7 +569,7 @@
                 document.getElementById('serviceFrequency').value = equipment.serviceFrequency || 'Weekly';
                 document.getElementById('toiletFeatures').value = equipment.toiletFeatures || '';
             } else if (equipment.type === 'Storage Container') {
-                document.getElementById('storageContainerType').value = equipment.storageContainerType || ''; // Corrected ID
+                document.getElementById('storageContainerType').value = equipment.storageContainerType || '';
                 document.getElementById('doorType').value = equipment.doorType || '';
                 document.getElementById('condition').value = equipment.condition || '';
                 document.getElementById('securityFeatures').value = equipment.securityFeatures || '';
@@ -762,7 +585,7 @@
         event.preventDefault(); // Prevent default form submission
 
         const id = equipmentIdField.value;
-        const type = equipmentTypeSelect.value; // Use the select element directly
+        const type = equipmentTypeSelect.value;
         const size = document.getElementById('equipmentSize').value;
         const status = document.getElementById('equipmentStatus').value;
         const location = document.getElementById('equipmentLocation').value;
@@ -813,7 +636,7 @@
         if (type === 'Dumpster') {
             newEquipment.dumpsterDimensions = document.getElementById('dumpsterDimensions').value;
             newEquipment.maxTonnage = parseFloat(document.getElementById('maxTonnage').value) || 0;
-            newEquipment.dumpsterContainerType = document.getElementById('dumpsterContainerType').value; // Corrected ID
+            newEquipment.dumpsterContainerType = document.getElementById('dumpsterContainerType').value;
             newEquipment.gateType = document.getElementById('gateType').value;
             newEquipment.prohibitedMaterials = document.getElementById('prohibitedMaterials').value;
         } else if (type === 'Temporary Toilet') {
@@ -821,7 +644,7 @@
             newEquipment.serviceFrequency = document.getElementById('serviceFrequency').value;
             newEquipment.toiletFeatures = document.getElementById('toiletFeatures').value;
         } else if (type === 'Storage Container') {
-            newEquipment.storageContainerType = document.getElementById('storageContainerType').value; // Corrected ID
+            newEquipment.storageContainerType = document.getElementById('storageContainerType').value;
             newEquipment.doorType = document.getElementById('doorType').value;
             newEquipment.condition = document.getElementById('condition').value;
             newEquipment.securityFeatures = document.getElementById('securityFeatures').value;
@@ -895,7 +718,7 @@
                 detailDumpsterFields.classList.remove('hidden');
                 detailDumpsterDimensions.textContent = equipment.dumpsterDimensions || 'N/A';
                 detailMaxTonnage.textContent = equipment.maxTonnage || 'N/A';
-                detailDumpsterContainerType.textContent = equipment.dumpsterContainerType || 'N/A'; // Corrected ID
+                detailDumpsterContainerType.textContent = equipment.dumpsterContainerType || 'N/A';
                 detailGateType.textContent = equipment.gateType || 'N/A';
                 detailProhibitedMaterials.textContent = equipment.prohibitedMaterials || 'N/A';
             } else if (equipment.type === 'Temporary Toilet') {
@@ -905,7 +728,7 @@
                 detailToiletFeatures.textContent = equipment.toiletFeatures || 'N/A';
             } else if (equipment.type === 'Storage Container') {
                 detailContainerFields.classList.remove('hidden');
-                detailStorageContainerType.textContent = equipment.storageContainerType || 'N/A'; // Corrected ID
+                detailStorageContainerType.textContent = equipment.storageContainerType || 'N/A';
                 detailDoorType.textContent = equipment.doorType || 'N/A';
                 detailCondition.textContent = equipment.condition || 'N/A';
                 detailSecurityFeatures.textContent = equipment.securityFeatures || 'N/A';
@@ -926,7 +749,7 @@
         // Reset values of all type-specific fields to prevent old data persistence
         document.getElementById('dumpsterDimensions').value = '';
         document.getElementById('maxTonnage').value = '';
-        document.getElementById('dumpsterContainerType').value = ''; // Corrected ID
+        document.getElementById('dumpsterContainerType').value = '';
         document.getElementById('gateType').value = '';
         document.getElementById('prohibitedMaterials').value = '';
 
@@ -934,7 +757,7 @@
         document.getElementById('serviceFrequency').value = 'Weekly'; // Default
         document.getElementById('toiletFeatures').value = '';
 
-        document.getElementById('storageContainerType').value = ''; // Corrected ID
+        document.getElementById('storageContainerType').value = '';
         document.getElementById('doorType').value = '';
         document.getElementById('condition').value = '';
         document.getElementById('securityFeatures').value = '';
@@ -971,10 +794,6 @@
     }
 
     // Initial render when the module loads
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        renderEquipmentTable();
-    } else {
-        document.addEventListener('DOMContentLoaded', renderEquipmentTable);
-    }
-
+    renderEquipmentTable();
+})(); // End of IIFE
 </script>

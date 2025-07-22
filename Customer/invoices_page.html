@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RentPro - My Invoices</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'chili-red': '#EA3A26',
+                        'ut-orange': '#FF8600',
+                        'chili-red-2': '#EA3D2A',
+                        'chili-red-3': '#EA3D24',
+                        'tangelo': '#F54F1D',
+                        'custom-red': '#FF2424',
+                        'custom-red-2': '#FF0000',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.6s ease-in-out',
+                        'slide-up': 'slideUp 0.6s ease-out',
+                        'pulse-custom': 'pulse 0.5s ease-in-out',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-backdrop {
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 font-sans">
+    <button
+        id="mobileNavToggle"
+        class="lg:hidden fixed top-4 left-4 z-50 bg-chili-red text-white p-3 rounded-lg shadow-lg hover:bg-chili-red-2 transition-colors duration-300"
+    >
+        <i class="fas fa-bars text-lg"></i>
+    </button>
+
+    <div
+        id="sidebarOverlay"
+        class="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40 opacity-0 invisible transition-all duration-300"
+    ></div>
+
+    <div class="flex min-h-screen">
+        <nav
+            id="sidebar"
+            class="fixed lg:relative bg-gradient-to-b from-black to-gray-800 w-72 h-screen overflow-y-auto z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out"
+        >
+            <div class="text-center py-8 px-6">
+                <h1 class="text-chili-red text-3xl font-bold drop-shadow-lg">
+                    <i class="fas fa-truck mr-2"></i>RentPro
+                </h1>
+            </div>
+
+            <ul class="space-y-2 px-4">
+                <li>
+                    <a href="customer_index.html" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange">
+                        <i class="fas fa-tachometer-alt mr-4 text-lg"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="bookings_page.html" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange">
+                        <i class="fas fa-calendar-alt mr-4 text-lg"></i>
+                        Bookings
+                        <span class="absolute -top-1 -right-1 bg-custom-red-2 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">3</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link active bg-gradient-to-r from-chili-red to-tangelo border-ut-orange transform translate-x-2 flex items-center px-6 py-4 text-white transition-all duration-300 rounded-lg border-l-4 relative">
+                        <i class="fas fa-file-invoice mr-4 text-lg"></i>
+                        Invoices
+                        <span class="absolute -top-1 -right-1 bg-custom-red-2 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">2</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange relative">
+                        <i class="fas fa-quote-left mr-4 text-lg"></i>
+                        Quotes
+                        <span class="absolute -top-1 -right-1 bg-custom-red-2 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">1</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange relative">
+                        <i class="fas fa-bell mr-4 text-lg"></i>
+                        Notifications
+                        <span class="absolute -top-1 -right-1 bg-custom-red-2 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">5</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange">
+                        <i class="fas fa-credit-card mr-4 text-lg"></i>
+                        Payment Methods
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange">
+                        <i class="fas fa-user-circle mr-4 text-lg"></i>
+                        Profile
+                    </a>
+                </li>
+                <li class="mt-8">
+                    <a href="#" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange">
+                        <i class="fas fa-sign-out-alt mr-4 text-lg"></i>
+                        Logout
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="flex-1 lg:ml-0 p-4 lg:p-8 mt-16 lg:mt-0">
+            <header class="bg-white rounded-2xl shadow-lg p-6 lg:p-8 mb-8">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0">
+                    <div>
+                        <h1 class="text-chili-red text-3xl lg:text-4xl font-bold mb-2">My Invoices</h1>
+                        <p class="text-gray-600 text-lg">View and manage your past and pending invoices</p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+                        <button onclick="showNotification('Generating new invoice report...', 'info')" class="bg-gradient-to-r from-chili-red to-tangelo text-white px-6 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl hover:transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center">
+                            <i class="fas fa-file-export mr-2"></i>
+                            Export Invoices
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="bg-white rounded-2xl shadow-lg mb-8">
+                <div class="border-b border-gray-200">
+                    <nav class="flex space-x-8 px-6 lg:px-8">
+                        <button onclick="filterInvoices('all')" id="allInvoicesTab" class="tab-button py-4 px-2 border-b-2 border-chili-red text-chili-red font-semibold">
+                            All Invoices
+                            <span class="ml-2 bg-chili-red text-white text-xs px-2 py-1 rounded-full" id="allCount">6</span>
+                        </button>
+                        <button onclick="filterInvoices('pending')" id="pendingInvoicesTab" class="tab-button py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-semibold">
+                            Pending
+                            <span class="ml-2 bg-yellow-500 text-white text-xs px-2 py-1 rounded-full" id="pendingCount">2</span>
+                        </button>
+                        <button onclick="filterInvoices('overdue')" id="overdueInvoicesTab" class="tab-button py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-semibold">
+                            Overdue
+                            <span class="ml-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full" id="overdueCount">1</span>
+                        </button>
+                        <button onclick="filterInvoices('paid')" id="paidInvoicesTab" class="tab-button py-4 px-2 border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-semibold">
+                            Paid
+                            <span class="ml-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full" id="paidCount">3</span>
+                        </button>
+                    </nav>
+                </div>
+
+                <div class="p-6 lg:p-8">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice ID</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Issue Date</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Due Date</th>
+                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Total Amount</th>
+                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Balance Due</th>
+                                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                    <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200" id="invoiceTableBody">
+                                <tr data-status="pending">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">INV-001</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-07-01</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-07-15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900">$550.00</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900">$550.00</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <button onclick="openInvoiceDetailsModal('INV-001')" class="text-chili-red hover:text-chili-red-2 mr-3">View</button>
+                                        <button onclick="payInvoice('INV-001', 550.00)" class="bg-chili-red text-white px-3 py-1 rounded-md text-xs hover:bg-chili-red-2">Pay Now</button>
+                                    </td>
+                                </tr>
+                                <tr data-status="overdue">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">INV-002</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-06-10</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-06-25</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900">$720.00</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900">$720.00</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Overdue</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <button onclick="openInvoiceDetailsModal('INV-002')" class="text-chili-red hover:text-chili-red-2 mr-3">View</button>
+                                        <button onclick="payInvoice('INV-002', 720.00)" class="bg-chili-red text-white px-3 py-1 rounded-md text-xs hover:bg-chili-red-2">Pay Now</button>
+                                    </td>
+                                </tr>
+                                <tr data-status="paid">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">INV-003</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-05-20</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-06-03</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900">$385.00</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900">$0.00</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Paid</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <button onclick="openInvoiceDetailsModal('INV-003')" class="text-chili-red hover:text-chili-red-2 mr-3">View</button>
+                                        <button onclick="downloadInvoice('INV-003')" class="text-gray-500 hover:text-gray-700">Download</button>
+                                    </td>
+                                </tr>
+                                <tr data-status="pending">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">INV-004</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-07-18</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-08-01</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900">$210.00</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900">$210.00</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <button onclick="openInvoiceDetailsModal('INV-004')" class="text-chili-red hover:text-chili-red-2 mr-3">View</button>
+                                        <button onclick="payInvoice('INV-004', 210.00)" class="bg-chili-red text-white px-3 py-1 rounded-md text-xs hover:bg-chili-red-2">Pay Now</button>
+                                    </td>
+                                </tr>
+                                <tr data-status="paid">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">INV-005</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-04-05</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-04-19</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900">$495.00</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900">$0.00</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Paid</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <button onclick="openInvoiceDetailsModal('INV-005')" class="text-chili-red hover:text-chili-red-2 mr-3">View</button>
+                                        <button onclick="downloadInvoice('INV-005')" class="text-gray-500 hover:text-gray-700">Download</button>
+                                    </td>
+                                </tr>
+                                <tr data-status="paid">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">INV-006</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-03-01</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">2025-03-15</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900">$1200.00</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900">$0.00</td>
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Paid</span>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <button onclick="openInvoiceDetailsModal('INV-006')" class="text-chili-red hover:text-chili-red-2 mr-3">View</button>
+                                        <button onclick="downloadInvoice('INV-006')" class="text-gray-500 hover:text-gray-700">Download</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="invoiceDetailsModal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop z-50 flex items-center justify-center opacity-0 invisible transition-all duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl mx-4 max-h-screen overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-2xl font-bold text-chili-red">Invoice Details <span id="modalInvoiceId"></span></h3>
+                    <button onclick="closeInvoiceDetailsModal()" class="text-gray-400 hover:text-gray-600 text-2xl">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6" id="modalInvoiceContent">
+                </div>
+        </div>
+    </div>
+
+
+    <script>
+        // Dummy Invoice Data for Details Modal
+        const invoicesData = {
+            'INV-001': {
+                issueDate: '2025-07-01',
+                dueDate: '2025-07-15',
+                totalAmount: '550.00',
+                balanceDue: '550.00',
+                status: 'Pending',
+                terms: 'Net 15 days.',
+                notes: 'Thank you for your business!',
+                lineItems: [
+                    { description: '20-Yard Roll-off Dumpster Rental (Jul 1 - Jul 10)', quantity: 1, unitPrice: '450.00', total: '450.00' },
+                    { description: 'Delivery Fee', quantity: 1, unitPrice: '50.00', total: '50.00' },
+                    { description: 'Environmental Fee', quantity: 1, unitPrice: '20.00', total: '20.00' },
+                    { description: 'Fuel Surcharge', quantity: 1, unitPrice: '30.00', total: '30.00' }
+                ]
+            },
+            'INV-002': {
+                issueDate: '2025-06-10',
+                dueDate: '2025-06-25',
+                totalAmount: '720.00',
+                balanceDue: '720.00',
+                status: 'Overdue',
+                terms: 'Net 15 days. Late fee of 5% applies after due date.',
+                notes: 'Please remit payment as soon as possible.',
+                lineItems: [
+                    { description: '40-Foot Storage Container Rental (Jun 10 - Jul 10)', quantity: 1, unitPrice: '650.00', total: '650.00' },
+                    { description: 'Delivery Fee', quantity: 1, unitPrice: '70.00', total: '70.00' }
+                ]
+            },
+            'INV-003': {
+                issueDate: '2025-05-20',
+                dueDate: '2025-06-03',
+                totalAmount: '385.00',
+                balanceDue: '0.00',
+                status: 'Paid',
+                terms: 'Net 14 days.',
+                notes: 'Payment received. Thank you!',
+                lineItems: [
+                    { description: '15-Yard Roll-off Dumpster Rental (May 20 - May 27)', quantity: 1, unitPrice: '320.00', total: '320.00' },
+                    { description: 'Delivery & Pickup Fee', quantity: 1, unitPrice: '65.00', total: '65.00' }
+                ]
+            },
+            'INV-004': {
+                issueDate: '2025-07-18',
+                dueDate: '2025-08-01',
+                totalAmount: '210.00',
+                balanceDue: '210.00',
+                status: 'Pending',
+                terms: 'Net 14 days.',
+                notes: 'Upcoming service.',
+                lineItems: [
+                    { description: 'ADA Compliant Portable Toilet Rental (Jul 18 - Aug 18)', quantity: 1, unitPrice: '180.00', total: '180.00' },
+                    { description: 'Initial Service Fee', quantity: 1, unitPrice: '30.00', total: '30.00' }
+                ]
+            },
+            'INV-005': {
+                issueDate: '2025-04-05',
+                dueDate: '2025-04-19',
+                totalAmount: '495.00',
+                balanceDue: '0.00',
+                status: 'Paid',
+                terms: 'Net 14 days.',
+                notes: 'Full payment received.',
+                lineItems: [
+                    { description: '20-Foot Storage Container Rental (Apr 5 - May 5)', quantity: 1, unitPrice: '450.00', total: '450.00' },
+                    { description: 'Delivery Fee', quantity: 1, unitPrice: '45.00', total: '45.00' }
+                ]
+            },
+            'INV-006': {
+                issueDate: '2025-03-01',
+                dueDate: '2025-03-15',
+                totalAmount: '1200.00',
+                balanceDue: '0.00',
+                status: 'Paid',
+                terms: 'Net 15 days.',
+                notes: 'Thank you for your continued business.',
+                lineItems: [
+                    { description: '30-Yard Roll-off Dumpster Rental (Mar 1 - Mar 15)', quantity: 1, unitPrice: '900.00', total: '900.00' },
+                    { description: 'Additional Tonnage (2 tons @ $85/ton)', quantity: 2, unitPrice: '85.00', total: '170.00' },
+                    { description: 'Disposal Charges', quantity: 1, unitPrice: '130.00', total: '130.00' }
+                ]
+            }
+        };
+
+        // Tab filtering functionality
+        function filterInvoices(status) {
+            const rows = document.querySelectorAll('#invoiceTableBody tr');
+            rows.forEach(row => {
+                if (status === 'all' || row.dataset.status === status) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Update active tab styling
+            document.querySelectorAll('.tab-button').forEach(tab => {
+                tab.classList.remove('border-chili-red', 'text-chili-red');
+                tab.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700');
+            });
+            const activeTab = document.getElementById(status + 'InvoicesTab');
+            if (activeTab) {
+                activeTab.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700');
+                activeTab.classList.add('border-chili-red', 'text-chili-red');
+            }
+        }
+
+        // Invoice Details Modal functions
+        function openInvoiceDetailsModal(invoiceId) {
+            const modal = document.getElementById('invoiceDetailsModal');
+            const modalInvoiceId = document.getElementById('modalInvoiceId');
+            const modalContent = document.getElementById('modalInvoiceContent');
+            const invoice = invoicesData[invoiceId];
+
+            if (!invoice) {
+                showNotification(`Invoice ${invoiceId} not found.`, 'error');
+                return;
+            }
+
+            modalInvoiceId.textContent = `#${invoiceId}`;
+
+            let lineItemsHtml = invoice.lineItems.map(item => `
+                <div class="flex justify-between py-2 border-b border-gray-100 last:border-b-0">
+                    <div class="text-gray-700">${item.description}</div>
+                    <div class="text-gray-600">${item.quantity} x $${item.unitPrice}</div>
+                    <div class="font-semibold text-gray-800">$${item.total}</div>
+                </div>
+            `).join('');
+
+            modalContent.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <p class="text-sm text-gray-500">Issue Date:</p>
+                        <p class="font-semibold text-gray-800">${invoice.issueDate}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Due Date:</p>
+                        <p class="font-semibold text-gray-800">${invoice.dueDate}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Status:</p>
+                        <p class="font-semibold text-gray-800">${invoice.status}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Total Amount:</p>
+                        <p class="text-2xl font-bold text-chili-red">$${invoice.totalAmount}</p>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-500">Balance Due:</p>
+                        <p class="text-xl font-bold text-gray-800">$${invoice.balanceDue}</p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-lg mb-6">
+                    <h4 class="font-bold text-gray-800 mb-3">Invoice Items</h4>
+                    ${lineItemsHtml}
+                </div>
+
+                <div class="mb-6">
+                    <h4 class="font-bold text-gray-800 mb-2">Terms & Notes</h4>
+                    <p class="text-gray-600 text-sm">${invoice.terms}</p>
+                    <p class="text-gray-600 text-sm mt-2">${invoice.notes}</p>
+                </div>
+
+                <div class="flex gap-3 justify-end">
+                    ${invoice.status !== 'Paid' ? `<button onclick="payInvoice('${invoiceId}', ${invoice.balanceDue})" class="bg-chili-red text-white px-6 py-3 rounded-lg hover:bg-chili-red-2 transition-colors duration-300 flex items-center"><i class="fas fa-credit-card mr-2"></i>Pay Now</button>` : ''}
+                    <button onclick="downloadInvoice('${invoiceId}')" class="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors duration-300 flex items-center"><i class="fas fa-download mr-2"></i>Download PDF</button>
+                </div>
+            `;
+
+            modal.classList.remove('opacity-0', 'invisible');
+            modal.classList.add('opacity-100', 'visible');
+        }
+
+        function closeInvoiceDetailsModal() {
+            const modal = document.getElementById('invoiceDetailsModal');
+            modal.classList.add('opacity-0', 'invisible');
+            modal.classList.remove('opacity-100', 'visible');
+        }
+
+        function payInvoice(invoiceId, amount) {
+            closeInvoiceDetailsModal(); // Close modal if open
+            showNotification(`Initiating payment for Invoice #${invoiceId} of $${amount.toFixed(2)}...`, 'info');
+            // Simulate payment processing
+            setTimeout(() => {
+                showNotification(`Payment for Invoice #${invoiceId} processed successfully!`, 'success');
+                // In a real application, you would update the invoice status via API
+                // For this demo, let's manually update the status on the UI if it was pending/overdue
+                const row = document.querySelector(`#invoiceTableBody tr[data-status][data-status="pending"] .font-medium:contains("${invoiceId}")`)?.closest('tr') ||
+                            document.querySelector(`#invoiceTableBody tr[data-status][data-status="overdue"] .font-medium:contains("${invoiceId}")`)?.closest('tr');
+                if (row) {
+                    row.dataset.status = 'paid';
+                    const statusSpan = row.querySelector('.px-2.inline-flex');
+                    statusSpan.classList.remove('bg-yellow-100', 'text-yellow-800', 'bg-red-100', 'text-red-800');
+                    statusSpan.classList.add('bg-green-100', 'text-green-800');
+                    statusSpan.innerHTML = '<i class="fas fa-check-circle mr-1"></i>Paid';
+                    row.querySelector('td:nth-child(5)').textContent = '$0.00'; // Balance Due
+                    const payButton = row.querySelector('button.bg-chili-red');
+                    if (payButton) payButton.remove(); // Remove pay button
+                    updateInvoiceCounts();
+                }
+            }, 2000);
+        }
+
+        function downloadInvoice(invoiceId) {
+            showNotification(`Downloading Invoice #${invoiceId}...`, 'info');
+            // Simulate PDF generation/download
+        }
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm transition-all duration-300 transform translate-x-full`;
+
+            const colors = {
+                success: 'bg-green-500 text-white',
+                error: 'bg-red-500 text-white',
+                info: 'bg-blue-500 text-white',
+                warning: 'bg-yellow-500 text-white'
+            };
+
+            notification.className += ` ${colors[type]}`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <span class="flex-1">${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Mobile navigation functionality (copied from provided files for consistency)
+        const mobileNavToggle = document.getElementById('mobileNavToggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        function toggleMobileNav() {
+            sidebar.classList.toggle('translate-x-0');
+            sidebar.classList.toggle('-translate-x-full');
+            sidebarOverlay.classList.toggle('opacity-0');
+            sidebarOverlay.classList.toggle('invisible');
+            sidebarOverlay.classList.toggle('opacity-100');
+            sidebarOverlay.classList.toggle('visible');
+
+            const icon = mobileNavToggle.querySelector('i');
+            if (sidebar.classList.contains('translate-x-0')) {
+                icon.className = 'fas fa-times text-lg';
+            } else {
+                icon.className = 'fas fa-bars text-lg';
+            }
+        }
+
+        mobileNavToggle.addEventListener('click', toggleMobileNav);
+        sidebarOverlay.addEventListener('click', toggleMobileNav);
+
+        // Close mobile nav when clicking on nav links
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 1024) {
+                    toggleMobileNav();
+                }
+            });
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) {
+                sidebar.classList.remove('-translate-x-full');
+                sidebar.classList.add('translate-x-0');
+                sidebarOverlay.classList.add('opacity-0', 'invisible');
+                sidebarOverlay.classList.remove('opacity-100', 'visible');
+                mobileNavToggle.querySelector('i').className = 'fas fa-bars text-lg';
+            }
+        });
+
+        // Initial load functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            filterInvoices('all'); // Default to 'All Invoices' on load
+            updateInvoiceCounts(); // Update counts based on initial data
+        });
+
+        function updateInvoiceCounts() {
+            const allRows = document.querySelectorAll('#invoiceTableBody tr');
+            let allCount = allRows.length;
+            let pendingCount = 0;
+            let overdueCount = 0;
+            let paidCount = 0;
+
+            allRows.forEach(row => {
+                const status = row.dataset.status;
+                if (status === 'pending') {
+                    pendingCount++;
+                } else if (status === 'overdue') {
+                    overdueCount++;
+                } else if (status === 'paid') {
+                    paidCount++;
+                }
+            });
+
+            document.getElementById('allCount').textContent = allCount;
+            document.getElementById('pendingCount').textContent = pendingCount;
+            document.getElementById('overdueCount').textContent = overdueCount;
+            document.getElementById('paidCount').textContent = paidCount;
+
+            // Update sidebar notification for invoices
+            const invoiceNavBadge = document.querySelector('.nav-link.active .absolute');
+            if (invoiceNavBadge) {
+                invoiceNavBadge.textContent = pendingCount + overdueCount; // Sum of pending and overdue
+            }
+        }
+    </script>
+</body>
+</html>

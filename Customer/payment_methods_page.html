@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RentPro - Payment Methods</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'chili-red': '#EA3A26',
+                        'ut-orange': '#FF8600',
+                        'chili-red-2': '#EA3D2A',
+                        'chili-red-3': '#EA3D24',
+                        'tangelo': '#F54F1D',
+                        'custom-red': '#FF2424',
+                        'custom-red-2': '#FF0000',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.6s ease-in-out',
+                        'slide-up': 'slideUp 0.6s ease-out',
+                        'pulse-custom': 'pulse 0.5s ease-in-out',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .modal-backdrop {
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 font-sans">
+    <button
+        id="mobileNavToggle"
+        class="lg:hidden fixed top-4 left-4 z-50 bg-chili-red text-white p-3 rounded-lg shadow-lg hover:bg-chili-red-2 transition-colors duration-300"
+    >
+        <i class="fas fa-bars text-lg"></i>
+    </button>
+
+    <div
+        id="sidebarOverlay"
+        class="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40 opacity-0 invisible transition-all duration-300"
+    ></div>
+
+    <div class="flex min-h-screen">
+        <nav
+            id="sidebar"
+            class="fixed lg:relative bg-gradient-to-b from-black to-gray-800 w-72 h-screen overflow-y-auto z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out"
+        >
+            <div class="text-center py-8 px-6">
+                <h1 class="text-chili-red text-3xl font-bold drop-shadow-lg">
+                    <i class="fas fa-truck mr-2"></i>RentPro
+                </h1>
+            </div>
+
+            <ul class="space-y-2 px-4">
+                <li>
+                    <a href="customer_index.html" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange">
+                        <i class="fas fa-tachometer-alt mr-4 text-lg"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="bookings_page.html" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange">
+                        <i class="fas fa-calendar-alt mr-4 text-lg"></i>
+                        Bookings
+                        <span class="absolute -top-1 -right-1 bg-custom-red-2 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">3</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="invoices_page.html" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange relative">
+                        <i class="fas fa-file-invoice mr-4 text-lg"></i>
+                        Invoices
+                        <span class="absolute -top-1 -right-1 bg-custom-red-2 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">2</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="quotes_page.html" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange relative">
+                        <i class="fas fa-quote-left mr-4 text-lg"></i>
+                        Quotes
+                        <span class="absolute -top-1 -right-1 bg-custom-red-2 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">1</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="notifications_page.html" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange relative">
+                        <i class="fas fa-bell mr-4 text-lg"></i>
+                        Notifications
+                        <span class="absolute -top-1 -right-1 bg-custom-red-2 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">5</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link active bg-gradient-to-r from-chili-red to-tangelo border-ut-orange transform translate-x-2 flex items-center px-6 py-4 text-white transition-all duration-300 rounded-lg border-l-4">
+                        <i class="fas fa-credit-card mr-4 text-lg"></i>
+                        Payment Methods
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange">
+                        <i class="fas fa-user-circle mr-4 text-lg"></i>
+                        Profile
+                    </a>
+                </li>
+                <li class="mt-8">
+                    <a href="#" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange">
+                        <i class="fas fa-sign-out-alt mr-4 text-lg"></i>
+                        Logout
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="flex-1 lg:ml-0 p-4 lg:p-8 mt-16 lg:mt-0">
+            <header class="bg-white rounded-2xl shadow-lg p-6 lg:p-8 mb-8">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0">
+                    <div>
+                        <h1 class="text-chili-red text-3xl lg:text-4xl font-bold mb-2">My Payment Methods</h1>
+                        <p class="text-gray-600 text-lg">Manage your credit cards and payment preferences</p>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+                        <button onclick="openAddPaymentMethodModal()" class="bg-gradient-to-r from-chili-red to-tangelo text-white px-6 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl hover:transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center">
+                            <i class="fas fa-plus-circle mr-2"></i>
+                            Add New Card
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="bg-white rounded-2xl shadow-lg p-6 lg:p-8 mb-8">
+                <h3 class="flex items-center text-chili-red text-2xl font-bold mb-6">
+                    <i class="fas fa-credit-card mr-3"></i>
+                    Saved Cards
+                </h3>
+                <div class="space-y-4" id="paymentMethodsList">
+                    </div>
+                <p id="noPaymentMethodsMessage" class="text-center text-gray-500 py-8 hidden">You have no saved payment methods.</p>
+            </div>
+        </main>
+    </div>
+
+    <div id="paymentMethodModal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop z-50 flex items-center justify-center opacity-0 invisible transition-all duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-screen overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-2xl font-bold text-chili-red" id="modalTitle">Add New Payment Method</h3>
+                    <button onclick="closePaymentMethodModal()" class="text-gray-400 hover:text-gray-600 text-2xl">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6">
+                <form id="paymentMethodForm" onsubmit="savePaymentMethod(event)">
+                    <input type="hidden" id="cardId">
+                    <div class="mb-4">
+                        <label for="cardNickname" class="block text-sm font-medium text-gray-700 mb-2">Card Nickname (e.g., "My Visa", "Work Card")</label>
+                        <input type="text" id="cardNickname" name="cardNickname" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-chili-red focus:border-chili-red" placeholder="e.g., My Visa" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="cardNumber" class="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
+                        <input type="text" id="cardNumber" name="cardNumber" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-chili-red focus:border-chili-red" placeholder="**** **** **** 1234" maxlength="19" required>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label for="expiryDate" class="block text-sm font-medium text-gray-700 mb-2">Expiry Date (MM/YY)</label>
+                            <input type="text" id="expiryDate" name="expiryDate" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-chili-red focus:border-chili-red" placeholder="MM/YY" maxlength="5" required>
+                        </div>
+                        <div>
+                            <label for="cvv" class="block text-sm font-medium text-gray-700 mb-2">CVV</label>
+                            <input type="text" id="cvv" name="cvv" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-chili-red focus:border-chili-red" placeholder="***" maxlength="4" required>
+                        </div>
+                    </div>
+                    <div class="mb-6 flex items-center">
+                        <input type="checkbox" id="setDefault" name="setDefault" class="h-4 w-4 text-chili-red focus:ring-chili-red border-gray-300 rounded">
+                        <label for="setDefault" class="ml-2 block text-sm text-gray-900">Set as default payment method</label>
+                    </div>
+                    <div class="flex gap-3 justify-end">
+                        <button type="button" onclick="closePaymentMethodModal()" class="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors duration-300">Cancel</button>
+                        <button type="submit" class="bg-chili-red text-white px-6 py-3 rounded-lg hover:bg-chili-red-2 transition-colors duration-300">Save Card</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // Dummy Payment Method Data
+        let paymentMethods = [
+            { id: 1, nickname: 'My Primary Card', cardType: 'Visa', lastFour: '4242', expiry: '12/26', isDefault: true },
+            { id: 2, nickname: 'Work Debit', cardType: 'Mastercard', lastFour: '5858', expiry: '06/25', isDefault: false },
+            { id: 3, nickname: 'Backup Card', cardType: 'Amex', lastFour: '1005', expiry: '03/24', isDefault: false }
+        ];
+
+        function getCardIcon(cardType) {
+            switch (cardType.toLowerCase()) {
+                case 'visa': return 'fa-cc-visa';
+                case 'mastercard': return 'fa-cc-mastercard';
+                case 'amex': return 'fa-cc-amex';
+                case 'discover': return 'fa-cc-discover';
+                default: return 'fa-credit-card';
+            }
+        }
+
+        function renderPaymentMethods() {
+            const listContainer = document.getElementById('paymentMethodsList');
+            listContainer.innerHTML = ''; // Clear current list
+            const noPaymentMethodsMessage = document.getElementById('noPaymentMethodsMessage');
+
+            if (paymentMethods.length === 0) {
+                noPaymentMethodsMessage.classList.remove('hidden');
+                return;
+            } else {
+                noPaymentMethodsMessage.classList.add('hidden');
+            }
+
+            paymentMethods.sort((a, b) => (b.isDefault - a.isDefault)); // Sort default to top
+
+            paymentMethods.forEach(method => {
+                const item = document.createElement('div');
+                item.className = `bg-gray-50 rounded-xl p-4 shadow-sm flex items-center justify-between ${method.isDefault ? 'border-l-4 border-chili-red' : 'border-l-4 border-transparent'}`;
+                item.innerHTML = `
+                    <div class="flex items-center space-x-4">
+                        <div class="text-4xl text-gray-700">
+                            <i class="fab ${getCardIcon(method.cardType)}"></i>
+                        </div>
+                        <div>
+                            <div class="font-semibold text-gray-800">${method.nickname}</div>
+                            <div class="text-gray-600 text-sm">${method.cardType} ending in ${method.lastFour} &bull; Exp: ${method.expiry}</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        ${method.isDefault ? `
+                            <span class="bg-chili-red text-white text-xs px-3 py-1 rounded-full font-semibold">Default</span>
+                        ` : `
+                            <button onclick="setDefaultPaymentMethod(${method.id})" class="text-chili-red hover:text-chili-red-2 text-sm font-medium">Set Default</button>
+                        `}
+                        <button onclick="editPaymentMethod(${method.id})" class="text-blue-600 hover:text-blue-800 text-sm font-medium">Edit</button>
+                        <button onclick="removePaymentMethod(${method.id})" class="text-red-600 hover:text-red-800 text-sm font-medium">Remove</button>
+                    </div>
+                `;
+                listContainer.appendChild(item);
+            });
+        }
+
+        function openAddPaymentMethodModal() {
+            document.getElementById('modalTitle').textContent = 'Add New Payment Method';
+            document.getElementById('cardId').value = '';
+            document.getElementById('cardNickname').value = '';
+            document.getElementById('cardNumber').value = '';
+            document.getElementById('expiryDate').value = '';
+            document.getElementById('cvv').value = '';
+            document.getElementById('setDefault').checked = false;
+            document.getElementById('paymentMethodModal').classList.remove('opacity-0', 'invisible');
+            document.getElementById('paymentMethodModal').classList.add('opacity-100', 'visible');
+        }
+
+        function closePaymentMethodModal() {
+            document.getElementById('paymentMethodModal').classList.add('opacity-0', 'invisible');
+            document.getElementById('paymentMethodModal').classList.remove('opacity-100', 'visible');
+        }
+
+        function savePaymentMethod(event) {
+            event.preventDefault(); // Prevent default form submission
+
+            const id = document.getElementById('cardId').value;
+            const nickname = document.getElementById('cardNickname').value;
+            const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g, ''); // Remove spaces
+            const expiry = document.getElementById('expiryDate').value;
+            const cvv = document.getElementById('cvv').value;
+            const setDefault = document.getElementById('setDefault').checked;
+
+            // Basic validation
+            if (cardNumber.length < 13 || cardNumber.length > 19 || !/^\d+$/.test(cardNumber)) {
+                showNotification('Please enter a valid card number.', 'error');
+                return;
+            }
+            if (!/^\d{2}\/\d{2}$/.test(expiry)) {
+                showNotification('Expiry date must be in MM/YY format.', 'error');
+                return;
+            }
+            if (!/^\d{3,4}$/.test(cvv)) {
+                showNotification('CVV must be 3 or 4 digits.', 'error');
+                return;
+            }
+
+            const lastFour = cardNumber.slice(-4);
+            const cardType = detectCardType(cardNumber);
+
+            if (!cardType) {
+                showNotification('Could not detect card type. Please check the number.', 'error');
+                return;
+            }
+
+            if (id) {
+                // Edit existing method
+                const index = paymentMethods.findIndex(pm => pm.id === parseInt(id));
+                if (index > -1) {
+                    paymentMethods[index] = { ...paymentMethods[index], nickname, cardType, lastFour, expiry, isDefault: setDefault };
+                    if (setDefault) {
+                        paymentMethods.forEach((pm, i) => {
+                            if (i !== index) pm.isDefault = false;
+                        });
+                    }
+                    showNotification('Payment method updated successfully!', 'success');
+                }
+            } else {
+                // Add new method
+                const newId = paymentMethods.length > 0 ? Math.max(...paymentMethods.map(pm => pm.id)) + 1 : 1;
+                const newMethod = {
+                    id: newId,
+                    nickname,
+                    cardType,
+                    lastFour,
+                    expiry,
+                    isDefault: setDefault
+                };
+                if (setDefault) {
+                    paymentMethods.forEach(pm => pm.isDefault = false);
+                }
+                paymentMethods.push(newMethod);
+                showNotification('Payment method added successfully!', 'success');
+            }
+
+            closePaymentMethodModal();
+            renderPaymentMethods(); // Re-render the list
+        }
+
+        function editPaymentMethod(id) {
+            const method = paymentMethods.find(pm => pm.id === id);
+            if (method) {
+                document.getElementById('modalTitle').textContent = 'Edit Payment Method';
+                document.getElementById('cardId').value = method.id;
+                document.getElementById('cardNickname').value = method.nickname;
+                document.getElementById('cardNumber').value = '************' + method.lastFour; // Mask full number
+                document.getElementById('expiryDate').value = method.expiry;
+                document.getElementById('cvv').value = '***'; // Mask CVV for security
+                document.getElementById('setDefault').checked = method.isDefault;
+                document.getElementById('paymentMethodModal').classList.remove('opacity-0', 'invisible');
+                document.getElementById('paymentMethodModal').classList.add('opacity-100', 'visible');
+            }
+        }
+
+        function setDefaultPaymentMethod(id) {
+            paymentMethods.forEach(method => {
+                method.isDefault = (method.id === id);
+            });
+            renderPaymentMethods();
+            showNotification('Default payment method updated.', 'success');
+        }
+
+        function removePaymentMethod(id) {
+            if (confirm('Are you sure you want to remove this payment method?')) {
+                paymentMethods = paymentMethods.filter(method => method.id !== id);
+                renderPaymentMethods();
+                showNotification('Payment method removed successfully.', 'success');
+            }
+        }
+
+        function detectCardType(cardNumber) {
+            cardNumber = cardNumber.replace(/\D/g, ''); // Remove non-digits
+            if (/^4/.test(cardNumber)) return 'Visa';
+            if (/^5[1-5]/.test(cardNumber)) return 'Mastercard';
+            if (/^3[47]/.test(cardNumber)) return 'Amex';
+            if (/^6(?:011|5[0-9]{2})/.test(cardNumber)) return 'Discover';
+            return null;
+        }
+
+        // Notification system (copied for consistency)
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg max-w-sm transition-all duration-300 transform translate-x-full`;
+
+            const colors = {
+                success: 'bg-green-500 text-white',
+                error: 'bg-red-500 text-white',
+                info: 'bg-blue-500 text-white',
+                warning: 'bg-yellow-500 text-white'
+            };
+
+            notification.className += ` ${colors[type]}`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <span class="flex-1">${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Mobile navigation functionality (copied from provided files for consistency)
+        const mobileNavToggle = document.getElementById('mobileNavToggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        function toggleMobileNav() {
+            sidebar.classList.toggle('translate-x-0');
+            sidebar.classList.toggle('-translate-x-full');
+            sidebarOverlay.classList.toggle('opacity-0');
+            sidebarOverlay.classList.toggle('invisible');
+            sidebarOverlay.classList.toggle('opacity-100');
+            sidebarOverlay.classList.toggle('visible');
+
+            const icon = mobileNavToggle.querySelector('i');
+            if (sidebar.classList.contains('translate-x-0')) {
+                icon.className = 'fas fa-times text-lg';
+            } else {
+                icon.className = 'fas fa-bars text-lg';
+            }
+        }
+
+        mobileNavToggle.addEventListener('click', toggleMobileNav);
+        sidebarOverlay.addEventListener('click', toggleMobileNav);
+
+        // Close mobile nav when clicking on nav links
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 1024) {
+                    toggleMobileNav();
+                }
+            });
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) {
+                sidebar.classList.remove('-translate-x-full');
+                sidebar.classList.add('translate-x-0');
+                sidebarOverlay.classList.add('opacity-0', 'invisible');
+                sidebarOverlay.classList.remove('opacity-100', 'visible');
+                mobileNavToggle.querySelector('i').className = 'fas fa-bars text-lg';
+            }
+        });
+
+        // Initial load functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            renderPaymentMethods();
+        });
+    </script>
+</body>
+</html>

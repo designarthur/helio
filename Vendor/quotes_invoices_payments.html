@@ -298,119 +298,14 @@
 </div>
 
 <script>
-    // Ensure global data is accessible or provide minimal fallbacks
-    if (typeof window.customerData === 'undefined' || !Array.isArray(window.customerData)) {
-        console.warn("customerData not found, initializing fallback dummy data.");
-        window.customerData = [
-            { id: 'CUST001', name: 'Alice Smith', company: 'ABC Construction' },
-            { id: 'CUST002', name: 'Bob Johnson', company: '' },
-        ];
-    }
-    if (typeof window.equipmentData === 'undefined' || !Array.isArray(window.equipmentData)) {
-        console.warn("equipmentData not found, initializing fallback dummy data.");
-        window.equipmentData = [
-            { id: 'EQ001', type: 'Dumpster', size: '20-yard', baseDailyRate: 150, deliveryFee: 75, pickupFee: 75, damageWaiverCost: 25, overagePerTonFee: 75, disposalRatePerTon: 50, maxTonnage: 3 },
-            { id: 'EQ002', type: 'Temporary Toilet', size: 'Standard', baseDailyRate: 25, deliveryFee: 50, pickupFee: 50, damageWaiverCost: 10, serviceFrequency: 'Weekly' },
-            { id: 'EQ003', type: 'Storage Container', size: '40ft', baseDailyRate: 90, deliveryFee: 100, pickupFee: 100, damageWaiverCost: 30 },
-        ];
-    }
-    if (typeof window.bookingData === 'undefined' || !Array.isArray(window.bookingData)) {
-        console.warn("bookingData not found, initializing fallback dummy data.");
-        window.bookingData = [
-             { id: 'BOOK001', customerId: 'CUST001', equipmentId: 'EQ001', rentalStartDate: '2025-07-25', rentalEndDate: '2025-07-30', deliveryAddress: '123 Main St', pickupAddress: '123 Main St', status: 'Confirmed', totalPrice: 750.00, bookingNotes: '', estimatedTonnage: 2.5, prohibitedMaterialsAck: '' },
-        ];
-    }
-
-    // Ensure window.quotesData exists
-    if (typeof window.quotesData === 'undefined' || !Array.isArray(window.quotesData)) {
-        window.quotesData = [
-            {
-                id: 'QUO001',
-                customerId: 'CUST001',
-                quoteDate: '2025-07-15',
-                items: [
-                    { equipmentId: 'EQ001', rentalDays: 5, unitPrice: 150.00 } // Dumpster 20-yard for 5 days
-                ],
-                deliveryFee: 75.00,
-                pickupFee: 75.00,
-                damageWaiver: 25.00,
-                totalAmount: 850.00, // (150*5) + 75 + 75 + 25 = 850
-                notes: 'Special discount applied for long-term customer.',
-                status: 'Sent'
-            },
-            {
-                id: 'QUO002',
-                customerId: 'CUST002',
-                quoteDate: '2025-07-20',
-                items: [
-                    { equipmentId: 'EQ002', rentalDays: 28, unitPrice: 25.00 } // Toilet for 28 days
-                ],
-                deliveryFee: 50.00,
-                pickupFee: 50.00,
-                damageWaiver: 10.00,
-                totalAmount: 810.00, // (25*28) + 50 + 50 + 10 = 810
-                notes: '',
-                status: 'Draft'
-            }
-        ];
-    }
-
-    // Ensure window.invoicesData exists
-    if (typeof window.invoicesData === 'undefined' || !Array.isArray(window.invoicesData)) {
-        window.invoicesData = [
-            {
-                id: 'INV001',
-                customerId: 'CUST001',
-                issueDate: '2025-07-01',
-                dueDate: '2025-07-31',
-                items: [
-                    { description: '20-yard Dumpster Rental (Jul 1-15)', amount: 150.00 * 15 },
-                    { description: 'Delivery Fee', amount: 75.00 }
-                ],
-                totalAmount: 2325.00,
-                balanceDue: 0.00,
-                status: 'Paid',
-                linkedQuoteId: 'QUO001'
-            },
-            {
-                id: 'INV002',
-                customerId: 'CUST002',
-                issueDate: '2025-07-10',
-                dueDate: '2025-08-09',
-                items: [
-                    { description: 'Standard Toilet Rental (Jul 10-Aug 9)', amount: 25.00 * 31 },
-                    { description: 'Delivery Fee', amount: 50.00 },
-                    { description: 'Damage Waiver', amount: 10.00 }
-                ],
-                totalAmount: 835.00,
-                balanceDue: 835.00,
-                status: 'Sent',
-                linkedBookingId: 'BOOK002'
-            }
-        ];
-    }
-
-    // Ensure window.paymentsData exists
-    if (typeof window.paymentsData === 'undefined' || !Array.isArray(window.paymentsData)) {
-        window.paymentsData = [
-            {
-                id: 'PAY001',
-                invoiceId: 'INV001',
-                customerId: 'CUST001',
-                paymentDate: '2025-07-25',
-                amount: 2325.00,
-                method: 'Credit Card',
-                notes: 'Full payment received.'
-            }
-        ];
-    }
-
-    let customerData = window.customerData;
-    let equipmentData = window.equipmentData;
-    let quotesData = window.quotesData;
-    let invoicesData = window.invoicesData;
-    let paymentsData = window.paymentsData;
-    let bookingData = window.bookingData; // Needed for invoice generation from bookings
+(function() { // Wrap in IIFE
+    // Access global data directly from the window object
+    const customerData = window.customerData;
+    const equipmentData = window.equipmentData;
+    let quotesData = window.quotesData; // Use 'let' if you reassign this array
+    let invoicesData = window.invoicesData; // Use 'let'
+    let paymentsData = window.paymentsData; // Use 'let'
+    const bookingData = window.bookingData; // Use 'const'
 
     let currentQuoteId = null; // For editing quotes
     let currentInvoiceId = null; // For editing/marking paid invoices
@@ -481,10 +376,10 @@
 
 
     // --- General Modal Functions ---
+    // Assuming openModal and closeModal are defined globally in index.html
     function openModal(modalId) {
         document.getElementById(modalId).classList.remove('hidden');
     }
-
     function closeModal(modalId) {
         document.getElementById(modalId).classList.add('hidden');
         if (modalId === 'quoteModal') {
@@ -916,7 +811,7 @@
             customerId: 'CUST001', // Default to a dummy customer
             issueDate: new Date().toISOString().split('T')[0],
             dueDate: new Date(new Date().setDate(new Date().getDate() + 30)).toISOString().split('T')[0], // 30 days from now
-            items: [{ description: 'Manual Service Charge', amount: 100.00 }],
+            items: [{ description: 'Manual Service Charge', amount: 100.00, unitPrice: 100.00, quantity: 1 }],
             totalAmount: 100.00,
             balanceDue: 100.00,
             status: 'Sent',
@@ -1153,13 +1048,13 @@
         quote.status = 'Accepted';
 
         // 2. Create a Dummy Booking
-        const newBookingId = 'BOOK' + (bookingData.length + 1).toString().padStart(3, '0');
+        const newBookingId = 'BOOK' + (window.bookingData.length + 1).toString().padStart(3, '0'); // Use window.bookingData
         const dummyBooking = {
             id: newBookingId,
             customerId: quote.customerId,
             equipmentId: quote.items[0] ? quote.items[0].equipmentId : '', // Take first item's equipment
             rentalStartDate: new Date().toISOString().split('T')[0],
-            rentalEndDate: new Date(new Date().setDate(new Date().getDate() + quote.items[0].rentalDays)).toISOString().split('T')[0], // End date based on first item
+            rentalEndDate: new Date(new Date().setDate(new Date().getDate() + (quote.items[0] ? quote.items[0].rentalDays : 0))).toISOString().split('T')[0], // End date based on first item
             deliveryAddress: customerData.find(c => c.id === quote.customerId)?.billingAddress || 'N/A', // Use customer's billing address
             pickupAddress: customerData.find(c => c.id === quote.customerId)?.billingAddress || 'N/A',
             status: 'Confirmed',
@@ -1167,7 +1062,7 @@
             bookingNotes: `Generated from Quote ${quote.id}. ${quote.notes || ''}`,
             driverId: '' // Unassigned initially
         };
-        bookingData.push(dummyBooking);
+        window.bookingData.push(dummyBooking); // Push to global bookingData
 
         // 3. Create an Invoice from the Quote
         const newInvoiceId = 'INV' + (invoicesData.length + 1).toString().padStart(3, '0');
@@ -1175,12 +1070,14 @@
             const eq = equipmentData.find(e => e.id === item.equipmentId);
             return {
                 description: `${eq ? eq.type + ' (' + eq.size + ')' : 'Equipment'} Rental for ${item.rentalDays} days`,
-                amount: item.itemTotalPrice
+                amount: item.itemTotalPrice,
+                unitPrice: item.unitPrice, // Ensure unitPrice and quantity are included for consistency with global data structure
+                quantity: item.rentalDays
             };
         });
-        if (quote.deliveryFee > 0) invoiceItems.push({ description: 'Delivery Fee', amount: quote.deliveryFee });
-        if (quote.pickupFee > 0) invoiceItems.push({ description: 'Pickup Fee', amount: quote.pickupFee });
-        if (quote.damageWaiver > 0) invoiceItems.push({ description: 'Damage Waiver', amount: quote.damageWaiver });
+        if (quote.deliveryFee > 0) invoiceItems.push({ description: 'Delivery Fee', amount: quote.deliveryFee, unitPrice: quote.deliveryFee, quantity: 1 });
+        if (quote.pickupFee > 0) invoiceItems.push({ description: 'Pickup Fee', amount: quote.pickupFee, unitPrice: quote.pickupFee, quantity: 1 });
+        if (quote.damageWaiver > 0) invoiceItems.push({ description: 'Damage Waiver', amount: quote.damageWaiver, unitPrice: quote.damageWaiver, quantity: 1 });
 
 
         const newInvoice = {
@@ -1210,21 +1107,10 @@
 
 
     // --- Initial Render ---
-    // Ensure all tables are rendered and initial tab is shown
-    document.addEventListener('DOMContentLoaded', () => {
-        // Set default date for payment form
-        paymentDateInput.valueAsDate = new Date();
-        switchFinanceView('quotes'); // Default to Quotes tab
-    });
+    // This will run immediately after the module HTML is injected.
+    // Set default date for payment form input
+    paymentDateInput.valueAsDate = new Date();
+    switchFinanceView('quotes'); // Default to Quotes tab
 
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        paymentDateInput.valueAsDate = new Date();
-        switchFinanceView('quotes');
-    } else {
-        document.addEventListener('DOMContentLoaded', () => {
-            paymentDateInput.valueAsDate = new Date();
-            switchFinanceView('quotes');
-        });
-    }
-
+})(); // End of IIFE
 </script>

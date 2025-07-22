@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RentPro - Assigned Routes</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'chili-red': '#EA3A26',
+                        'ut-orange': '#FF8600',
+                        'chili-red-2': '#EA3D2A',
+                        'chili-red-3': '#EA3D24',
+                        'tangelo': '#F54F1D',
+                        'custom-red': '#FF2424',
+                        'custom-red-2': '#FF0000',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.6s ease-in-out',
+                        'slide-up': 'slideUp 0.6s ease-out',
+                        'pulse-custom': 'pulse 0.5s ease-in-out',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .stop-card.completed {
+            background-color: #f0fdf4; /* Light green for completed */
+            border-left-color: #22c55e; /* Tailwind green-500 */
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 font-sans">
+    <button
+        id="mobileNavToggle"
+        class="lg:hidden fixed top-4 left-4 z-50 bg-chili-red text-white p-3 rounded-lg shadow-lg hover:bg-chili-red-2 transition-colors duration-300"
+    >
+        <i class="fas fa-bars text-lg"></i>
+    </button>
+
+    <div
+        id="sidebarOverlay"
+        class="lg:hidden fixed inset-0 bg-black bg-opacity-50 z-40 opacity-0 invisible transition-all duration-300"
+    ></div>
+
+    <div class="flex min-h-screen">
+        <nav
+            id="sidebar"
+            class="fixed lg:relative bg-gradient-to-b from-black to-gray-800 w-72 h-screen overflow-y-auto z-40 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out"
+        >
+            <div class="text-center py-8 px-6">
+                <h1 class="text-chili-red text-3xl font-bold drop-shadow-lg">
+                    <i class="fas fa-truck-pickup mr-2"></i>RentPro
+                </h1>
+                <p class="text-gray-400 text-sm">Driver Portal</p>
+            </div>
+
+            <ul class="space-y-2 px-4">
+                <li>
+                    <a href="driver_dashboard.html" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange relative">
+                        <i class="fas fa-tachometer-alt mr-4 text-lg"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link active bg-gradient-to-r from-chili-red to-tangelo border-ut-orange transform translate-x-2 flex items-center px-6 py-4 text-white transition-all duration-300 rounded-lg border-l-4 relative">
+                        <i class="fas fa-route mr-4 text-lg"></i>
+                        Assigned Routes
+                        <span class="absolute -top-1 -right-1 bg-custom-red-2 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">2</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange relative">
+                        <i class="fas fa-calendar-alt mr-4 text-lg"></i>
+                        Schedule
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange relative">
+                        <i class="fas fa-clipboard-check mr-4 text-lg"></i>
+                        Vehicle Inspection
+                        <span class="absolute -top-1 -right-1 bg-custom-red-2 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">!</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange relative">
+                        <i class="fas fa-hourglass-half mr-4 text-lg"></i>
+                        Driver Log (HOS)
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange relative">
+                        <i class="fas fa-comments mr-4 text-lg"></i>
+                        Messages
+                        <span class="absolute -top-1 -right-1 bg-custom-red-2 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">3</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange">
+                        <i class="fas fa-user-circle mr-4 text-lg"></i>
+                        Profile
+                    </a>
+                </li>
+                <li class="mt-8">
+                    <a href="driver_login.html" class="nav-link flex items-center px-6 py-4 text-white hover:bg-gradient-to-r hover:from-chili-red hover:to-tangelo hover:transform hover:translate-x-2 transition-all duration-300 rounded-lg border-l-4 border-transparent hover:border-ut-orange">
+                        <i class="fas fa-sign-out-alt mr-4 text-lg"></i>
+                        Logout
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="flex-1 lg:ml-0 p-4 lg:p-8 mt-16 lg:mt-0">
+            <header class="bg-white rounded-2xl shadow-lg p-6 lg:p-8 mb-8 flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0">
+                <div class="text-center lg:text-left">
+                    <h2 class="text-chili-red text-2xl lg:text-3xl font-bold mb-2">Today's Routes</h2>
+                    <p class="text-gray-600 text-lg">Manage your deliveries and pickups for today</p>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+                    <button onclick="showNotification('Starting navigation for current route...', 'info')" class="btn-primary bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-6 py-3 rounded-lg font-semibold shadow-lg hover:shadow-xl hover:transform hover:-translate-y-1 transition-all duration-300 flex items-center justify-center">
+                        <i class="fas fa-compass mr-2"></i>
+                        Start Navigation
+                    </button>
+                    <button onclick="openRouteMap()" class="btn-outline border-2 border-chili-red text-chili-red px-6 py-3 rounded-lg font-semibold hover:bg-chili-red hover:text-white transition-all duration-300 flex items-center justify-center">
+                        <i class="fas fa-map mr-2"></i>
+                        View Full Route Map
+                    </button>
+                </div>
+            </header>
+
+            <div class="bg-white rounded-2xl shadow-lg p-6 lg:p-8 mb-8">
+                <h3 class="flex items-center text-chili-red text-xl font-bold mb-4">
+                    <i class="fas fa-info-circle mr-2"></i>
+                    Route Summary
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-gray-700 text-sm">
+                    <div class="bg-gray-50 p-3 rounded-lg">
+                        <span class="font-semibold text-gray-600">Total Stops:</span> 3
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg">
+                        <span class="font-semibold text-gray-600">Estimated Duration:</span> 4h 30m
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg">
+                        <span class="font-semibold text-gray-600">Estimated Mileage:</span> 45 miles
+                    </div>
+                    <div class="bg-gray-50 p-3 rounded-lg md:col-span-3">
+                        <span class="font-semibold text-gray-600">Assigned Vehicle:</span> Truck #TP-1234
+                        <span class="ml-4 font-semibold text-gray-600">Driver:</span> Mike Johnson
+                    </div>
+                </div>
+            </div>
+
+            <section class="bg-white rounded-2xl shadow-lg p-6 lg:p-8">
+                <h3 class="flex items-center text-chili-red text-2xl font-bold mb-6">
+                    <i class="fas fa-location-dot mr-3"></i>
+                    Your Stops
+                </h3>
+                <div class="space-y-6" id="routeStopsList">
+                    <div class="stop-card bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300" data-stop-id="1" data-status="pending">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <span class="bg-chili-red text-white text-lg font-bold w-10 h-10 flex items-center justify-center rounded-full mr-4">1</span>
+                                <div>
+                                    <h4 class="text-xl font-bold text-gray-800">Delivery: 20-Yard Dumpster</h4>
+                                    <p class="text-gray-600">Booking #BOOK123</p>
+                                </div>
+                            </div>
+                            <span class="bg-yellow-500 text-white px-4 py-2 rounded-full text-sm font-semibold status-badge">
+                                <i class="fas fa-truck-loading mr-2"></i>Pending
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <div class="text-sm text-gray-500 mb-1">Customer</div>
+                                <div class="font-semibold">Springfield Construction Inc. (John Doe)</div>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <div class="text-sm text-gray-500 mb-1">Contact</div>
+                                <div class="font-semibold">(555) 123-4567</div>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg md:col-span-2">
+                                <div class="text-sm text-gray-500 mb-1">Address</div>
+                                <div class="font-semibold">123 Main St, Springfield, IL 62704</div>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <div class="text-sm text-gray-500 mb-1">Equipment</div>
+                                <div class="font-semibold">20YD Dumpster (Unit #D4587)</div>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <div class="text-sm text-gray-500 mb-1">Due Time</div>
+                                <div class="font-semibold">10:30 AM</div>
+                            </div>
+                        </div>
+                        <div class="bg-blue-50 border-l-4 border-blue-400 text-blue-800 p-3 rounded-lg mb-4">
+                            <i class="fas fa-info-circle mr-2"></i>Special Instructions: Place dumpster on driveway, avoid sprinkler heads.
+                        </div>
+                        <div class="flex flex-wrap gap-3 action-buttons">
+                            <button onclick="navigateToStop(1)" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-300 flex items-center">
+                                <i class="fas fa-compass mr-2"></i>Navigate
+                            </button>
+                            <button onclick="updateStopStatus(1, 'arrived')" class="bg-ut-orange text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors duration-300 flex items-center">
+                                <i class="fas fa-flag-checkered mr-2"></i>Arrived
+                            </button>
+                            <button onclick="openProofOfDeliveryModal(1)" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-300 flex items-center">
+                                <i class="fas fa-signature mr-2"></i>Complete Job
+                            </button>
+                            <button onclick="reportProblem(1)" class="border border-red-500 text-red-500 px-4 py-2 rounded-lg hover:bg-red-500 hover:text-white transition-colors duration-300 flex items-center">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>Problem
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="stop-card bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300" data-stop-id="2" data-status="pending">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <span class="bg-chili-red text-white text-lg font-bold w-10 h-10 flex items-center justify-center rounded-full mr-4">2</span>
+                                <div>
+                                    <h4 class="text-xl font-bold text-gray-800">Pickup: 40-Foot Storage Container</h4>
+                                    <p class="text-gray-600">Booking #BOOK124</p>
+                                </div>
+                            </div>
+                            <span class="bg-yellow-500 text-white px-4 py-2 rounded-full text-sm font-semibold status-badge">
+                                <i class="fas fa-truck-loading mr-2"></i>Pending
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <div class="text-sm text-gray-500 mb-1">Customer</div>
+                                <div class="font-semibold">ABC Development (Jane Smith)</div>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <div class="text-sm text-gray-500 mb-1">Contact</div>
+                                <div class="font-semibold">(555) 987-6543</div>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg md:col-span-2">
+                                <div class="text-sm text-gray-500 mb-1">Address</div>
+                                <div class="font-semibold">456 Oak Ave, Springfield, IL 62704</div>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <div class="text-sm text-gray-500 mb-1">Equipment</div>
+                                <div class="font-semibold">40FT Storage Container (Unit #SC9876)</div>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <div class="text-sm text-gray-500 mb-1">Due Time</div>
+                                <div class="font-semibold">1:45 PM</div>
+                            </div>
+                        </div>
+                        <div class="bg-blue-50 border-l-4 border-blue-400 text-blue-800 p-3 rounded-lg mb-4">
+                            <i class="fas fa-info-circle mr-2"></i>Special Instructions: Gate code 7834. Container is empty.
+                        </div>
+                        <div class="flex flex-wrap gap-3 action-buttons">
+                            <button onclick="navigateToStop(2)" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-300 flex items-center">
+                                <i class="fas fa-compass mr-2"></i>Navigate
+                            </button>
+                            <button onclick="updateStopStatus(2, 'arrived')" class="bg-ut-orange text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors duration-300 flex items-center">
+                                <i class="fas fa-flag-checkered mr-2"></i>Arrived
+                            </button>
+                            <button onclick="openProofOfDeliveryModal(2)" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-300 flex items-center">
+                                <i class="fas fa-signature mr-2"></i>Complete Job
+                            </button>
+                            <button onclick="reportProblem(2)" class="border border-red-500 text-red-500 px-4 py-2 rounded-lg hover:bg-red-500 hover:text-white transition-colors duration-300 flex items-center">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>Problem
+                            </button>
+                        </div>
+                    </div>
+
+                     <div class="stop-card bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300" data-stop-id="3" data-status="pending">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <span class="bg-chili-red text-white text-lg font-bold w-10 h-10 flex items-center justify-center rounded-full mr-4">3</span>
+                                <div>
+                                    <h4 class="text-xl font-bold text-gray-800">Service: Portable Toilet Cleaning</h4>
+                                    <p class="text-gray-600">Booking #BOOK125</p>
+                                </div>
+                            </div>
+                            <span class="bg-yellow-500 text-white px-4 py-2 rounded-full text-sm font-semibold status-badge">
+                                <i class="fas fa-truck-loading mr-2"></i>Pending
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <div class="text-sm text-gray-500 mb-1">Customer</div>
+                                <div class="font-semibold">Springfield Events (Sarah Lee)</div>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <div class="text-sm text-gray-500 mb-1">Contact</div>
+                                <div class="font-semibold">(555) 789-0123</div>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg md:col-span-2">
+                                <div class="text-sm text-gray-500 mb-1">Address</div>
+                                <div class="font-semibold">789 Elm St, Springfield, IL 62704</div>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <div class="text-sm text-gray-500 mb-1">Equipment</div>
+                                <div class="font-semibold">ADA Portable Toilet (Unit #PT5432)</div>
+                            </div>
+                            <div class="bg-gray-50 p-3 rounded-lg">
+                                <div class="text-sm text-gray-500 mb-1">Due Time</div>
+                                <div class="font-semibold">3:00 PM</div>
+                            </div>
+                        </div>
+                        <div class="bg-blue-50 border-l-4 border-blue-400 text-blue-800 p-3 rounded-lg mb-4">
+                            <i class="fas fa-info-circle mr-2"></i>Special Instructions: Unit is located behind the building.
+                        </div>
+                        <div class="flex flex-wrap gap-3 action-buttons">
+                            <button onclick="navigateToStop(3)" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-300 flex items-center">
+                                <i class="fas fa-compass mr-2"></i>Navigate
+                            </button>
+                            <button onclick="updateStopStatus(3, 'arrived')" class="bg-ut-orange text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors duration-300 flex items-center">
+                                <i class="fas fa-flag-checkered mr-2"></i>Arrived
+                            </button>
+                            <button onclick="openProofOfDeliveryModal(3)" class="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors duration-300 flex items-center">
+                                <i class="fas fa-signature mr-2"></i>Complete Job
+                            </button>
+                            <button onclick="reportProblem(3)" class="border border-red-500 text-red-500 px-4 py-2 rounded-lg hover:bg-red-500 hover:text-white transition-colors duration-300 flex items-center">
+                                <i class="fas fa-exclamation-triangle mr-2"></i>Problem
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="podModal" class="fixed inset-0 bg-black bg-opacity-50 modal-backdrop z-50 flex items-center justify-center opacity-0 invisible transition-all duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl mx-4 max-h-screen overflow-y-auto">
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-2xl font-bold text-chili-red" id="podModalTitle">Complete Job for Stop #<span id="podStopId"></span></h3>
+                    <button onclick="closeProofOfDeliveryModal()" class="text-gray-400 hover:text-gray-600 text-2xl">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6">
+                <form id="podForm" onsubmit="submitProofOfDelivery(event)">
+                    <input type="hidden" id="currentPodStopId">
+
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Capture Photos (Max 3)</label>
+                        <div class="flex items-center space-x-4 mb-3">
+                            <input type="file" id="photoUpload1" accept="image/*" class="hidden" onchange="previewImage(event, 'preview1')">
+                            <label for="photoUpload1" class="w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors duration-200">
+                                <img id="preview1" src="" alt="Preview" class="hidden w-full h-full object-cover rounded-lg">
+                                <i class="fas fa-camera text-gray-400 text-2xl" id="icon1"></i>
+                            </label>
+
+                            <input type="file" id="photoUpload2" accept="image/*" class="hidden" onchange="previewImage(event, 'preview2')">
+                            <label for="photoUpload2" class="w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors duration-200">
+                                <img id="preview2" src="" alt="Preview" class="hidden w-full h-full object-cover rounded-lg">
+                                <i class="fas fa-camera text-gray-400 text-2xl" id="icon2"></i>
+                            </label>
+
+                            <input type="file" id="photoUpload3" accept="image/*" class="hidden" onchange="previewImage(event, 'preview3')">
+                            <label for="photoUpload3" class="w-24 h-24 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors duration-200">
+                                <img id="preview3" src="" alt="Preview" class="hidden w-full h-full object-cover rounded-lg">
+                                <i class="fas fa-camera text-gray-400 text-2xl" id="icon3"></i>
+                            </label>
+                        </div>
+                        <p class="text-xs text-gray-500">Click to upload photos of the completed job site.</p>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Customer Signature</label>
+                        <canvas id="signatureCanvas" class="border border-gray-300 rounded-lg w-full h-32 bg-white" style="touch-action: none;"></canvas>
+                        <div class="flex justify-end mt-2">
+                            <button type="button" onclick="clearSignature()" class="text-chili-red hover:text-chili-red-2 text-sm font-semibold">Clear Signature</button>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="notes" class="block text-sm font-medium text-gray-700 mb-2">Notes/Site Conditions</label>
+                        <textarea id="notes" rows="4" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-chili-red focus:border-chili-red" placeholder="Any relevant notes about the job or site conditions..."></textarea>
+                    </div>
+
+                    <div class="flex gap-3 justify-end">
+                        <button type="button" onclick="closeProofOfDeliveryModal()" class="border border-gray-300 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors duration-300">Cancel</button>
+                        <button type="submit" class="bg-chili-red text-white px-6 py-3 rounded-lg hover:bg-chili-red-2 transition-colors duration-300">Submit Completion</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="notificationContainer" class="fixed top-4 right-4 z-50"></div>
+
+    <script>
+        // Dummy data for stops (can be expanded)
+        let routeStops = [
+            { id: 1, type: 'delivery', status: 'pending' },
+            { id: 2, type: 'pickup', status: 'pending' },
+            { id: 3, type: 'service', status: 'pending' }
+        ];
+
+        function navigateToStop(stopId) {
+            showNotification(`Starting navigation to Stop #${stopId}...`, 'info');
+            // In a real app, integrate with mapping service.
+        }
+
+        function updateStopStatus(stopId, status) {
+            const stopCard = document.querySelector(`.stop-card[data-stop-id="${stopId}"]`);
+            if (!stopCard) return;
+
+            // Update data attribute
+            stopCard.dataset.status = status;
+
+            const statusBadge = stopCard.querySelector('.status-badge');
+            const actionButtons = stopCard.querySelector('.action-buttons');
+
+            let message = '';
+            let newBadgeClass = '';
+            let newBadgeIcon = '';
+            let newBadgeText = '';
+
+            switch (status) {
+                case 'arrived':
+                    message = `Marked Stop #${stopId} as arrived.`;
+                    newBadgeClass = 'bg-blue-500 text-white';
+                    newBadgeIcon = 'fas fa-flag-checkered';
+                    newBadgeText = 'Arrived';
+                    break;
+                case 'completed':
+                    message = `Stop #${stopId} marked as completed!`;
+                    newBadgeClass = 'bg-green-500 text-white';
+                    newBadgeIcon = 'fas fa-check-circle';
+                    newBadgeText = 'Completed';
+                    stopCard.classList.add('completed');
+                    // Remove action buttons or change to "View POD"
+                    actionButtons.innerHTML = `
+                        <button onclick="viewPodDetails(${stopId})" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-300 flex items-center">
+                            <i class="fas fa-eye mr-2"></i>View POD
+                        </button>
+                    `;
+                    break;
+                case 'problem':
+                    message = `Problem reported for Stop #${stopId}. Dispatch notified.`;
+                    newBadgeClass = 'bg-red-500 text-white';
+                    newBadgeIcon = 'fas fa-exclamation-triangle';
+                    newBadgeText = 'Problem';
+                    break;
+                default:
+                    return;
+            }
+
+            if (statusBadge) {
+                statusBadge.className = `px-4 py-2 rounded-full text-sm font-semibold status-badge ${newBadgeClass}`;
+                statusBadge.innerHTML = `<i class="${newBadgeIcon} mr-2"></i>${newBadgeText}`;
+            }
+
+            showNotification(message, 'success');
+        }
+
+        function reportProblem(stopId) {
+            if (confirm(`Are you sure you want to report a problem for Stop #${stopId}? This will notify dispatch.`)) {
+                updateStopStatus(stopId, 'problem');
+            }
+        }
+
+        function openRouteMap() {
+            showNotification('Opening full route map...', 'info');
+            // In a real app, this would open a new map view.
+        }
+
+        // --- Proof of Delivery/Pickup (POD) Modal Functions ---
+        let signaturePad = null; // Variable to hold SignaturePad instance
+
+        function openProofOfDeliveryModal(stopId) {
+            document.getElementById('podStopId').textContent = stopId;
+            document.getElementById('currentPodStopId').value = stopId;
+
+            // Reset photo previews
+            for (let i = 1; i <= 3; i++) {
+                const preview = document.getElementById(`preview${i}`);
+                const icon = document.getElementById(`icon${i}`);
+                preview.src = '';
+                preview.classList.add('hidden');
+                icon.classList.remove('hidden');
+                document.getElementById(`photoUpload${i}`).value = ''; // Clear file input
+            }
+
+            // Initialize or clear signature canvas
+            const canvas = document.getElementById('signatureCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear any previous drawings
+
+            if (!signaturePad) {
+                // Only initialize SignaturePad once if it doesn't exist
+                signaturePad = new SignaturePad(canvas, {
+                    backgroundColor: 'rgb(255, 255, 255)' // Match canvas background
+                });
+            } else {
+                signaturePad.clear(); // Clear existing signature
+            }
+
+            // Open the modal
+            document.getElementById('podModal').classList.remove('opacity-0', 'invisible');
+            document.getElementById('podModal').classList.add('opacity-100', 'visible');
+        }
+
+        function closeProofOfDeliveryModal() {
+            document.getElementById('podModal').classList.add('opacity-0', 'invisible');
+            document.getElementById('podModal').classList.remove('opacity-100', 'visible');
+            if (signaturePad) {
+                signaturePad.clear(); // Clear signature when closing
+            }
+        }
+
+        function previewImage(event, previewId) {
+            const preview = document.getElementById(previewId);
+            const icon = document.getElementById(`icon${previewId.replace('preview', 'icon')}`);
+            if (event.target.files && event.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove('hidden');
+                    icon.classList.add('hidden');
+                };
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        }
+
+        function clearSignature() {
+            if (signaturePad) {
+                signaturePad.clear();
+            }
+        }
+
+        function submitProofOfDelivery(event) {
+            event.preventDefault();
+            const stopId = document.getElementById('currentPodStopId').value;
+            const notes = document.getElementById('notes').value;
+
+            // Check if signature is empty
+            if (signaturePad && signaturePad.isEmpty()) {
+                showNotification('Customer signature is required to complete the job.', 'error');
+                return;
+            }
+
+            showNotification(`Submitting POD for Stop #${stopId}...`, 'info');
+            // In a real application, you would send:
+            // - signaturePad.toDataURL() (PNG image of signature)
+            // - Base64 encoded images from photo uploads
+            // - Notes
+
+            // Simulate completion
+            setTimeout(() => {
+                updateStopStatus(stopId, 'completed');
+                closeProofOfDeliveryModal();
+            }, 1000);
+        }
+
+        function viewPodDetails(stopId) {
+            showNotification(`Viewing POD details for Stop #${stopId} (this would open a summary of collected POD data)`, 'info');
+            // In a real app, fetch and display the saved POD data.
+        }
+
+        // Notification system (copied from previous files for consistency)
+        function showNotification(message, type = 'info') {
+            const notificationContainer = document.getElementById('notificationContainer');
+            const notification = document.createElement('div');
+            notification.className = `p-4 rounded-lg shadow-lg max-w-sm mt-2 transition-all duration-300 transform translate-x-full opacity-0`;
+
+            const colors = {
+                success: 'bg-green-500 text-white',
+                error: 'bg-red-500 text-white',
+                info: 'bg-blue-500 text-white',
+                warning: 'bg-yellow-500 text-white'
+            };
+
+            notification.className += ` ${colors[type]}`;
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <span class="flex-1">${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-white hover:text-gray-200">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+
+            notificationContainer.appendChild(notification);
+
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full', 'opacity-0');
+                notification.classList.add('translate-x-0', 'opacity-100');
+            }, 50);
+
+            // Animate out and remove after a delay
+            setTimeout(() => {
+                notification.classList.remove('translate-x-0', 'opacity-100');
+                notification.classList.add('translate-x-full', 'opacity-0');
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Mobile navigation functionality (copied for consistency)
+        const mobileNavToggle = document.getElementById('mobileNavToggle');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        function toggleMobileNav() {
+            sidebar.classList.toggle('translate-x-0');
+            sidebar.classList.toggle('-translate-x-full');
+            sidebarOverlay.classList.toggle('opacity-0');
+            sidebarOverlay.classList.toggle('invisible');
+            sidebarOverlay.classList.toggle('opacity-100');
+            sidebarOverlay.classList.toggle('visible');
+
+            const icon = mobileNavToggle.querySelector('i');
+            if (sidebar.classList.contains('translate-x-0')) {
+                icon.className = 'fas fa-times text-lg';
+            } else {
+                icon.className = 'fas fa-bars text-lg';
+            }
+        }
+
+        mobileNavToggle.addEventListener('click', toggleMobileNav);
+        sidebarOverlay.addEventListener('click', toggleMobileNav);
+
+        // Close mobile nav when clicking on nav links
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth < 1024) {
+                    toggleMobileNav();
+                }
+            });
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth >= 1024) {
+                sidebar.classList.remove('-translate-x-full');
+                sidebar.classList.add('translate-x-0');
+                sidebarOverlay.classList.add('opacity-0', 'invisible');
+                sidebarOverlay.classList.remove('opacity-100', 'visible');
+                mobileNavToggle.querySelector('i').className = 'fas fa-bars text-lg';
+            }
+        });
+
+        // Load SignaturePad library
+        const script = document.createElement('script');
+        script.src = "https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js";
+        script.onload = () => {
+            console.log('SignaturePad loaded.');
+        };
+        document.head.appendChild(script);
+
+        // Initial load functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set active navigation state for Assigned Routes
+            document.querySelector('.nav-link.active').classList.add('bg-gradient-to-r', 'from-chili-red', 'to-tangelo', 'border-ut-orange', 'transform', 'translate-x-2');
+        });
+    </script>
+</body>
+</html>

@@ -217,36 +217,10 @@
 </div>
 
 <script>
-    // Ensure window.vendorSettings exists or initialize it
-    if (typeof window.vendorSettings === 'undefined' || typeof window.vendorSettings !== 'object') {
-        window.vendorSettings = {
-            businessName: 'Your Company Rentals Inc.', // Updated dummy
-            contactEmail: 'info@yourcompany.com',
-            contactPhone: '(123) 456-7890',
-            primaryAddress: '123 Corporate Blvd, Anytown, CA 90210', // Updated dummy
-            operatingHours: 'Mon-Fri: 8AM-5PM, Sat: 9AM-1PM',
-            serviceAreas: '90210, 90211, Anytown, Othercity', // Updated dummy
-            notifyNewBooking: true,
-            notifyPaymentReceived: true,
-            notifyOverdueInvoice: true,
-            notifyDriverIssues: false,
-            smsApiKey: 'sk_demo_123abc', // Dummy API key
-            chatCode: '// Dummy chat widget script: console.log("Chat widget loaded.");' // Dummy script
-        };
-    }
-
-    // Ensure window.internalUsersData exists or initialize it
-    if (typeof window.internalUsersData === 'undefined' || !Array.isArray(window.internalUsersData)) {
-        window.internalUsersData = [
-            { id: 'STAFF001', name: 'Vendor Admin', email: 'admin@yourcompany.com', role: 'Admin', status: 'Active' },
-            { id: 'STAFF002', name: 'Dispatcher One', email: 'dispatch@yourcompany.com', role: 'Dispatcher', status: 'Active' },
-            { id: 'STAFF003', name: 'Sales Manager', email: 'sales@yourcompany.com', role: 'Sales', status: 'Active' },
-            { id: 'STAFF004', name: 'Inactive User', email: 'inactive@yourcompany.com', role: 'Viewer', status: 'Inactive' }
-        ];
-    }
-
-    let vendorSettings = window.vendorSettings;
-    let internalUsersData = window.internalUsersData;
+(function() { // Wrap in IIFE
+    // Access global data directly from the window object
+    let vendorSettings = window.vendorSettings; // Use 'let' because we modify properties and might reassign
+    let internalUsersData = window.internalUsersData; // Use 'let' because it's modified (add/delete)
 
     let currentInternalUserId = null;
 
@@ -513,14 +487,9 @@
     }
 
     // This save function is specific to the integrations tab's inputs.
-    // For this demo, buttons have inline onclick handlers like alert/console.log.
-    // If we wanted to "save" their values, we'd add unique IDs and pass to this function.
     function saveIntegrationSettings(event) {
-        // Prevent default form submission if this function is attached to a form submit
         if (event) event.preventDefault(); 
         
-        // Example of saving an individual field, assuming it's called from specific buttons
-        // For actual saving, you'd pull values from the relevant input fields
         vendorSettings.smsApiKey = smsApiKeyInput.value;
         vendorSettings.chatCode = chatCodeInput.value;
 
@@ -534,28 +503,14 @@
 
 
     // --- Initial Render ---
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log("Settings module DOMContentLoaded.");
-        settingsTabs.forEach(tab => {
-            tab.addEventListener('click', (event) => {
-                console.log(`Tab clicked: ${event.target.dataset.tab}`);
-                switchSettingsView(event.target.dataset.tab);
-            });
+    // Attach event listeners for tabs
+    settingsTabs.forEach(tab => {
+        tab.addEventListener('click', (event) => {
+            switchSettingsView(event.target.dataset.tab);
         });
-
-        // Set initial view to Company Profile
-        switchSettingsView('profile');
     });
 
-    // Ensure initial render on dynamic module load
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        console.log("Settings module readyState complete/interactive.");
-        switchSettingsView('profile');
-    } else {
-        document.addEventListener('DOMContentLoaded', () => {
-            console.log("Settings module DOMContentLoaded (fallback).");
-            switchSettingsView('profile');
-        });
-    }
-
+    // Set initial view to Company Profile
+    switchSettingsView('profile');
+})(); // End of IIFE
 </script>

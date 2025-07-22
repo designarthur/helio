@@ -145,23 +145,9 @@
 </div>
 
 <script>
-    // Ensure window.brandingSettings exists or initialize it with defaults
-    if (typeof window.brandingSettings === 'undefined' || typeof window.brandingSettings !== 'object') {
-        window.brandingSettings = {
-            logoUrl: 'https://via.placeholder.com/100x40/E0E0E0/6C757D?text=Default+Logo',
-            faviconUrl: 'https://via.placeholder.com/32x32/E0E0E0/6C757D?text=Fav',
-            primaryColor: '#EA3A26',
-            secondaryColor: '#FF8600',
-            customDomain: '',
-            senderName: '',
-            replyToEmail: '',
-            portalBannerText: '',
-            customCss: '',
-            customJs: ''
-        };
-    }
-
-    let brandingSettings = window.brandingSettings;
+(function() { // Wrap in IIFE
+    // Access global data directly from the window object
+    let brandingSettings = window.brandingSettings; // Use 'let' as we will modify its properties
 
     // Get elements
     const brandingTabs = document.querySelectorAll('.branding-tab');
@@ -189,12 +175,13 @@
     const customJsInput = document.getElementById('customJs');
 
     // Live Preview elements
-    const previewArea = document.getElementById('previewArea');
+    const previewArea = document.getElementById('previewArea'); // This seems to be the outer wrapper for the preview
     const previewLogo = document.getElementById('previewLogo');
     const previewSiteName = document.getElementById('previewSiteName');
     const previewButton = document.getElementById('previewButton');
     const previewBanner = document.getElementById('previewBanner');
     const previewCard = document.getElementById('previewCard');
+    const previewHeader = document.getElementById('previewHeader'); // Added for the border-b styling
 
     // --- Modal Functions (reusing for consistency) ---
     function openModal(modalId) {
@@ -225,18 +212,23 @@
         if (tabName === 'preview') {
             updateLivePreview();
         } else if (tabName === 'general') {
-            // Re-render logo/favicon previews if files were selected
+            // Re-render logo/favicon previews if files were selected previously
             if (brandingSettings.logoFile) {
                 const reader = new FileReader();
                 reader.onload = (e) => logoPreviewImg.src = e.target.result;
                 reader.readAsDataURL(brandingSettings.logoFile);
+            } else {
+                 logoPreviewImg.src = brandingSettings.logoUrl; // Revert to stored URL if no file
             }
             if (brandingSettings.faviconFile) {
                 const reader = new FileReader();
                 reader.onload = (e) => faviconPreviewImg.src = e.target.result;
                 reader.readAsDataURL(brandingSettings.faviconFile);
+            } else {
+                faviconPreviewImg.src = brandingSettings.faviconUrl; // Revert to stored URL if no file
             }
         }
+        // For other tabs, just ensure their input fields are loaded correctly by loadBrandingSettings()
     }
 
     // --- File Preview Handlers (for Logo & Favicon) ---
@@ -252,9 +244,11 @@
             };
             reader.readAsDataURL(file);
         } else {
-            imgElement.src = brandingSettings[settingName] || ''; // Revert to stored or default
+            // Revert to the last saved URL or default if file is cleared
+            imgElement.src = brandingSettings[settingName] || (settingName === 'logoUrl' ? 'https://via.placeholder.com/100x40/E0E0E0/6C757D?text=Default+Logo' : 'https://via.placeholder.com/32x32/E0E0E0/6C757D?text=Fav');
+            brandingSettings[settingName + 'File'] = null;
         }
-        updateLivePreview();
+        updateLivePreview(); // Update preview area after file changes
     }
 
     logoUploadInput.addEventListener('change', (e) => handleFileUpload(e, logoPreviewImg, 'logoUrl'));
@@ -262,6 +256,10 @@
     primaryColorInput.addEventListener('change', updatePreviewColors);
     secondaryColorInput.addEventListener('change', updatePreviewColors);
     portalBannerTextInput.addEventListener('input', updatePreviewColors); // For live text change
+    // Add event listeners for customCss and customJs if you want live changes on preview
+    customCssInput.addEventListener('input', updatePreviewColors);
+    customJsInput.addEventListener('input', updatePreviewColors);
+
 
     // --- Live Preview Functions ---
     function updatePreviewColors() {
@@ -272,36 +270,62 @@
 
         previewArea.style.setProperty('--preview-secondary-color', secondaryColorInput.value);
         previewCard.style.backgroundColor = secondaryColorInput.value + '20'; // A lighter tint
-        previewCard.style.color = secondaryColorInput.value;
+        previewCard.style.color = secondaryColorInput.value; // Text color on card
 
         // Update other text/image content directly
+        previewLogo.src = logoPreviewImg.src; // Ensure logo image in preview matches upload/default
         previewBanner.textContent = portalBannerTextInput.value || "Welcome to Your Company's Rental Portal!";
+        
+        // Apply custom CSS (if applicable)
+        const customCssStyleTag = document.getElementById('customPreviewCss');
+        if (customCssStyleTag) {
+            customCssStyleTag.innerHTML = customCssInput.value;
+        } else if (customCssInput.value) {
+            const styleTag = document.createElement('style');
+            styleTag.id = 'customPreviewCss';
+            styleTag.innerHTML = customCssInput.value;
+            document.head.appendChild(styleTag);
+        }
+        
+        // Execute custom JS (for preview, this is tricky and might not reflect full page effects)
+        // For security and complexity, usually dynamic JS is not fully executed in a live preview this way.
+        // Alerting for now.
+        if (customJsInput.value && customJsInput.value.length > 0 && confirm("Attempt to run custom JavaScript in preview? This can affect performance or cause errors.")) {
+             try {
+                eval(customJsInput.value); // WARNING: eval() is dangerous in production. For controlled demo only.
+                console.log("Custom JS executed in preview.");
+             } catch (e) {
+                console.error("Error executing custom JS in preview:", e);
+                alert("Error in custom JavaScript: " + e.message);
+             }
+        }
     }
 
+    // Function to initialize the live preview elements on load/tab switch
     function updateLivePreview() {
-        // Ensure preview elements reflect current state from form inputs
-        previewLogo.src = logoPreviewImg.src;
-        // Favicon would affect browser tab, not easily previewed within element
-        
-        primaryColorInput.value = brandingSettings.primaryColor;
-        secondaryColorInput.value = brandingSettings.secondaryColor;
-        customDomainInput.value = brandingSettings.customDomain;
-        domainStatusSpan.textContent = brandingSettings.customDomain ? 'Configured (Needs DNS Verification)' : 'Not Configured';
-        senderNameInput.value = brandingSettings.senderName;
-        replyToEmailInput.value = brandingSettings.replyToEmail;
-        portalBannerTextInput.value = brandingSettings.portalBannerText;
-        customCssInput.value = brandingSettings.customCss;
-        customJsInput.value = brandingSettings.customJs;
+        // Create dynamic style tag for custom CSS if not already present in the preview area
+        let customPreviewCssTag = previewArea.querySelector('style#customPreviewCss');
+        if (!customPreviewCssTag) {
+            customPreviewCssTag = document.createElement('style');
+            customPreviewCssTag.id = 'customPreviewCss';
+            previewArea.appendChild(customPreviewCssTag);
+        }
+        customPreviewCssTag.innerHTML = customCssInput.value; // Apply custom CSS
 
-        // Apply colors and text to preview elements
-        updatePreviewColors();
+        // Set initial values from input fields to preview
+        previewLogo.src = logoPreviewImg.src;
+        previewBanner.textContent = portalBannerTextInput.value || "Welcome to Your Company's Rental Portal!";
+        updatePreviewColors(); // Apply all color/text related styling
     }
 
 
     // --- Save & Load Settings ---
     function saveBrandingSettings() {
+        // Update brandingSettings object from current form values
         brandingSettings.logoUrl = logoPreviewImg.src; // Save current preview as URL
+        // brandingSettings.logoFile = ... (actual file object, not saved in static HTML)
         brandingSettings.faviconUrl = faviconPreviewImg.src;
+        // brandingSettings.faviconFile = ...
         brandingSettings.primaryColor = primaryColorInput.value;
         brandingSettings.secondaryColor = secondaryColorInput.value;
         brandingSettings.customDomain = customDomainInput.value;
@@ -336,28 +360,15 @@
 
 
     // --- Initial Render ---
-    document.addEventListener('DOMContentLoaded', () => {
-        // Attach event listeners for tabs
-        brandingTabs.forEach(tab => {
-            tab.addEventListener('click', (event) => {
-                switchBrandingView(event.target.dataset.tab);
-            });
+    // Attach event listeners for tabs
+    brandingTabs.forEach(tab => {
+        tab.addEventListener('click', (event) => {
+            switchBrandingView(event.target.dataset.tab);
         });
-
-        // Load settings and set initial view to General Branding
-        loadBrandingSettings();
-        switchBrandingView('general');
     });
 
-    // Ensure initial render on dynamic module load
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        loadBrandingSettings();
-        switchBrandingView('general');
-    } else {
-        document.addEventListener('DOMContentLoaded', () => {
-            loadBrandingSettings();
-            switchBrandingView('general');
-        });
-    }
-
+    // Load settings and set initial view to General Branding
+    loadBrandingSettings();
+    switchBrandingView('general');
+})(); // End of IIFE
 </script>

@@ -209,50 +209,15 @@
 </div>
 
 <script>
-    // Ensure global data is accessible or provide minimal fallbacks
-    if (typeof window.customerData === 'undefined' || !Array.isArray(window.customerData)) {
-        window.customerData = [{ id: 'CUST001', name: 'Alice Smith' }];
-    }
-    if (typeof window.equipmentData === 'undefined' || !Array.isArray(window.equipmentData)) {
-        window.equipmentData = [{ id: 'EQ001', type: 'Dumpster', size: '20-yard', baseDailyRate: 150 }];
-    }
-    if (typeof window.bookingData === 'undefined' || !Array.isArray(window.bookingData)) {
-        window.bookingData = [{ id: 'BOOK001', customerId: 'CUST001', equipmentId: 'EQ001', rentalStartDate: '2025-07-01', rentalEndDate: '2025-07-05', totalPrice: 750 }];
-    }
-    if (typeof window.quotesData === 'undefined' || !Array.isArray(window.quotesData)) {
-        window.quotesData = [{ id: 'QUO001', customerId: 'CUST001', totalAmount: 850, status: 'Accepted' }];
-    }
-    if (typeof window.invoicesData === 'undefined' || !Array.isArray(window.invoicesData)) {
-        window.invoicesData = [
-            { id: 'INV001', customerId: 'CUST001', totalAmount: 1000, balanceDue: 0, status: 'Paid', issueDate: '2025-06-01', dueDate: '2025-07-01' },
-            { id: 'INV002', customerId: 'CUST001', totalAmount: 500, balanceDue: 250, status: 'Partially Paid', issueDate: '2025-07-15', dueDate: '2025-08-15' },
-            { id: 'INV003', customerId: 'CUST001', totalAmount: 700, balanceDue: 700, status: 'Overdue', issueDate: '2025-06-01', dueDate: '2025-07-01' }
-        ];
-    }
-    if (typeof window.paymentsData === 'undefined' || !Array.isArray(window.paymentsData)) {
-        window.paymentsData = [
-            { id: 'PAY001', invoiceId: 'INV001', customerId: 'CUST001', amount: 1000, paymentDate: '2025-06-28', method: 'Credit Card' }
-        ];
-    }
-
-    // New: Expense Data
-    if (typeof window.expenseData === 'undefined' || !Array.isArray(window.expenseData)) {
-        window.expenseData = [
-            { id: 'EXP001', date: '2025-07-10', description: 'Diesel Refill - Truck 101', category: 'Fuel', amount: 120.50, notes: 'Full tank' },
-            { id: 'EXP002', date: '2025-07-12', description: 'Office Paper & Pens', category: 'Office Supplies', amount: 45.75, notes: '' },
-            { id: 'EXP003', date: '2025-07-15', description: 'Dumpster EQ001 Repair', category: 'Maintenance', amount: 300.00, notes: 'Gate hinge replacement' },
-            { id: 'EXP004', date: '2025-07-20', description: 'Digital Ad Campaign', category: 'Marketing', amount: 500.00, notes: 'Google Ads for July' }
-        ];
-    }
-
-
-    let customerData = window.customerData;
-    let equipmentData = window.equipmentData;
-    let quotesData = window.quotesData;
-    let invoicesData = window.invoicesData;
-    let paymentsData = window.paymentsData;
-    let bookingData = window.bookingData;
-    let expenseData = window.expenseData;
+(function() { // Wrap in IIFE
+    // Access global data directly from the window object
+    const customerData = window.customerData;
+    const equipmentData = window.equipmentData;
+    const quotesData = window.quotesData;
+    const invoicesData = window.invoicesData;
+    const paymentsData = window.paymentsData;
+    const bookingData = window.bookingData;
+    let expenseData = window.expenseData; // Use 'let' if you reassign this array
 
     let currentExpenseId = null;
 
@@ -292,7 +257,7 @@
     const detailExpenseNotes = document.getElementById('detailExpenseNotes');
 
     // --- General Modal Functions ---
-    function openModal(modalId) {
+    function openModal(modalId) { // Assuming openModal and closeModal are global functions or locally defined
         document.getElementById(modalId).classList.remove('hidden');
     }
 
@@ -396,7 +361,6 @@
                 const paidAmountRatio = (invoice.totalAmount - invoice.balanceDue) / invoice.totalAmount;
                 invoice.items.forEach(item => {
                     let equipmentType = 'Other Service';
-                    // Try to link item description to equipment for type
                     // This is a simplification; in a real system, invoice items would link directly to source bookings/equipment
                     const matchedEq = equipmentData.find(eq => item.description.includes(eq.type) || item.description.includes(eq.size));
                     if (matchedEq) {
@@ -652,23 +616,15 @@
 
 
     // --- Initial Render ---
-    document.addEventListener('DOMContentLoaded', () => {
-        // Attach event listeners for tabs
-        financeTabs.forEach(tab => {
-            tab.addEventListener('click', (event) => {
-                switchFinanceView(event.target.dataset.tab);
-            });
+    // This will run immediately after the module HTML is injected.
+    // Attach event listeners for tabs
+    financeTabs.forEach(tab => {
+        tab.addEventListener('click', (event) => {
+            switchFinanceView(event.target.dataset.tab);
         });
-
-        // Set initial view to Overview
-        switchFinanceView('overview');
     });
 
-    // Ensure initial render on dynamic module load
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        switchFinanceView('overview');
-    } else {
-        document.addEventListener('DOMContentLoaded', () => switchFinanceView('overview'));
-    }
-
+    // Set initial view to Overview
+    switchFinanceView('overview');
+})(); // End of IIFE
 </script>

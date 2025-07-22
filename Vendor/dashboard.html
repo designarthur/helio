@@ -12,10 +12,8 @@
         <span class="dashboard-tab py-2 px-0 cursor-pointer font-bold text-gray-500 transition-colors duration-300 hover:text-gray-800 border-b-2 border-transparent" data-tab="pricing">Pricing</span>
     </div>
 
-    <!-- Tab Content Containers -->
     <div id="tab-content-overview" class="tab-content">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <!-- Metric Card 1: Total Revenue -->
             <div class="metric-card bg-white p-6 rounded-lg shadow-md flex items-center justify-between transform transition-transform duration-200 hover:scale-105 cursor-pointer" onclick="showAlert('Total Revenue')">
                 <div>
                     <h3 class="text-lg text-gray-500 mb-1 font-normal">Total Revenue</h3>
@@ -29,7 +27,6 @@
                 </div>
             </div>
 
-            <!-- Metric Card 2: Bookings -->
             <div class="metric-card bg-white p-6 rounded-lg shadow-md flex items-center justify-between transform transition-transform duration-200 hover:scale-105 cursor-pointer" onclick="showAlert('Bookings')">
                 <div>
                     <h3 class="text-lg text-gray-500 mb-1 font-normal">Bookings</h3>
@@ -43,7 +40,6 @@
                 </div>
             </div>
 
-            <!-- Metric Card 3: Social Clicks -->
             <div class="metric-card bg-white p-6 rounded-lg shadow-md flex items-center justify-between transform transition-transform duration-200 hover:scale-105 cursor-pointer" onclick="showAlert('Social Clicks')">
                 <div>
                     <h3 class="text-lg text-gray-500 mb-1 font-normal">Social Clicks</h3>
@@ -57,7 +53,6 @@
                 </div>
             </div>
 
-            <!-- Metric Card 4: Page Visitors -->
             <div class="metric-card bg-white p-6 rounded-lg shadow-md flex items-center justify-between transform transition-transform duration-200 hover:scale-105 cursor-pointer" onclick="showAlert('Page Visitors')">
                 <div>
                     <h3 class="text-lg text-gray-500 mb-1 font-normal">Page Visitors</h3>
@@ -73,7 +68,6 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <!-- Chart Card 1: Daily Analytics -->
             <div class="bg-white p-6 rounded-lg shadow-md">
                 <div class="flex justify-between items-center pb-3 mb-4 border-b border-gray-200">
                     <h3 class="text-xl text-gray-800 font-semibold m-0">Analytics</h3>
@@ -82,7 +76,6 @@
                 <canvas id="dailyAnalyticsChart" class="max-h-[300px]"></canvas>
             </div>
 
-            <!-- Chart Card 2: Visitor Insights -->
             <div class="bg-white p-6 rounded-lg shadow-md">
                 <div class="flex justify-between items-center pb-3 mb-4 border-b border-gray-200">
                     <h3 class="text-xl text-gray-800 font-semibold m-0">Visitor Insights</h3>
@@ -95,7 +88,6 @@
         <div class="bg-white p-6 rounded-lg shadow-md">
             <h3 class="text-xl text-gray-800 font-semibold pb-3 mb-4 border-b border-gray-200">Pending Requests</h3>
             <div class="space-y-4">
-                <!-- Request Item 1 -->
                 <div class="request-item flex justify-between items-center pb-4 border-b border-dashed border-gray-200 last:border-b-0 cursor-pointer" onclick="showRequestDetails('New booking request', 'ABC Construction - 20-yard dumpster', 'Scheduled for tomorrow', 'Pending')">
                     <div>
                         <strong class="block text-gray-800 mb-1">New booking request - 20-yard dumpster</strong>
@@ -103,7 +95,6 @@
                     </div>
                     <span class="px-3 py-1 rounded-full text-xs font-bold uppercase text-white bg-[#FF8600]">Pending</span>
                 </div>
-                <!-- Request Item 2 -->
                 <div class="request-item flex justify-between items-center pb-4 border-b border-dashed border-gray-200 last:border-b-0 cursor-pointer" onclick="showRequestDetails('Payment confirmation needed', 'Johnson & Co - Portable toilet rental', 'Invoice #INV-2025-001', 'Approved')">
                     <div>
                         <strong class="block text-gray-800 mb-1">Payment confirmation needed</strong>
@@ -111,7 +102,6 @@
                     </div>
                     <span class="px-3 py-1 rounded-full text-xs font-bold uppercase text-white bg-green-600">Approved</span>
                 </div>
-                <!-- Request Item 3 -->
                 <div class="request-item flex justify-between items-center pb-4 last:border-b-0 cursor-pointer" onclick="showRequestDetails('Equipment maintenance request', 'Storage container #CON-003', 'Needs servicing for door repair', 'Pending')">
                     <div>
                         <strong class="block text-gray-800 mb-1">Equipment maintenance request</strong>
@@ -144,7 +134,6 @@
     </div>
 
 
-    <!-- Request Details Modal -->
     <div id="requestDetailModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
         <div class="bg-white p-8 rounded-lg shadow-xl w-11/12 max-w-lg relative">
             <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold" onclick="closeModal('requestDetailModal')">&times;</button>
@@ -164,7 +153,8 @@
 </div>
 
 <script>
-    // Data for Daily Analytics Chart
+(function() { // Wrap in IIFE
+    // Data for Daily Analytics Chart (local to this module's IIFE)
     const dailyAnalyticsData = {
         labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
         datasets: [
@@ -195,7 +185,7 @@
         ]
     };
 
-    // Data for Monthly Visitor Insights Chart
+    // Data for Monthly Visitor Insights Chart (local to this module's IIFE)
     const monthlyVisitorData = {
         labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         datasets: [
@@ -218,15 +208,31 @@
         ]
     };
 
+    // Chart instances (local to this module's IIFE)
+    let dailyAnalyticsChartInstance = null;
+    let monthlyVisitorChartInstance = null;
+
+
+    // Function to render charts (local to this module's IIFE)
     function renderCharts() {
         console.log("Attempting to render charts...");
         const dailyCtx = document.getElementById('dailyAnalyticsChart');
         const monthlyCtx = document.getElementById('monthlyVisitorChart');
 
+        // Destroy existing chart instances to prevent duplicates on re-render
+        if (dailyAnalyticsChartInstance) {
+            dailyAnalyticsChartInstance.destroy();
+            dailyAnalyticsChartInstance = null; // Clear reference
+        }
+        if (monthlyVisitorChartInstance) {
+            monthlyVisitorChartInstance.destroy();
+            monthlyVisitorChartInstance = null; // Clear reference
+        }
+
         if (dailyCtx && monthlyCtx) {
             console.log("Canvas elements found. Initializing Chart.js.");
             // Daily Analytics Chart (Bar Chart)
-            new Chart(dailyCtx.getContext('2d'), {
+            dailyAnalyticsChartInstance = new Chart(dailyCtx.getContext('2d'), {
                 type: 'bar',
                 data: dailyAnalyticsData,
                 options: {
@@ -258,7 +264,7 @@
             });
 
             // Monthly Visitor Insights Chart (Line Chart)
-            new Chart(monthlyCtx.getContext('2d'), {
+            monthlyVisitorChartInstance = new Chart(monthlyCtx.getContext('2d'), {
                 type: 'line',
                 data: monthlyVisitorData,
                 options: {
@@ -294,19 +300,6 @@
         }
     }
 
-    // Call renderCharts when the dashboard module is loaded
-    // This listener ensures it runs if the HTML is parsed normally
-    document.addEventListener('DOMContentLoaded', renderCharts);
-
-    // This part ensures it runs even if index.html fetches it later
-    // and the DOMContentLoaded already fired for the main document.
-    // It checks if the document is already ready, and if so, calls renderCharts directly.
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        renderCharts();
-    } else {
-        document.addEventListener('DOMContentLoaded', renderCharts);
-    }
-
     // --- New Dashboard Specific Functions ---
 
     // Function to show a simple alert for metric cards/exports
@@ -314,15 +307,11 @@
         alert("Action: " + message + "\n(In a real app, this would lead to a detailed report or download.)");
     }
 
-    // Function to open a modal
-    function openModal(modalId) {
-        document.getElementById(modalId).classList.remove('hidden');
-    }
+    // Function to open a modal (defined globally in index.html, accessed via window)
+    // function openModal(modalId) { ... }
 
-    // Function to close a modal
-    function closeModal(modalId) {
-        document.getElementById(modalId).classList.add('hidden');
-    }
+    // Function to close a modal (defined globally in index.html, accessed via window)
+    // function closeModal(modalId) { ... }
 
     // Function to show details for a pending request in a modal
     function showRequestDetails(type, customerItem, description, status) {
@@ -342,7 +331,7 @@
         }
         // Add more conditions for other statuses if needed
 
-        openModal('requestDetailModal');
+        window.openModal('requestDetailModal'); // Use global openModal
     }
 
     // Function to handle tab switching
@@ -368,17 +357,14 @@
 
             // Re-render charts if switching to the overview tab (important for responsiveness)
             if (this.dataset.tab === 'overview') {
-                // Destroy existing charts if they exist to prevent duplicates
-                // This part is a bit more complex with Chart.js. For now, we'll just re-render.
-                // In a production app, you'd manage chart instances.
-                renderCharts();
+                renderCharts(); // Re-render charts when overview tab is shown
             }
         });
     });
 
     // Ensure Overview tab is active and its content is shown on initial load
-    document.addEventListener('DOMContentLoaded', () => {
-        document.querySelector('.dashboard-tab[data-tab="overview"]').click();
-    });
+    // This runs once when the module HTML is injected and its script parsed.
+    document.querySelector('.dashboard-tab[data-tab="overview"]').click();
 
+})(); // End of IIFE
 </script>

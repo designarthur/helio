@@ -1,0 +1,473 @@
+<div class="p-8">
+    <h2 class="text-3xl font-bold text-gray-900 mb-6">Junk Removal Management</h2>
+
+    <div class="flex flex-wrap items-center justify-between mb-6 gap-4">
+        <button id="addJunkRemovalBtn" class="px-6 py-3 bg-[#EA3A26] text-white rounded-md font-semibold hover:bg-[#F54F1D] transition-colors duration-200 flex items-center gap-2">
+            <i class="fas fa-plus-circle"></i> Create New Job
+        </button>
+        <div class="flex flex-wrap items-center gap-4">
+            <input type="text" id="junkRemovalSearch" placeholder="Search by ID, Customer..." onkeyup="filterJunkRemovalJobs()"
+                   class="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#EA3A26] w-full md:w-auto">
+            <select id="junkRemovalStatusFilter" onchange="filterJunkRemovalJobs()"
+                    class="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#EA3A26] w-full md:w-auto">
+                <option value="">All Statuses</option>
+                <option value="Pending Quote">Pending Quote</option>
+                <option value="Quoted">Quoted</option>
+                <option value="Scheduled">Scheduled</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+                <option value="Cancelled">Cancelled</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md overflow-x-auto mb-8">
+        <table class="min-w-full divide-y divide-gray-200" id="junkRemovalTable">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Job ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Requested Date</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Est. Price</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                </tbody>
+        </table>
+    </div>
+
+    <div id="junkRemovalModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-8 rounded-lg shadow-xl w-11/12 max-w-3xl relative max-h-[90vh] overflow-y-auto">
+            <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold" onclick="closeModal('junkRemovalModal')">&times;</button>
+            <h3 id="modalTitle" class="text-2xl font-bold text-[#EA3A26] mb-6 border-b pb-3 border-gray-200">Create New Junk Removal Job</h3>
+            <form id="junkRemovalForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input type="hidden" id="jobId">
+
+                <div class="col-span-1 md:col-span-2">
+                    <label for="jrCustomerIdSelect" class="block text-sm font-medium text-gray-700 mb-1">Customer:</label>
+                    <select id="jrCustomerIdSelect" required
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                        <option value="">Select Customer</option>
+                        </select>
+                </div>
+
+                <div>
+                    <label for="requestedDate" class="block text-sm font-medium text-gray-700 mb-1">Requested Date:</label>
+                    <input type="date" id="requestedDate" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+                <div>
+                    <label for="requestedTime" class="block text-sm font-medium text-gray-700 mb-1">Requested Time (Optional):</label>
+                    <input type="time" id="requestedTime"
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+                <div class="col-span-1 md:col-span-2">
+                    <label for="jobLocation" class="block text-sm font-medium text-gray-700 mb-1">Job Location:</label>
+                    <input type="text" id="jobLocation" placeholder="123 Main St, Anytown" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+
+                <div class="col-span-1 md:col-span-2">
+                    <label for="descriptionOfJunk" class="block text-sm font-medium text-gray-700 mb-1">Description of Junk:</label>
+                    <textarea id="descriptionOfJunk" rows="3" placeholder="e.g., Old furniture, yard waste, construction debris" required
+                              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26] resize-y"></textarea>
+                </div>
+
+                <div>
+                    <label for="volumeEstimate" class="block text-sm font-medium text-gray-700 mb-1">Volume Estimate (Cu Yards/Truckloads):</label>
+                    <input type="text" id="volumeEstimate" placeholder="e.g., 2 cu yards, 1/2 truckload"
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+                <div>
+                    <label for="weightEstimate" class="block text-sm font-medium text-gray-700 mb-1">Weight Estimate (Lbs/Tons):</label>
+                    <input type="text" id="weightEstimate" placeholder="e.g., 500 lbs, 0.25 tons"
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+                <div>
+                    <label for="crewRequirements" class="block text-sm font-medium text-gray-700 mb-1">Crew Requirements:</label>
+                    <input type="number" id="crewRequirements" min="1" value="1"
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+                <div>
+                    <label for="assignedDriver" class="block text-sm font-medium text-gray-700 mb-1">Assigned Driver (Optional):</label>
+                    <select id="assignedDriver"
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                        <option value="">Unassigned</option>
+                        </select>
+                </div>
+                
+                <div class="col-span-1 md:col-span-2">
+                    <label for="estimatedPrice" class="block text-sm font-medium text-gray-700 mb-1">Estimated Price ($):</label>
+                    <input type="number" id="estimatedPrice" min="0" step="0.01" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                </div>
+
+                <div class="col-span-1 md:col-span-2">
+                    <label for="jobStatus" class="block text-sm font-medium text-gray-700 mb-1">Status:</label>
+                    <select id="jobStatus" required
+                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26]">
+                        <option value="Pending Quote">Pending Quote</option>
+                        <option value="Quoted">Quoted</option>
+                        <option value="Scheduled">Scheduled</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div class="col-span-1 md:col-span-2">
+                    <label for="jobNotes" class="block text-sm font-medium text-gray-700 mb-1">Internal Notes:</label>
+                    <textarea id="jobNotes" rows="3" placeholder="Any specific instructions or customer notes."
+                              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#EA3A26] focus:border-[#EA3A26] resize-y"></textarea>
+                </div>
+
+                <div class="col-span-1 md:col-span-2 flex justify-end gap-3 mt-6">
+                    <button type="button" class="px-6 py-2 bg-gray-300 text-gray-800 rounded-md font-semibold hover:bg-gray-400 transition-colors duration-200" onclick="closeModal('junkRemovalModal')">Cancel</button>
+                    <button type="submit" class="px-6 py-2 bg-[#EA3A26] text-white rounded-md font-semibold hover:bg-[#F54F1D] transition-colors duration-200">Save Job</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="viewJunkRemovalModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-8 rounded-lg shadow-xl w-11/12 max-w-3xl relative max-h-[90vh] overflow-y-auto">
+            <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold" onclick="closeModal('viewJunkRemovalModal')">&times;</button>
+            <h3 class="text-2xl font-bold text-[#EA3A26] mb-6 border-b pb-3 border-gray-200">Junk Removal Job: <span id="detailJobId"></span></h3>
+            <div class="space-y-4 text-gray-700">
+                <div class="bg-gray-50 p-4 rounded-md shadow-sm">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Job Information</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <p><strong>Customer:</strong> <span id="detailJrCustomerName"></span></p>
+                        <p><strong>Requested:</strong> <span id="detailRequestedDateTime"></span></p>
+                        <p class="col-span-1 md:col-span-2"><strong>Location:</strong> <span id="detailJobLocation"></span></p>
+                        <p class="col-span-1 md:col-span-2"><strong>Description:</strong> <span id="detailDescriptionOfJunk"></span></p>
+                        <p><strong>Volume Est.:</strong> <span id="detailVolumeEstimate"></span></p>
+                        <p><strong>Weight Est.:</strong> <span id="detailWeightEstimate"></span></p>
+                        <p><strong>Crew Needed:</strong> <span id="detailCrewRequirements"></span></p>
+                        <p><strong>Assigned Driver:</strong> <span id="detailAssignedDriver"></span></p>
+                        <p><strong>Est. Price:</strong> $<span id="detailEstimatedPrice"></span></p>
+                        <p><strong>Status:</strong> <span id="detailJobStatus" class="px-3 py-1 rounded-full text-xs font-bold uppercase text-white"></span></p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-4 rounded-md shadow-sm hidden" id="detailJobNotesGroup">
+                    <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Internal Notes</h4>
+                    <p><span id="detailJobNotes"></span></p>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-end gap-3">
+                <button type="button" class="px-6 py-2 bg-gray-300 text-gray-800 rounded-md font-semibold hover:bg-gray-400 transition-colors duration-200" onclick="closeModal('viewJunkRemovalModal')">Close</button>
+                <button type="button" class="px-6 py-2 bg-[#EA3A26] text-white rounded-md font-semibold hover:bg-[#F54F1D] transition-colors duration-200" id="editFromDetailBtn">Edit Job</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function() { // Wrap in IIFE
+    // Access global data directly from the window object
+    const customerData = window.customerData;
+    const driverData = window.driverData;
+    let junkRemovalData = window.junkRemovalData; // Use 'let' if you reassign this array
+
+    let currentJobId = null;
+
+    // Get elements
+    const junkRemovalTableBody = document.querySelector('#junkRemovalTable tbody');
+    const addJunkRemovalBtn = document.getElementById('addJunkRemovalBtn');
+    const junkRemovalModal = document.getElementById('junkRemovalModal');
+    const viewJunkRemovalModal = document.getElementById('viewJunkRemovalModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const junkRemovalForm = document.getElementById('junkRemovalForm');
+    const jobIdField = document.getElementById('jobId');
+
+    const jrCustomerIdSelect = document.getElementById('jrCustomerIdSelect');
+    const assignedDriverSelect = document.getElementById('assignedDriver');
+
+    // Detail view elements
+    const detailJobId = document.getElementById('detailJobId');
+    const detailJrCustomerName = document.getElementById('detailJrCustomerName');
+    const detailRequestedDateTime = document.getElementById('detailRequestedDateTime');
+    const detailJobLocation = document.getElementById('detailJobLocation');
+    const detailDescriptionOfJunk = document.getElementById('detailDescriptionOfJunk');
+    const detailVolumeEstimate = document.getElementById('detailVolumeEstimate');
+    const detailWeightEstimate = document.getElementById('detailWeightEstimate');
+    const detailCrewRequirements = document.getElementById('detailCrewRequirements');
+    const detailAssignedDriver = document.getElementById('detailAssignedDriver');
+    const detailEstimatedPrice = document.getElementById('detailEstimatedPrice');
+    const detailJobStatus = document.getElementById('detailJobStatus');
+    const detailJobNotes = document.getElementById('detailJobNotes');
+    const detailJobNotesGroup = document.getElementById('detailJobNotesGroup');
+
+    const editFromDetailBtn = document.getElementById('editFromDetailBtn');
+
+    // Event Listeners
+    addJunkRemovalBtn.addEventListener('click', () => openAddModal());
+    junkRemovalForm.addEventListener('submit', (e) => saveJunkRemovalJob(e));
+    editFromDetailBtn.addEventListener('click', () => {
+        closeModal('viewJunkRemovalModal');
+        openEditModal(currentJobId);
+    });
+
+    // --- Modal Functions ---
+    function openModal(modalId) {
+        document.getElementById(modalId).classList.remove('hidden');
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).classList.add('hidden');
+        if (modalId === 'junkRemovalModal') {
+            junkRemovalForm.reset();
+            currentJobId = null;
+        }
+    }
+
+    // --- Populate Dropdowns ---
+    function populateDropdowns() {
+        // Populate Customer Select
+        jrCustomerIdSelect.innerHTML = '<option value="">Select Customer</option>';
+        if (Array.isArray(customerData)) {
+            customerData.forEach(customer => {
+                const option = document.createElement('option');
+                option.value = customer.id;
+                option.textContent = `${customer.name} (${customer.company || 'Residential'})`;
+                jrCustomerIdSelect.appendChild(option);
+            });
+        }
+
+        // Populate Assigned Driver Select
+        assignedDriverSelect.innerHTML = '<option value="">Unassigned</option>';
+        if (Array.isArray(driverData)) {
+            driverData.forEach(driver => {
+                const option = document.createElement('option');
+                option.value = driver.id;
+                option.textContent = driver.name;
+                assignedDriverSelect.appendChild(option);
+            });
+        }
+    }
+
+    // --- CRUD Operations ---
+    function renderJunkRemovalTable(dataToRender = junkRemovalData) {
+        console.log("Rendering junk removal table with data:", dataToRender);
+        junkRemovalTableBody.innerHTML = '';
+        if (!Array.isArray(dataToRender) || dataToRender.length === 0) {
+            const row = junkRemovalTableBody.insertRow();
+            row.innerHTML = '<td colspan="7" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">No junk removal jobs found.</td>';
+            return;
+        }
+        dataToRender.forEach(job => {
+            const row = junkRemovalTableBody.insertRow();
+            row.classList.add('hover:bg-gray-50');
+
+            const customer = customerData.find(c => c.id === job.customerId);
+            const displayDate = job.requestedDate + (job.requestedTime ? ` ${job.requestedTime}` : '');
+
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'font-medium', 'text-gray-900').textContent = job.id;
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-500').textContent = customer ? customer.name : 'Unknown';
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-500').textContent = displayDate;
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-500').textContent = job.jobLocation;
+            row.insertCell().classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-500').textContent = `$${job.estimatedPrice.toFixed(2)}`;
+            
+            const statusCell = row.insertCell();
+            const statusSpan = document.createElement('span');
+            statusSpan.textContent = job.status;
+            statusSpan.classList.add('px-2', 'py-1', 'rounded-full', 'text-xs', 'font-bold', 'uppercase', 'text-white');
+            if (job.status === 'Completed') statusSpan.classList.add('bg-green-600');
+            else if (job.status === 'Scheduled' || job.status === 'In Progress' || job.status === 'Quoted') statusSpan.classList.add('bg-blue-600');
+            else if (job.status === 'Pending Quote') statusSpan.classList.add('bg-yellow-600');
+            else if (job.status === 'Cancelled') statusSpan.classList.add('bg-red-600');
+            statusCell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-sm', 'text-gray-500');
+            statusCell.appendChild(statusSpan);
+
+            const actionsCell = row.insertCell();
+            actionsCell.classList.add('px-6', 'py-4', 'whitespace-nowrap', 'text-right', 'text-sm', 'font-medium');
+            const viewBtn = document.createElement('button');
+            viewBtn.textContent = 'View';
+            viewBtn.classList.add('text-indigo-600', 'hover:text-indigo-900', 'mr-3', 'transition-colors', 'duration-200');
+            viewBtn.onclick = () => viewJunkRemovalDetails(job.id);
+            actionsCell.appendChild(viewBtn);
+
+            const editBtn = document.createElement('button');
+            editBtn.textContent = 'Edit';
+            editBtn.classList.add('text-[#EA3A26]', 'hover:text-[#F54F1D]', 'mr-3', 'transition-colors', 'duration-200');
+            editBtn.onclick = () => openEditModal(job.id);
+            actionsCell.appendChild(editBtn);
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.classList.add('text-red-600', 'hover:text-red-900', 'transition-colors', 'duration-200');
+            deleteBtn.onclick = () => deleteJunkRemovalJob(job.id);
+            actionsCell.appendChild(deleteBtn);
+        });
+    }
+
+    function openAddModal() {
+        modalTitle.textContent = 'Create New Junk Removal Job';
+        jobIdField.value = '';
+        junkRemovalForm.reset();
+        currentJobId = null;
+        populateDropdowns();
+        openModal('junkRemovalModal');
+    }
+
+    function openEditModal(id) {
+        const job = junkRemovalData.find(j => j.id === id);
+        if (job) {
+            modalTitle.textContent = `Edit Junk Removal Job: ${job.id}`;
+            jobIdField.value = job.id;
+            
+            populateDropdowns(); // Populate first, then set selected value
+            jrCustomerIdSelect.value = job.customerId;
+            assignedDriverSelect.value = job.assignedDriver || ''; // Handle unassigned
+
+            document.getElementById('requestedDate').value = job.requestedDate;
+            document.getElementById('requestedTime').value = job.requestedTime || '';
+            document.getElementById('jobLocation').value = job.jobLocation;
+            document.getElementById('descriptionOfJunk').value = job.descriptionOfJunk;
+            document.getElementById('volumeEstimate').value = job.volumeEstimate || '';
+            document.getElementById('weightEstimate').value = job.weightEstimate || '';
+            document.getElementById('crewRequirements').value = job.crewRequirements || 1;
+            document.getElementById('assignedDriver').value = job.assignedDriver || '';
+            document.getElementById('estimatedPrice').value = job.estimatedPrice;
+            document.getElementById('jobStatus').value = job.status;
+            document.getElementById('jobNotes').value = job.jobNotes || '';
+
+            currentJobId = id;
+            openModal('junkRemovalModal');
+        } else {
+            alert('Junk Removal Job not found for editing.');
+        }
+    }
+
+    function saveJunkRemovalJob(event) {
+        event.preventDefault();
+
+        const id = jobIdField.value;
+        const customerId = jrCustomerIdSelect.value;
+        const requestedDate = document.getElementById('requestedDate').value;
+        const requestedTime = document.getElementById('requestedTime').value;
+        const jobLocation = document.getElementById('jobLocation').value;
+        const descriptionOfJunk = document.getElementById('descriptionOfJunk').value;
+        const volumeEstimate = document.getElementById('volumeEstimate').value;
+        const weightEstimate = document.getElementById('weightEstimate').value;
+        const crewRequirements = parseInt(document.getElementById('crewRequirements').value) || 1;
+        const assignedDriver = document.getElementById('assignedDriver').value || '';
+        const estimatedPrice = parseFloat(document.getElementById('estimatedPrice').value) || 0;
+        const status = document.getElementById('jobStatus').value;
+        const jobNotes = document.getElementById('jobNotes').value;
+
+        if (!customerId || !requestedDate || !jobLocation || !descriptionOfJunk || isNaN(estimatedPrice) || estimatedPrice <= 0) {
+            alert('Please fill in all required job fields (Customer, Date, Location, Description, Estimated Price).');
+            return;
+        }
+
+        let newJob = {
+            id: id,
+            customerId: customerId,
+            requestedDate: requestedDate,
+            requestedTime: requestedTime,
+            jobLocation: jobLocation,
+            descriptionOfJunk: descriptionOfJunk,
+            volumeEstimate: volumeEstimate,
+            weightEstimate: weightEstimate,
+            crewRequirements: crewRequirements,
+            assignedDriver: assignedDriver,
+            estimatedPrice: estimatedPrice,
+            status: status,
+            jobNotes: jobNotes
+        };
+
+        if (id) {
+            const index = junkRemovalData.findIndex(j => j.id === id);
+            if (index !== -1) {
+                junkRemovalData[index] = newJob;
+                alert(`Junk Removal Job ${id} updated successfully!`);
+            } else {
+                alert(`Error: Job ${id} not found for update.`);
+            }
+        } else {
+            newJob.id = 'JR' + (junkRemovalData.length + 1).toString().padStart(3, '0');
+            junkRemovalData.push(newJob);
+            alert(`New Junk Removal Job ${newJob.id} created successfully!`);
+        }
+
+        renderJunkRemovalTable();
+        closeModal('junkRemovalModal');
+    }
+
+    function deleteJunkRemovalJob(id) {
+        if (confirm(`Are you sure you want to delete Junk Removal Job ID: ${id}? This action cannot be undone.`)) {
+            junkRemovalData = junkRemovalData.filter(j => j.id !== id);
+            renderJunkRemovalTable();
+            alert(`Junk Removal Job ${id} deleted successfully.`);
+        }
+    }
+
+    function viewJunkRemovalDetails(id) {
+        const job = junkRemovalData.find(j => j.id === id);
+        if (job) {
+            const customer = customerData.find(c => c.id === job.customerId);
+            const driver = driverData.find(d => d.id === job.assignedDriver);
+
+            detailJobId.textContent = job.id;
+            detailJrCustomerName.textContent = customer ? customer.name : 'Unknown';
+            detailRequestedDateTime.textContent = job.requestedDate + (job.requestedTime ? ` at ${job.requestedTime}` : '');
+            detailJobLocation.textContent = job.jobLocation;
+            detailDescriptionOfJunk.textContent = job.descriptionOfJunk;
+            detailVolumeEstimate.textContent = job.volumeEstimate || 'N/A';
+            detailWeightEstimate.textContent = job.weightEstimate || 'N/A';
+            detailCrewRequirements.textContent = job.crewRequirements;
+            detailAssignedDriver.textContent = driver ? driver.name : 'Unassigned';
+            detailEstimatedPrice.textContent = job.estimatedPrice.toFixed(2);
+            
+            // Status styling
+            detailJobStatus.textContent = job.status;
+            detailJobStatus.classList.remove('bg-green-600', 'bg-blue-600', 'bg-yellow-600', 'bg-red-600');
+            if (job.status === 'Completed') detailJobStatus.classList.add('bg-green-600');
+            else if (job.status === 'Scheduled' || job.status === 'In Progress' || job.status === 'Quoted') detailJobStatus.classList.add('bg-blue-600');
+            else if (job.status === 'Pending Quote') detailJobStatus.classList.add('bg-yellow-600');
+            else if (job.status === 'Cancelled') detailJobStatus.classList.add('bg-red-600');
+
+            if (job.jobNotes) {
+                detailJobNotesGroup.classList.remove('hidden');
+                detailJobNotes.textContent = job.jobNotes;
+            } else {
+                detailJobNotesGroup.classList.add('hidden');
+            }
+
+            currentJobId = id; // Set for edit button from detail view
+            openModal('viewJunkRemovalModal');
+        } else {
+            alert('Junk Removal Job details not found.');
+        }
+    }
+
+    // --- Filtering and Searching ---
+    function filterJunkRemovalJobs() {
+        const searchTerm = document.getElementById('junkRemovalSearch').value.toLowerCase();
+        const statusFilter = document.getElementById('junkRemovalStatusFilter').value;
+
+        const filteredData = junkRemovalData.filter(job => {
+            const customer = customerData.find(c => c.id === job.customerId);
+            const customerName = customer ? customer.name.toLowerCase() : '';
+
+            const matchesSearch = job.id.toLowerCase().includes(searchTerm) ||
+                                  customerName.includes(searchTerm) ||
+                                  job.jobLocation.toLowerCase().includes(searchTerm) ||
+                                  job.descriptionOfJunk.toLowerCase().includes(searchTerm);
+            const matchesStatus = statusFilter === '' || job.status === statusFilter;
+
+            return matchesSearch && matchesStatus;
+        });
+
+        renderJunkRemovalTable(filteredData);
+    }
+
+    // Initial render when the module loads
+    populateDropdowns();
+    renderJunkRemovalTable();
+})(); // End of IIFE
+</script>
