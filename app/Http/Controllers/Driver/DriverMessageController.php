@@ -1,15 +1,16 @@
 <?php
 
-namespace App->Http->Controllers->Driver;
+namespace App\Http\Controllers\Driver;
 
-use App->Http->Controllers->Controller;
-use App->Models->Message;
-use App->Models->User; // The model used for driver authentication and other staff
-use App->Models->Vendor; // For authentication fallback
-use Illuminate->Http->Request;
-use Illuminate->Support->Facades->Auth;
-use Carbon->Carbon;
-use Illuminate->Validation->Rule;
+use App\Http\Controllers\Controller;
+use App\Models\Message;
+use App\Models\User; // The model used for driver authentication and other staff
+use App\Models\Vendor; // For authentication fallback
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+use Illuminate\Validation\Rule;
+
 
 class DriverMessageController extends Controller
 {

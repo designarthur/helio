@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash; // For user password hashing
 use Illuminate\Validation\Rule;
 
+
 class SettingsController extends Controller
 {
     /**
