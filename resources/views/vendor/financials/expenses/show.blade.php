@@ -1,49 +1,84 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Helly - Expense Details: {{ $expense->description }}</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'chili-red': '#EA3A26',
-                        'ut-orange': '#FF8600',
-                        'tangelo': '#F54F1D',
-                    },
-                }
-            }
-        }
-    </script>
-</head>
-<body class="bg-gradient-to-br from-gray-50 to-gray-100 font-sans min-h-screen flex items-center justify-center py-8">
+@extends('layouts.vendor-app')
 
-    {{-- Main content wrapper (simulating a modal or a dedicated page for details) --}}
-    <div class="bg-white p-8 rounded-lg shadow-xl w-11/12 max-w-md relative max-h-[90vh] overflow-y-auto">
-        <button onclick="window.history.back()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold">&times;</button>
-        <h3 class="text-2xl font-bold text-chili-red mb-6 border-b pb-3 border-gray-200">
-            Expense Details: <span id="detailExpenseId">{{ $expense->id }}</span>
-        </h3>
+@section('content')
+    <h2 class="text-3xl font-bold text-gray-900 mb-6">Expense Details: #{{ $expense->id }}</h2>
 
-        <div class="space-y-4 text-gray-700">
-            <p><strong>Date:</strong> <span id="detailExpenseDate">{{ $expense->date->format('Y-m-d') }}</span></p>
-            <p><strong>Description:</strong> <span id="detailExpenseDescription">{{ $expense->description }}</span></p>
-            <p><strong>Category:</strong> <span id="detailExpenseCategory">{{ $expense->category }}</span></p>
-            <p><strong>Amount:</strong> $<span id="detailExpenseAmount">{{ number_format($expense->amount, 2) }}</span></p>
-            <p><strong>Paid To:</strong> <span id="detailExpenseVendorName">{{ $expense->vendor_name ?? 'N/A' }}</span></p>
-            <p><strong>Notes:</strong> <span id="detailExpenseNotes">{{ $expense->notes ?? 'N/A' }}</span></p>
-            {{-- Optional: Display receipt image/link here if you implement file storage --}}
-            {{-- @if($expense->receipt_path)
-            <p><strong>Receipt:</strong> <a href="{{ asset('storage/' . $expense->receipt_path) }}" target="_blank" class="text-blue-600 hover:underline">View Receipt</a></p>
-            @endif --}}
+    {{-- Success/Error Messages from Controller --}}
+    @if (session('success'))
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Success!</strong>
+            <span class="block sm:inline">{{ session('success') }}</span>
         </div>
-        <div class="mt-6 flex justify-end">
-            <a href="{{ route('expenses.index') }}" class="px-6 py-2 bg-gray-300 text-gray-800 rounded-md font-semibold hover:bg-gray-400 transition-colors duration-200">Close</a>
+    @endif
+    @if (session('error'))
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Error!</strong>
+            <span class="block sm:inline">{{ session('error') }}</span>
+        </div>
+    @endif
+    @if ($errors->any())
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Validation Error!</strong>
+            <span class="block sm:inline">Please check your input.</span>
+            <ul class="mt-3 list-disc list-inside text-sm">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <p class="text-sm font-medium text-gray-500">Expense ID:</p>
+                <p class="text-lg text-gray-900 font-semibold">#{{ $expense->id }}</p>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-gray-500">Date:</p>
+                <p class="text-lg text-gray-900">{{ $expense->expense_date->format('M d, Y') }}</p>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-gray-500">Category:</p>
+                <p class="text-lg text-gray-900">{{ $expense->category }}</p>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-gray-500">Amount:</p>
+                <p class="text-lg text-gray-900">${{ number_format($expense->amount, 2) }}</p>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <p class="text-sm font-medium text-gray-500">Description:</p>
+            <p class="text-lg text-gray-900">{{ $expense->description }}</p>
+        </div>
+
+        @if($expense->notes)
+            <div class="mt-4">
+                <p class="text-sm font-medium text-gray-500">Notes:</p>
+                <p class="text-lg text-gray-900">{{ $expense->notes }}</p>
+            </div>
+        @endif
+
+        <div class="mt-4">
+            <p class="text-sm font-medium text-gray-500">Recorded By:</p>
+            <p class="text-lg text-gray-900">{{ $expense->user->name ?? 'N/A' }}</p>
+        </div>
+
+        <div class="mt-8 flex justify-end gap-3">
+            <a href="{{ route('expenses.edit', $expense->id) }}" class="px-6 py-3 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 transition-colors duration-200">
+                Edit Expense
+            </a>
+            <form action="{{ route('expenses.destroy', $expense->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this expense? This action cannot be undone.');">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="px-6 py-3 bg-red-600 text-white rounded-md font-semibold hover:bg-red-700 transition-colors duration-200">
+                    Delete Expense
+                </button>
+            </form>
+            <a href="{{ route('expenses.index') }}" class="px-6 py-3 bg-gray-300 text-gray-800 rounded-md font-semibold hover:bg-gray-400 transition-colors duration-200">
+                Back to Expenses
+            </a>
         </div>
     </div>
-</body>
-</html>
+@endsection

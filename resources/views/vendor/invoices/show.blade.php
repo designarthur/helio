@@ -1,109 +1,169 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Helly - Invoice Details: {{ $invoice->invoice_number }}</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'chili-red': '#EA3A26',
-                        'ut-orange': '#FF8600',
-                        'tangelo': '#F54F1D',
-                    },
-                }
-            }
-        }
-    </script>
-</head>
-<body class="bg-gradient-to-br from-gray-50 to-gray-100 font-sans min-h-screen flex items-center justify-center py-8">
+@extends('layouts.vendor-app')
 
-    {{-- Main content wrapper (simulating a modal or a dedicated page for details) --}}
-    <div class="bg-white p-8 rounded-lg shadow-xl w-11/12 max-w-3xl relative max-h-[90vh] overflow-y-auto">
-        <button onclick="window.history.back()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold">&times;</button>
-        <h3 class="text-2xl font-bold text-chili-red mb-6 border-b pb-3 border-gray-200">
-            Invoice Details: <span id="detailInvoiceId">{{ $invoice->invoice_number }}</span>
-        </h3>
+@section('content')
+    <h2 class="text-3xl font-bold text-gray-900 mb-6">Invoice Details: #{{ $invoice->id }}</h2>
 
-        <div class="space-y-4 text-gray-700">
-            <div class="bg-gray-50 p-4 rounded-md shadow-sm">
-                <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Invoice Information</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <p><strong>Customer:</strong> <span id="detailInvoiceCustomerName">{{ $invoice->customer->name ?? 'N/A' }}</span></p>
-                    <p><strong>Issue Date:</strong> <span id="detailInvoiceIssueDate">{{ $invoice->issue_date->format('Y-m-d') }}</span></p>
-                    <p><strong>Due Date:</strong> <span id="detailInvoiceDueDate">{{ $invoice->due_date->format('Y-m-d') }}</span></p>
-                    <p><strong>Total Amount:</strong> $<span id="detailInvoiceTotal">{{ number_format($invoice->total_amount, 2) }}</span></p>
-                    <p><strong>Balance Due:</strong> $<span id="detailInvoiceBalanceDue">{{ number_format($invoice->balance_due, 2) }}</span></p>
-                    <p><strong>Status:</strong>
-                        <span id="detailInvoiceStatus" class="px-2 py-1 rounded-full text-xs font-bold uppercase text-white
-                            @if($invoice->status == 'Paid') bg-green-600
-                            @elseif($invoice->status == 'Partially Paid') bg-ut-orange
-                            @elseif($invoice->status == 'Overdue') bg-red-600
-                            @else bg-blue-600
-                            @endif
-                        ">{{ $invoice->status }}</span>
-                    </p>
-                    <p><strong>Linked Booking:</strong>
-                        @if($invoice->linkedBooking)
-                            <a href="{{ route('bookings.show', $invoice->linkedBooking->id) }}" class="text-blue-600 hover:underline">#{{ $invoice->linkedBooking->id }}</a>
-                        @else
-                            N/A
-                        @endif
-                    </p>
-                    <p><strong>Linked Quote:</strong>
-                        @if($invoice->linkedQuote)
-                            <a href="{{ route('quotes.show', $invoice->linkedQuote->id) }}" class="text-blue-600 hover:underline">#{{ $invoice->linkedQuote->id }}</a>
-                        @else
-                            N/A
-                        @endif
+    {{-- Success/Error Messages from Controller --}}
+    @if (session('success'))
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Success!</strong>
+            <span class="block sm:inline">{{ session('success') }}</span>
+        </div>
+    @endif
+    @if (session('error'))
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Error!</strong>
+            <span class="block sm:inline">{{ session('error') }}</span>
+        </div>
+    @endif
+    @if ($errors->any())
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Validation Error!</strong>
+            <span class="block sm:inline">Please check your input.</span>
+            <ul class="mt-3 list-disc list-inside text-sm">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            <div>
+                <p class="text-sm font-medium text-gray-500">Invoice ID:</p>
+                <p class="text-lg text-gray-900 font-semibold">#{{ $invoice->id }}</p>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-gray-500">Customer:</p>
+                <p class="text-lg text-gray-900">
+                    <a href="{{ route('customers.show', $invoice->customer->id ?? '#') }}" class="text-blue-600 hover:underline">
+                        {{ $invoice->customer->first_name ?? 'N/A' }} {{ $invoice->customer->last_name ?? '' }}
+                    </a>
+                </p>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-gray-500">Issue Date:</p>
+                <p class="text-lg text-gray-900">{{ $invoice->issue_date->format('M d, Y') }}</p>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-gray-500">Due Date:</p>
+                <p class="text-lg text-gray-900">{{ $invoice->due_date->format('M d, Y') }}</p>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-gray-500">Status:</p>
+                <p class="text-lg text-gray-900">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                        @if($invoice->status == 'Paid') bg-green-100 text-green-800
+                        @elseif($invoice->status == 'Unpaid') bg-yellow-100 text-yellow-800
+                        @elseif($invoice->status == 'Partially Paid') bg-orange-100 text-orange-800
+                        @elseif($invoice->status == 'Overdue') bg-red-100 text-red-800
+                        @else bg-gray-100 text-gray-800 @endif">
+                        {{ $invoice->status }}
+                    </span>
+                </p>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-gray-500">Total Amount:</p>
+                <p class="text-lg text-gray-900">${{ number_format($invoice->total_amount, 2) }}</p>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-gray-500">Amount Paid:</p>
+                <p class="text-lg text-gray-900">${{ number_format($invoice->amount_paid, 2) }}</p>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-gray-500">Amount Due:</p>
+                <p class="text-lg text-gray-900 font-bold text-chili-red">${{ number_format($invoice->amount_due, 2) }}</p>
+            </div>
+            @if($invoice->quote)
+                <div>
+                    <p class="text-sm font-medium text-gray-500">From Quote:</p>
+                    <p class="text-lg text-gray-900">
+                        <a href="{{ route('quotes.show', $invoice->quote->id) }}" class="text-blue-600 hover:underline">
+                            #{{ $invoice->quote->id }}
+                        </a>
                     </p>
                 </div>
-            </div>
-
-            <div class="bg-gray-50 p-4 rounded-md shadow-sm">
-                <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Invoice Items</h4>
-                <ul id="detailInvoiceItemsList" class="list-disc list-inside ml-4 space-y-1">
-                    @forelse($invoice->items as $item)
-                        <li>{{ $item['description'] }} - ${{ number_format($item['amount'], 2) }}</li>
-                    @empty
-                        <li>No items on this invoice.</li>
-                    @endforelse
-                </ul>
-            </div>
-
-            @if($invoice->notes)
-            <div class="bg-gray-50 p-4 rounded-md shadow-sm">
-                <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Notes</h4>
-                <p>{{ $invoice->notes }}</p>
-            </div>
             @endif
-
-            <div class="bg-gray-50 p-4 rounded-md shadow-sm">
-                <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Payments Received</h4>
-                <ul class="list-disc list-inside ml-4 space-y-1">
-                    @forelse($invoice->payments as $payment)
-                        <li>${{ number_format($payment->amount, 2) }} on {{ $payment->payment_date->format('Y-m-d') }} via {{ $payment->method }}</li>
-                    @empty
-                        <li>No payments recorded for this invoice yet.</li>
-                    @endforelse
-                </ul>
-            </div>
         </div>
-        <div class="mt-6 flex justify-end gap-3">
-            <a href="{{ route('invoices.index') }}" class="px-6 py-2 bg-gray-300 text-gray-800 rounded-md font-semibold hover:bg-gray-400 transition-colors duration-200">Close</a>
-            <a href="{{ route('invoices.edit', $invoice->id) }}" class="px-6 py-2 bg-chili-red text-white rounded-md font-semibold hover:bg-tangelo transition-colors duration-200">Edit Invoice</a>
 
-            @if($invoice->balance_due > 0)
-                <form action="{{ route('invoices.markAsPaid', $invoice->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to mark this invoice as fully paid? This will record a payment for the remaining balance.');">
-                    @csrf
-                    <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-md font-semibold hover:bg-green-700 transition-colors duration-200">Mark As Paid</button>
-                </form>
+        <h3 class="text-xl font-semibold text-gray-800 mb-4 border-t pt-4 mt-6">Items on Invoice</h3>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Unit Price</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Line Total</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @forelse($invoice->items as $item)
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $item->description }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $item->quantity }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${{ number_format($item->unit_price, 2) }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">${{ number_format($item->quantity * $item->unit_price, 2) }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="4" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">No items on this invoice.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <h3 class="text-xl font-semibold text-gray-800 mb-4 border-t pt-4 mt-6">Payment History</h3>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount Paid</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Method</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Transaction ID</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @forelse($invoice->payments as $payment)
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $payment->id }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $payment->payment_date->format('M d, Y') }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${{ number_format($payment->amount, 2) }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $payment->payment_method }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $payment->transaction_id ?? 'N/A' }}</td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">No payments recorded for this invoice.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-8 flex justify-end gap-3">
+            @if($invoice->status !== 'Paid' && $invoice->amount_due > 0)
+                <a href="{{ route('payments.record', ['invoice_id' => $invoice->id]) }}" class="px-6 py-3 bg-green-600 text-white rounded-md font-semibold hover:bg-green-700 transition-colors duration-200">
+                    Record Payment
+                </a>
             @endif
+            <a href="{{ route('invoices.edit', $invoice->id) }}" class="px-6 py-3 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 transition-colors duration-200">
+                Edit Invoice
+            </a>
+            <form action="{{ route('invoices.destroy', $invoice->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this invoice? This action cannot be undone.');">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="px-6 py-3 bg-red-600 text-white rounded-md font-semibold hover:bg-red-700 transition-colors duration-200">
+                    Delete Invoice
+                </button>
+            </form>
+            <a href="{{ route('invoices.index') }}" class="px-6 py-3 bg-gray-300 text-gray-800 rounded-md font-semibold hover:bg-gray-400 transition-colors duration-200">
+                Back to Invoices
+            </a>
         </div>
     </div>
-</body>
-</html>
+@endsection

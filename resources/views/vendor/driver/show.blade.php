@@ -1,90 +1,99 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Helly - Driver Details: {{ $driver->name }}</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'chili-red': '#EA3A26',
-                        'ut-orange': '#FF8600',
-                        'tangelo': '#F54F1D',
-                    },
-                }
-            }
-        }
-    </script>
-</head>
-<body class="bg-gradient-to-br from-gray-50 to-gray-100 font-sans min-h-screen flex items-center justify-center py-8">
+@extends('layouts.vendor-app')
 
-    {{-- Main content wrapper (simulating a modal or a dedicated page for details) --}}
-    <div class="bg-white p-8 rounded-lg shadow-xl w-11/12 max-w-3xl relative max-h-[90vh] overflow-y-auto">
-        <button onclick="window.history.back()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold">&times;</button>
-        <h3 class="text-2xl font-bold text-chili-red mb-6 border-b pb-3 border-gray-200">
-            Driver Details: <span id="detailDriverId">{{ $driver->id }}</span>
-        </h3>
+@section('content')
+    <h2 class="text-3xl font-bold text-gray-900 mb-6">Driver Details: {{ $driver->first_name }} {{ $driver->last_name }}</h2>
 
-        <div class="space-y-4 text-gray-700">
-            <div class="bg-gray-50 p-4 rounded-md shadow-sm">
-                <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">General Information</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <p><strong>Name:</strong> <span id="detailDriverName">{{ $driver->name }}</span></p>
-                    <p><strong>Email:</strong> <span id="detailDriverEmail">{{ $driver->email }}</span></p>
-                    <p><strong>Phone:</strong> <span id="detailDriverPhone">{{ $driver->phone ?? 'N/A' }}</span></p>
-                    <p><strong>License Number:</strong> <span id="detailLicenseNumber">{{ $driver->license_number ?? 'N/A' }}</span></p>
-                    <p><strong>License Expiry:</strong> <span id="detailLicenseExpiry">{{ $driver->license_expiry ? $driver->license_expiry->format('Y-m-d') : 'N/A' }}</span></p>
-                    <p><strong>CDL Class:</strong> <span id="detailCdlClass">{{ $driver->cdl_class ?? 'N/A' }}</span></p>
-                    <p><strong>Status:</strong> <span id="detailDriverStatus">{{ $driver->status }}</span></p>
-                    <p><strong>Assigned Vehicle:</strong> <span id="detailAssignedVehicle">{{ $driver->assigned_vehicle ?? 'N/A' }}</span></p>
-                    <p class="col-span-1 md:col-span-2"><strong>Certifications:</strong> <span id="detailCertifications">{{ is_array($driver->certifications) ? implode(', ', $driver->certifications) : ($driver->certifications ?? 'N/A') }}</span></p>
-                </div>
+    {{-- Success/Error Messages from Controller --}}
+    @if (session('success'))
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Success!</strong>
+            <span class="block sm:inline">{{ session('success') }}</span>
+        </div>
+    @endif
+    @if (session('error'))
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Error!</strong>
+            <span class="block sm:inline">{{ session('error') }}</span>
+        </div>
+    @endif
+    @if ($errors->any())
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Validation Error!</strong>
+            <span class="block sm:inline">Please check your input.</span>
+            <ul class="mt-3 list-disc list-inside text-sm">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <p class="text-sm font-medium text-gray-500">Name:</p>
+                <p class="text-lg text-gray-900 font-semibold">{{ $driver->first_name }} {{ $driver->last_name }}</p>
             </div>
-
-            @if($driver->driver_notes)
-            <div class="bg-gray-50 p-4 rounded-md shadow-sm" id="detailDriverNotesGroup">
-                <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Internal Notes</h4>
-                <p><span id="detailDriverNotes">{{ $driver->driver_notes }}</span></p>
+            <div>
+                <p class="text-sm font-medium text-gray-500">Email:</p>
+                <p class="text-lg text-gray-900">{{ $driver->email }}</p>
             </div>
-            @endif
-
-            <div class="bg-gray-50 p-4 rounded-md shadow-sm">
-                <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Assigned Bookings (Current/Upcoming)</h4>
-                <div id="assignedBookingsList" class="space-y-2">
-                    @forelse($assignedBookings as $booking)
-                        <div class="border-b border-dashed border-gray-300 pb-2 mb-2 last:border-b-0">
-                            <p class="font-medium"><strong>Booking {{ $booking->id }}:</strong> {{ $booking->customer->name ?? 'N/A' }}</p>
-                            <p class="text-sm text-gray-600 ml-2">Equipment: {{ $booking->equipment->type ?? 'N/A' }} ({{ $booking->equipment->size ?? 'N/A' }})</p>
-                            <p class="text-sm text-gray-600 ml-2">Date: {{ $booking->rental_start_date->format('Y-m-d') }}</p>
-                            <p class="text-sm text-gray-600 ml-2">Status: {{ $booking->status }}</p>
-                            <a href="{{ route('bookings.show', $booking->id) }}" class="text-blue-600 hover:text-blue-800 text-sm ml-2">View Booking Details</a>
-                        </div>
-                    @empty
-                        <p class="text-gray-500 italic">No assigned bookings for this driver for the upcoming days.</p>
-                    @endforelse
-                </div>
+            <div>
+                <p class="text-sm font-medium text-gray-500">Phone Number:</p>
+                <p class="text-lg text-gray-900">{{ $driver->phone_number }}</p>
             </div>
-
-            <div class="bg-gray-50 p-4 rounded-md shadow-sm">
-                <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Performance Metrics (Conceptual)</h4>
-                <p class="text-gray-600">This section would show driver-specific performance metrics such as:
-                    <ul class="list-disc list-inside ml-4 text-sm mt-2">
-                        <li>On-time delivery rate.</li>
-                        <li>Average service time per job.</li>
-                        <li>Fuel efficiency comparisons.</li>
-                        <li>Customer feedback/ratings.</li>
-                    </ul>
+            <div>
+                <p class="text-sm font-medium text-gray-500">License Number:</p>
+                <p class="text-lg text-gray-900">{{ $driver->license_number }}</p>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-gray-500">Status:</p>
+                <p class="text-lg text-gray-900">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                        @if($driver->status == 'Available') bg-green-100 text-green-800
+                        @elseif($driver->status == 'On Duty') bg-blue-100 text-blue-800
+                        @elseif($driver->status == 'Off Duty') bg-gray-100 text-gray-800
+                        @elseif($driver->status == 'Incapacitated') bg-red-100 text-red-800
+                        @else bg-gray-100 text-gray-800 @endif">
+                        {{ $driver->status }}
+                    </span>
+                </p>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-gray-500">Assigned Vehicle:</p>
+                <p class="text-lg text-gray-900">
+                    @if($driver->vehicle)
+                        <a href="{{ route('equipment.show', $driver->vehicle->id) }}" class="text-blue-600 hover:underline">
+                            {{ $driver->vehicle->make }} {{ $driver->vehicle->model }} ({{ $driver->vehicle->license_plate }})
+                        </a>
+                    @else
+                        N/A
+                    @endif
                 </p>
             </div>
         </div>
-        <div class="mt-6 flex justify-end gap-3">
-            <a href="{{ route('drivers.index') }}" class="px-6 py-2 bg-gray-300 text-gray-800 rounded-md font-semibold hover:bg-gray-400 transition-colors duration-200">Close</a>
-            <a href="{{ route('drivers.edit', $driver->id) }}" class="px-6 py-2 bg-chili-red text-white rounded-md font-semibold hover:bg-tangelo transition-colors duration-200" id="editFromDetailBtn">Edit Driver</a>
+
+        @if($driver->notes)
+            <div class="mt-4">
+                <p class="text-sm font-medium text-gray-500">Notes:</p>
+                <p class="text-lg text-gray-900">{{ $driver->notes }}</p>
+            </div>
+        @endif
+
+        <div class="mt-8 flex justify-end gap-3">
+            <a href="{{ route('drivers.edit', $driver->id) }}" class="px-6 py-3 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 transition-colors duration-200">
+                Edit Driver
+            </a>
+            <form action="{{ route('drivers.destroy', $driver->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this driver? This action cannot be undone.');">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="px-6 py-3 bg-red-600 text-white rounded-md font-semibold hover:bg-red-700 transition-colors duration-200">
+                    Delete Driver
+                </button>
+            </form>
+            <a href="{{ route('drivers.index') }}" class="px-6 py-3 bg-gray-300 text-gray-800 rounded-md font-semibold hover:bg-gray-400 transition-colors duration-200">
+                Back to Drivers
+            </a>
         </div>
     </div>
-</body>
-</html>
+@endsection

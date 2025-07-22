@@ -1,205 +1,160 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Helly - Analytics Trends</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> {{-- Chart.js CDN --}}
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'chili-red': '#EA3A26',
-                        'ut-orange': '#FF8600',
-                        'tangelo': '#F54F1D',
-                    },
-                }
-            }
-        }
-    </script>
-    <style>
-        /* Existing custom styles from your HTML, if any */
-    </style>
-</head>
-<body class="bg-gradient-to-br from-gray-50 to-gray-100 font-sans min-h-screen">
+@extends('layouts.vendor-app')
 
-    {{-- Main content wrapper - for now, this will be a full page, later part of a layout --}}
-    <div class="p-8">
-        <h2 class="text-3xl font-bold text-gray-900 mb-6">Analytics & Reporting</h2>
+@section('content')
+    <h2 class="text-3xl font-bold text-gray-900 mb-6">Analytics & Reporting: Trends</h2>
 
-        {{-- Success/Error Messages from Controller --}}
-        @if (session('success'))
-            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-                <strong class="font-bold">Success!</strong>
-                <span class="block sm:inline">{{ session('success') }}</span>
-            </div>
-        @endif
-        @if (session('error'))
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                <strong class="font-bold">Error!</strong>
-                <span class="block sm:inline">{{ session('error') }}</span>
-            </div>
-        @endif
-        @if (session('info'))
-            <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded relative mb-4" role="alert">
-                <strong class="font-bold">Info:</strong>
-                <span class="block sm:inline">{{ session('info') }}</span>
-            </div>
-        @endif
-        @if ($errors->any())
-            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                <strong class="font-bold">Validation Error!</strong>
-                <span class="block sm:inline">Please check your input.</span>
-                <ul class="mt-3 list-disc list-inside text-sm">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-
-        <div class="flex border-b border-gray-200 mb-8 space-x-6">
-            <a href="{{ route('analytics.overview') }}" class="analytics-tab py-2 px-0 cursor-pointer font-bold text-gray-500 transition-colors duration-300 hover:text-gray-800 border-b-2 border-transparent">Overview</a>
-            <a href="{{ route('analytics.trends') }}" class="analytics-tab py-2 px-0 cursor-pointer font-bold text-gray-500 transition-colors duration-300 hover:text-gray-800 border-b-2 border-transparent text-chili-red border-chili-red">Trends</a>
-            <a href="{{ route('analytics.reports') }}" class="analytics-tab py-2 px-0 cursor-pointer font-bold text-gray-500 transition-colors duration-300 hover:text-gray-800 border-b-2 border-transparent">Reports</a>
-            <a href="{{ route('analytics.performance') }}" class="analytics-tab py-2 px-0 cursor-pointer font-bold text-gray-500 transition-colors duration-300 hover:text-gray-800 border-b-2 border-transparent">Performance (Conceptual)</a>
+    {{-- Success/Error Messages from Controller --}}
+    @if (session('success'))
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Success!</strong>
+            <span class="block sm:inline">{{ session('success') }}</span>
         </div>
-
-        <div id="analytics-tab-trends" class="analytics-content-view">
-            <h3 class="text-2xl font-bold text-gray-800 mb-4">Performance Trends</h3>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <div class="flex justify-between items-center pb-3 mb-4 border-b border-gray-200">
-                        <h4 class="text-xl text-gray-800 font-semibold m-0">Daily Engagement & Bookings</h4>
-                        <button onclick="alert('Simulating export of daily trend data...')" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md text-sm hover:bg-gray-300 transition-colors">Export</button>
-                    </div>
-                    <canvas id="dailyAnalyticsChartAnalytics" class="max-h-[300px]"></canvas>
-                </div>
-
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <div class="flex justify-between items-center pb-3 mb-4 border-b border-gray-200">
-                        <h4 class="text-xl text-gray-800 font-semibold m-0">Monthly Revenue & Bookings</h4>
-                        <button onclick="alert('Simulating export of monthly trend data...')" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md text-sm hover:bg-gray-300 transition-colors">Export</button>
-                    </div>
-                    <canvas id="monthlyRevenueBookingsChart" class="max-h-[300px]"></canvas>
-                </div>
-            </div>
+    @endif
+    @if (session('error'))
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Error!</strong>
+            <span class="block sm:inline">{{ session('error') }}</span>
         </div>
+    @endif
+    @if ($errors->any())
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Validation Error!</strong>
+            <span class="block sm:inline">Please check your input.</span>
+            <ul class="mt-3 list-disc list-inside text-sm">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <div class="flex border-b border-gray-200 mb-8 space-x-6">
+        {{-- Analytics Tabs --}}
+        <a href="{{ route('analytics.overview') }}" class="analytics-tab py-2 px-0 cursor-pointer font-bold text-gray-500 transition-colors duration-300 hover:text-gray-800 border-b-2 border-transparent" data-tab="overview">Overview</a>
+        <a href="{{ route('analytics.customer_insights') }}" class="analytics-tab py-2 px-0 cursor-pointer font-bold text-gray-500 transition-colors duration-300 hover:text-gray-800 border-b-2 border-transparent" data-tab="customer_insights">Customer Insights</a>
+        <a href="{{ route('analytics.equipment_performance') }}" class="analytics-tab py-2 px-0 cursor-pointer font-bold text-gray-500 transition-colors duration-300 hover:text-gray-800 border-b-2 border-transparent" data-tab="equipment_performance">Equipment Performance</a>
+        <a href="{{ route('analytics.job_efficiency') }}" class="analytics-tab py-2 px-0 cursor-pointer font-bold text-gray-500 transition-colors duration-300 hover:text-gray-800 border-b-2 border-transparent" data-tab="job_efficiency">Job Efficiency</a>
+        <span class="analytics-tab py-2 px-0 cursor-pointer font-bold text-gray-500 transition-colors duration-300 hover:text-gray-800 border-b-2 border-transparent text-[#EA3A26] border-[#EA3A26]" data-tab="trends">Trends</span>
+        <a href="{{ route('analytics.reports') }}" class="analytics-tab py-2 px-0 cursor-pointer font-bold text-gray-500 transition-colors duration-300 hover:text-gray-800 border-b-2 border-transparent" data-tab="reports">Reports</a>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Data passed from Laravel Controller
-            const dailyAnalyticsData = @json($dailyAnalyticsChartData);
-            const monthlyRevenueBookingsData = @json($monthlyRevenueBookingsChartData);
+    <div id="analytics-tab-content-trends" class="tab-content bg-white p-6 rounded-lg shadow-md">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4">Historical Data Trends</h3>
+        <p class="text-gray-600 mb-6">
+            Analyze long-term trends in your business performance.
+        </p>
 
-            // Chart instances
-            let dailyAnalyticsChartInstance = null;
-            let monthlyRevenueBookingsChartInstance = null;
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            {{-- Revenue Trend Chart --}}
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="flex justify-between items-center pb-3 mb-4 border-b border-gray-200">
+                    <h3 class="text-xl text-gray-800 font-semibold m-0">Quarterly Revenue Trend</h3>
+                    <button class="px-4 py-2 bg-chili-red text-white rounded-md text-sm font-semibold hover:bg-tangelo transition-colors duration-200">Export</button>
+                </div>
+                <canvas id="quarterlyRevenueTrendChart" class="max-h-[300px]"></canvas>
+            </div>
 
-            function renderCharts() {
-                const dailyCtx = document.getElementById('dailyAnalyticsChartAnalytics');
-                const monthlyCtx = document.getElementById('monthlyRevenueBookingsChart');
+            {{-- Booking Growth Chart --}}
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="flex justify-between items-center pb-3 mb-4 border-b border-gray-200">
+                    <h3 class="text-xl text-gray-800 font-semibold m-0">Yearly Booking Growth</h3>
+                    <button class="px-4 py-2 bg-chili-red text-white rounded-md text-sm font-semibold hover:bg-tangelo transition-colors duration-200">Export</button>
+                </div>
+                <canvas id="yearlyBookingGrowthChart" class="max-h-[300px]"></canvas>
+            </div>
+        </div>
 
-                // Destroy existing chart instances to prevent duplicates on re-render
-                if (dailyAnalyticsChartInstance) {
-                    dailyAnalyticsChartInstance.destroy();
-                }
-                if (monthlyRevenueBookingsChartInstance) {
-                    monthlyRevenueBookingsChartInstance.destroy();
-                }
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            {{-- New Customer Acquisition Trend --}}
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="flex justify-between items-center pb-3 mb-4 border-b border-gray-200">
+                    <h3 class="text-xl text-gray-800 font-semibold m-0">New Customer Acquisition</h3>
+                    <button class="px-4 py-2 bg-chili-red text-white rounded-md text-sm font-semibold hover:bg-tangelo transition-colors duration-200">Export</button>
+                </div>
+                <canvas id="newCustomerAcquisitionChart" class="max-h-[300px]"></canvas>
+            </div>
 
-                if (dailyCtx && monthlyCtx) {
-                    // Daily Analytics Chart (Bar Chart)
-                    dailyAnalyticsChartInstance = new Chart(dailyCtx.getContext('2d'), {
-                        type: 'bar',
-                        data: {
-                            labels: dailyAnalyticsData.labels,
-                            datasets: [
-                                {
-                                    label: dailyAnalyticsData.datasets[0].label,
-                                    data: dailyAnalyticsData.datasets[0].data,
-                                    backgroundColor: 'rgba(0, 0, 0, 0.7)', // Black
-                                    borderColor: 'rgba(0, 0, 0, 1)',
-                                    borderWidth: 1,
-                                    borderRadius: 5
-                                },
-                                {
-                                    label: dailyAnalyticsData.datasets[1].label,
-                                    data: dailyAnalyticsData.datasets[1].data,
-                                    backgroundColor: 'rgba(234, 58, 38, 0.7)', // Chili Red
-                                    borderColor: 'rgba(234, 58, 38, 1)',
-                                    borderWidth: 1,
-                                    borderRadius: 5
-                                },
-                                {
-                                    label: dailyAnalyticsData.datasets[2].label,
-                                    data: dailyAnalyticsData.datasets[2].data,
-                                    backgroundColor: 'rgba(255, 134, 0, 0.7)', // UT Orange
-                                    borderColor: 'rgba(255, 134, 0, 1)',
-                                    borderWidth: 1,
-                                    borderRadius: 5
-                                }
-                            ]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    position: 'bottom',
-                                },
-                                title: {
-                                    display: false,
-                                    text: 'Daily Analytics'
-                                }
-                            },
-                            scales: {
-                                x: {
-                                    grid: {
-                                        display: false
-                                    }
-                                },
-                                y: {
-                                    beginAtZero: true,
-                                    grid: {
-                                        color: 'rgba(0, 0, 0, 0.05)'
-                                    }
-                                }
-                            }
-                        }
-                    });
+            {{-- Average Job Value Trend --}}
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="flex justify-between items-center pb-3 mb-4 border-b border-gray-200">
+                    <h3 class="text-xl text-gray-800 font-semibold m-0">Average Job Value Trend</h3>
+                    <button class="px-4 py-2 bg-chili-red text-white rounded-md text-sm font-semibold hover:bg-tangelo transition-colors duration-200">Export</button>
+                </div>
+                <canvas id="averageJobValueChart" class="max-h-[300px]"></canvas>
+            </div>
+        </div>
 
-                    // Monthly Revenue & Bookings Chart (Line Chart)
-                    monthlyRevenueBookingsChartInstance = new Chart(monthlyCtx.getContext('2d'), {
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            // Data passed from Laravel Controller (example structure)
+            const quarterlyRevenueTrendData = {
+                labels: ['Q1 2023', 'Q2 2023', 'Q3 2023', 'Q4 2023', 'Q1 2024'],
+                datasets: [{
+                    label: 'Revenue',
+                    data: [30000, 32000, 35000, 33000, 38000],
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            };
+
+            const yearlyBookingGrowthData = {
+                labels: ['2021', '2022', '2023', '2024'],
+                datasets: [{
+                    label: 'Bookings',
+                    data: [150, 180, 220, 250],
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            };
+
+            const newCustomerAcquisitionData = {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'New Customers',
+                    data: [10, 12, 15, 11, 14, 16],
+                    backgroundColor: 'rgba(255, 159, 64, 0.6)',
+                    borderColor: 'rgba(255, 159, 64, 1)',
+                    borderWidth: 1
+                }]
+            };
+
+            const averageJobValueData = {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Avg. Job Value ($)',
+                    data: [350, 360, 340, 370, 355, 380],
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                    fill: false,
+                    tension: 0.4
+                }]
+            };
+
+
+            let quarterlyRevenueTrendChartInstance = null;
+            let yearlyBookingGrowthChartInstance = null;
+            let newCustomerAcquisitionChartInstance = null;
+            let averageJobValueChartInstance = null;
+
+            function renderTrendCharts() {
+                const quarterlyRevenueCtx = document.getElementById('quarterlyRevenueTrendChart');
+                const yearlyBookingGrowthCtx = document.getElementById('yearlyBookingGrowthChart');
+                const newCustomerAcquisitionCtx = document.getElementById('newCustomerAcquisitionChart');
+                const averageJobValueCtx = document.getElementById('averageJobValueChart');
+
+                if (quarterlyRevenueTrendChartInstance) quarterlyRevenueTrendChartInstance.destroy();
+                if (yearlyBookingGrowthChartInstance) yearlyBookingGrowthChartInstance.destroy();
+                if (newCustomerAcquisitionChartInstance) newCustomerAcquisitionChartInstance.destroy();
+                if (averageJobValueChartInstance) averageJobValueChartInstance.destroy();
+
+                if (quarterlyRevenueCtx) {
+                    quarterlyRevenueTrendChartInstance = new Chart(quarterlyRevenueCtx.getContext('2d'), {
                         type: 'line',
-                        data: {
-                            labels: monthlyRevenueBookingsData.labels,
-                            datasets: [
-                                {
-                                    label: monthlyRevenueBookingsData.datasets[0].label,
-                                    data: monthlyRevenueBookingsData.datasets[0].data,
-                                    borderColor: 'rgba(234, 58, 38, 1)', // Chili Red
-                                    backgroundColor: 'rgba(234, 58, 38, 0.2)',
-                                    fill: true,
-                                    tension: 0.4,
-                                    yAxisID: 'y'
-                                },
-                                {
-                                    label: monthlyRevenueBookingsData.datasets[1].label,
-                                    data: monthlyRevenueBookingsData.datasets[1].data,
-                                    borderColor: 'rgba(0, 0, 0, 1)', // Black
-                                    backgroundColor: 'rgba(0, 0, 0, 0.1)',
-                                    fill: true,
-                                    tension: 0.4,
-                                    yAxisID: 'y1' // Use a second Y-axis
-                                }
-                            ]
-                        },
+                        data: quarterlyRevenueTrendData,
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
@@ -207,36 +162,88 @@
                                 legend: {
                                     position: 'bottom',
                                 },
-                                title: {
-                                    display: false,
-                                    text: 'Monthly Revenue & Bookings'
-                                }
                             },
                             scales: {
                                 y: {
-                                    type: 'linear',
-                                    display: true,
-                                    position: 'left',
                                     beginAtZero: true,
                                     title: {
                                         display: true,
                                         text: 'Revenue ($)'
-                                    },
-                                    grid: {
-                                        color: 'rgba(0, 0, 0, 0.05)'
                                     }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                if (yearlyBookingGrowthCtx) {
+                    yearlyBookingGrowthChartInstance = new Chart(yearlyBookingGrowthCtx.getContext('2d'), {
+                        type: 'line',
+                        data: yearlyBookingGrowthData,
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
                                 },
-                                y1: {
-                                    type: 'linear',
-                                    display: true,
-                                    position: 'right',
+                            },
+                            scales: {
+                                y: {
                                     beginAtZero: true,
                                     title: {
                                         display: true,
                                         text: 'Bookings'
-                                    },
-                                    grid: {
-                                        drawOnChartArea: false // Only draw grids for the left Y axis
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                if (newCustomerAcquisitionCtx) {
+                    newCustomerAcquisitionChartInstance = new Chart(newCustomerAcquisitionCtx.getContext('2d'), {
+                        type: 'bar',
+                        data: newCustomerAcquisitionData,
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                },
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    title: {
+                                        display: true,
+                                        text: 'New Customers'
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                if (averageJobValueCtx) {
+                    averageJobValueChartInstance = new Chart(averageJobValueCtx.getContext('2d'), {
+                        type: 'line',
+                        data: averageJobValueData,
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                },
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: false, // Don't necessarily start at zero for average values
+                                    title: {
+                                        display: true,
+                                        text: 'Amount ($)'
                                     }
                                 }
                             }
@@ -245,9 +252,18 @@
                 }
             }
 
-            // Render charts when the page loads
-            renderCharts();
-        });
-    </script>
-</body>
-</html>
+            // Set active analytics tab and render charts on load
+            document.addEventListener('DOMContentLoaded', () => {
+                renderTrendCharts();
+
+                const analyticsTabs = document.querySelectorAll('.analytics-tab');
+                analyticsTabs.forEach(tab => {
+                    tab.classList.remove('text-[#EA3A26]', 'border-[#EA3A26]');
+                    tab.classList.add('text-gray-500', 'border-transparent');
+                });
+                // Set 'trends' as active
+                document.querySelector('.analytics-tab[data-tab="trends"]').classList.add('text-[#EA3A26]', 'border-[#EA3A26]');
+                document.querySelector('.analytics-tab[data-tab="trends"]').classList.remove('text-gray-500', 'border-transparent');
+            });
+        </script>
+@endsection

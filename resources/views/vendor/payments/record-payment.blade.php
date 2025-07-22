@@ -1,170 +1,101 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Helly - @if(isset($payment)) Edit Payment: {{ $payment->id }} @else Record New Payment @endif</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'chili-red': '#EA3A26',
-                        'ut-orange': '#FF8600',
-                        'tangelo': '#F54F1D',
-                    },
-                }
-            }
-        }
-    </script>
-</head>
-<body class="bg-gradient-to-br from-gray-50 to-gray-100 font-sans min-h-screen flex items-center justify-center py-8">
+@extends('layouts.vendor-app')
 
-    {{-- Main content wrapper (simulating a modal or a dedicated page for the form) --}}
-    <div class="bg-white p-8 rounded-lg shadow-xl w-11/12 max-w-md relative max-h-[90vh] overflow-y-auto">
-        <button onclick="window.history.back()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold">&times;</button>
-        <h3 class="text-2xl font-bold text-chili-red mb-6 border-b pb-3 border-gray-200">
-            @if(isset($payment)) Edit Payment: {{ $payment->id }} @else Record New Payment @endif
-        </h3>
+@section('content')
+    <h2 class="text-3xl font-bold text-gray-900 mb-6">Record Payment for Invoice #{{ $invoice->id ?? 'N/A' }}</h2>
 
-        <form id="paymentForm" method="POST" action="@if(isset($payment)) {{ route('payments.update', $payment->id) }} @else {{ route('payments.store') }} @endif">
-            @csrf {{-- CSRF token for security --}}
-            @if(isset($payment)) @method('PUT') @endif {{-- Method spoofing for UPDATE request --}}
+    {{-- Success/Error Messages from Controller --}}
+    @if (session('success'))
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Success!</strong>
+            <span class="block sm:inline">{{ session('success') }}</span>
+        </div>
+    @endif
+    @if (session('error'))
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Error!</strong>
+            <span class="block sm:inline">{{ session('error') }}</span>
+        </div>
+    @endif
+    @if ($errors->any())
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Validation Error!</strong>
+            <span class="block sm:inline">Please check your input.</span>
+            <ul class="mt-3 list-disc list-inside text-sm">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-            <div class="space-y-4">
-                <input type="hidden" id="paymentId" name="id" value="{{ $payment->id ?? '' }}">
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        @if(isset($invoice))
+            <div class="mb-6 border-b pb-4">
+                <p class="text-lg font-semibold text-gray-800">Invoice Details:</p>
+                <p class="text-md text-gray-700">Customer: {{ $invoice->customer->first_name ?? 'N/A' }} {{ $invoice->customer->last_name ?? '' }}</p>
+                <p class="text-md text-gray-700">Total Amount: ${{ number_format($invoice->total_amount, 2) }}</p>
+                <p class="text-md text-gray-700">Amount Due: <span class="font-bold text-chili-red">${{ number_format($invoice->amount_due, 2) }}</span></p>
+                <p class="text-md text-gray-700">Due Date: {{ $invoice->due_date->format('M d, Y') }}</p>
+            </div>
+        @else
+            <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded relative mb-4" role="alert">
+                <strong class="font-bold">Warning!</strong>
+                <span class="block sm:inline">No invoice selected for payment. Please select an invoice from the invoices list.</span>
+            </div>
+        @endif
 
-                <div>
-                    <label for="customer_id" class="block text-sm font-medium text-gray-700 mb-1">Customer:</label>
-                    <select id="customer_id" name="customer_id" required
-                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-chili-red focus:border-chili-red">
-                        <option value="">Select Customer</option>
-                        @foreach($customers as $customer)
-                            <option value="{{ $customer->id }}" {{ (old('customer_id', $payment->customer_id ?? ($selectedInvoice->customer_id ?? '')) == $customer->id) ? 'selected' : '' }}>
-                                {{ $customer->name }} ({{ $customer->company ?? 'Residential' }})
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('customer_id')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
-                </div>
+        <form action="{{ route('payments.store') }}" method="POST">
+            @csrf
+            <input type="hidden" name="invoice_id" value="{{ $invoice->id ?? '' }}">
+            <input type="hidden" name="customer_id" value="{{ $invoice->customer_id ?? '' }}">
 
-                <div>
-                    <label for="invoice_id" class="block text-sm font-medium text-gray-700 mb-1">Invoice ID (Optional):</label>
-                    <select id="invoice_id" name="invoice_id"
-                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-chili-red focus:border-chili-red">
-                        <option value="">No Specific Invoice</option>
-                        @foreach($invoices as $invoice)
-                            <option value="{{ $invoice->id }}" {{ (old('invoice_id', $payment->invoice_id ?? ($selectedInvoice->id ?? '')) == $invoice->id) ? 'selected' : '' }}
-                                data-balance-due="{{ $invoice->balance_due }}">
-                                {{ $invoice->invoice_number }} (Balance: ${{ number_format($invoice->balance_due, 2) }})
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('invoice_id')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
-                </div>
+            <div class="mb-4">
+                <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">Payment Amount ($)</label>
+                <input type="number" name="amount" id="amount" step="0.01" min="0.01"
+                       max="{{ $invoice->amount_due ?? '' }}" {{-- Restrict max to amount due --}}
+                       class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-chili-red focus:border-chili-red sm:text-sm"
+                       value="{{ old('amount', $invoice->amount_due ?? '') }}" required>
+                @if(isset($invoice))
+                    <p class="mt-2 text-xs text-gray-500">Max amount: ${{ number_format($invoice->amount_due, 2) }}</p>
+                @endif
+            </div>
 
-                <div>
-                    <label for="amount" class="block text-sm font-medium text-gray-700 mb-1">Amount ($):</label>
-                    <input type="number" id="amount" name="amount" min="0.01" step="0.01" required
-                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-chili-red focus:border-chili-red"
-                           value="{{ old('amount', $payment->amount ?? ($selectedInvoice->balance_due ?? '')) }}">
-                    @error('amount')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
-                </div>
+            <div class="mb-4">
+                <label for="payment_date" class="block text-sm font-medium text-gray-700 mb-1">Payment Date</label>
+                <input type="date" name="payment_date" id="payment_date"
+                       class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-chili-red focus:border-chili-red sm:text-sm"
+                       value="{{ old('payment_date', date('Y-m-d')) }}" required>
+            </div>
 
-                <div>
-                    <label for="method" class="block text-sm font-medium text-gray-700 mb-1">Payment Method:</label>
-                    <select id="method" name="method" required
-                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-chili-red focus:border-chili-red">
-                        <option value="">Select Method</option>
-                        <option value="Credit Card" {{ (old('method', $payment->method ?? '') == 'Credit Card') ? 'selected' : '' }}>Credit Card</option>
-                        <option value="ACH" {{ (old('method', $payment->method ?? '') == 'ACH') ? 'selected' : '' }}>ACH/Bank Transfer</option>
-                        <option value="Check" {{ (old('method', $payment->method ?? '') == 'Check') ? 'selected' : '' }}>Check</option>
-                        <option value="Cash" {{ (old('method', $payment->method ?? '') == 'Cash') ? 'selected' : '' }}>Cash</option>
-                        <option value="Manual Mark as Paid" {{ (old('method', $payment->method ?? '') == 'Manual Mark as Paid') ? 'selected' : '' }}>Manual Mark as Paid</option>
-                    </select>
-                    @error('method')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
-                </div>
+            <div class="mb-4">
+                <label for="payment_method" class="block text-sm font-medium text-gray-700 mb-1">Payment Method</label>
+                <select name="payment_method" id="payment_method"
+                        class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-chili-red focus:border-chili-red sm:text-sm"
+                        required>
+                    <option value="">Select Method</option>
+                    <option value="Bank Transfer" {{ (old('payment_method') == 'Bank Transfer') ? 'selected' : '' }}>Bank Transfer</option>
+                    <option value="Credit Card" {{ (old('payment_method') == 'Credit Card') ? 'selected' : '' }}>Credit Card</option>
+                    <option value="Cash" {{ (old('payment_method') == 'Cash') ? 'selected' : '' }}>Cash</option>
+                    <option value="Check" {{ (old('payment_method') == 'Check') ? 'selected' : '' }}>Check</option>
+                    <option value="Online Payment" {{ (old('payment_method') == 'Online Payment') ? 'selected' : '' }}>Online Payment</option>
+                </select>
+            </div>
 
-                <div>
-                    <label for="payment_date" class="block text-sm font-medium text-gray-700 mb-1">Payment Date:</label>
-                    <input type="date" id="payment_date" name="payment_date" required
-                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-chili-red focus:border-chili-red"
-                           value="{{ old('payment_date', $payment->payment_date ? $payment->payment_date->format('Y-m-d') : now()->format('Y-m-d')) }}">
-                    @error('payment_date')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
-                </div>
-                
-                <div>
-                    <label for="transaction_id" class="block text-sm font-medium text-gray-700 mb-1">Transaction ID (Optional):</label>
-                    <input type="text" id="transaction_id" name="transaction_id" placeholder="e.g., Stripe_ch_123xyz"
-                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-chili-red focus:border-chili-red"
-                           value="{{ old('transaction_id', $payment->transaction_id ?? '') }}">
-                    @error('transaction_id')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
-                </div>
+            <div class="mb-6">
+                <label for="transaction_id" class="block text-sm font-medium text-gray-700 mb-1">Transaction ID (optional)</label>
+                <input type="text" name="transaction_id" id="transaction_id"
+                       class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-chili-red focus:border-chili-red sm:text-sm"
+                       value="{{ old('transaction_id') }}" placeholder="e.g., Stripe charge ID, bank reference">
+            </div>
 
-                <div class="col-span-1 md:col-span-2">
-                    <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">Notes (Optional):</label>
-                    <textarea id="notes" name="notes" rows="2" placeholder="Any specific notes about this payment."
-                              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-chili-red focus:border-chili-red resize-y">
-                        {{ old('notes', $payment->notes ?? '') }}
-                    </textarea>
-                    @error('notes')<p class="text-red-500 text-xs mt-1">{{ $message }}</p>@enderror
-                </div>
-
-                <div class="col-span-1 md:col-span-2 flex justify-end gap-3 mt-6">
-                    <a href="{{ route('payments.index') }}" class="px-6 py-2 bg-gray-300 text-gray-800 rounded-md font-semibold hover:bg-gray-400 transition-colors duration-200">Cancel</a>
-                    <button type="submit" class="px-6 py-2 bg-chili-red text-white rounded-md font-semibold hover:bg-tangelo transition-colors duration-200">
-                        @if(isset($payment)) Save Changes @else Record Payment @endif
-                    </button>
-                </div>
+            <div class="mt-8 flex justify-end gap-3">
+                <a href="{{ route('invoices.index') }}" class="px-6 py-3 bg-gray-300 text-gray-800 rounded-md font-semibold hover:bg-gray-400 transition-colors duration-200">
+                    Cancel
+                </a>
+                <button type="submit" class="px-6 py-3 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 transition-colors duration-200">
+                    Record Payment
+                </button>
             </div>
         </form>
     </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const invoiceSelect = document.getElementById('invoice_id');
-            const amountInput = document.getElementById('amount');
-            const customerSelect = document.getElementById('customer_id');
-
-            // Store invoice data from PHP for JS lookup
-            const invoicesData = @json($invoices->keyBy('id'));
-
-            // Function to update amount and optionally customer when invoice is selected
-            invoiceSelect.addEventListener('change', function() {
-                const selectedInvoiceId = this.value;
-                const selectedInvoice = invoicesData[selectedInvoiceId];
-
-                if (selectedInvoice) {
-                    // Set amount to balance_due if an invoice is selected and it has balance
-                    if (selectedInvoice.balance_due > 0) {
-                        amountInput.value = parseFloat(selectedInvoice.balance_due).toFixed(2);
-                    } else {
-                        amountInput.value = parseFloat(selectedInvoice.total_amount).toFixed(2); // If balance is 0, suggest total
-                    }
-                    // Automatically select customer if invoice is selected
-                    customerSelect.value = selectedInvoice.customer_id;
-                } else {
-                    // If "No Specific Invoice" is selected, clear amount
-                    if (!amountInput.value) { // Don't clear if user already typed something
-                        amountInput.value = '';
-                    }
-                }
-            });
-
-            // Set current date for new payments if the field is empty
-            @if(!isset($payment))
-                if (!document.getElementById('payment_date').value) {
-                    document.getElementById('payment_date').valueAsDate = new Date();
-                }
-            @endif
-
-            // Trigger change event if an invoice was pre-selected on page load (e.g., from query param)
-            if (invoiceSelect.value && !amountInput.value && !customerSelect.value) { // Only trigger if nothing is filled yet
-                invoiceSelect.dispatchEvent(new Event('change'));
-            }
-        });
-    </script>
-</body>
-</html>
+@endsection

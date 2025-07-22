@@ -1,101 +1,109 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Helly - Quote Details: {{ $quote->id }}</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'chili-red': '#EA3A26',
-                        'ut-orange': '#FF8600',
-                        'tangelo': '#F54F1D',
-                    },
-                }
-            }
-        }
-    </script>
-</head>
-<body class="bg-gradient-to-br from-gray-50 to-gray-100 font-sans min-h-screen flex items-center justify-center py-8">
+@extends('layouts.vendor-app')
 
-    {{-- Main content wrapper (simulating a modal or a dedicated page for details) --}}
-    <div class="bg-white p-8 rounded-lg shadow-xl w-11/12 max-w-3xl relative max-h-[90vh] overflow-y-auto">
-        <button onclick="window.history.back()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold">&times;</button>
-        <h3 class="text-2xl font-bold text-chili-red mb-6 border-b pb-3 border-gray-200">
-            Quote Details: <span id="detailQuoteId">{{ $quote->id }}</span>
-        </h3>
+@section('content')
+    <h2 class="text-3xl font-bold text-gray-900 mb-6">Quote Details: #{{ $quote->id }}</h2>
 
-        <div class="space-y-4 text-gray-700">
-            <div class="bg-gray-50 p-4 rounded-md shadow-sm">
-                <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Quote Information</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <p><strong>Customer:</strong> <span id="detailQuoteCustomerName">{{ $quote->customer->name ?? 'N/A' }}</span></p>
-                    <p><strong>Quote Date:</strong> <span id="detailQuoteDate">{{ $quote->quote_date->format('Y-m-d') }}</span></p>
-                    <p><strong>Expiry Date:</strong> <span id="detailExpiryDate">{{ $quote->expiry_date ? $quote->expiry_date->format('Y-m-d') : 'N/A' }}</span></p>
-                    <p><strong>Status:</strong>
-                        <span id="detailQuoteStatus" class="px-2 py-1 rounded-full text-xs font-bold uppercase text-white
-                            @if($quote->status == 'Draft') bg-gray-500
-                            @elseif($quote->status == 'Sent') bg-blue-600
-                            @elseif($quote->status == 'Accepted') bg-green-600
-                            @elseif($quote->status == 'Rejected' || $quote->status == 'Expired') bg-red-600
-                            @endif
-                        ">{{ $quote->status }}</span>
-                    </p>
-                    <p class="md:col-span-2"><strong>Total Amount:</strong> $<span id="detailQuoteTotal">{{ number_format($quote->total_amount, 2) }}</span></p>
-                </div>
-            </div>
-
-            <div class="bg-gray-50 p-4 rounded-md shadow-sm">
-                <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Items Quoted</h4>
-                <ul id="detailQuoteItemsList" class="list-disc list-inside ml-4 space-y-1">
-                    @forelse($quoteItemsWithDetails as $item)
-                        <li>
-                            <strong>{{ $item['equipment_details']['type'] ?? 'N/A' }} ({{ $item['equipment_details']['size'] ?? 'N/A' }})</strong> - ID: {{ $item['equipment_details']['internal_id'] ?? 'N/A' }}
-                            for {{ $item['rental_days'] }} days @ ${{ number_format($item['unit_price'], 2) }}/day (Subtotal: ${{ number_format($item['item_total_price'], 2) }})
-                        </li>
-                    @empty
-                        <li>No items quoted.</li>
-                    @endforelse
-                </ul>
-            </div>
-            
-            <div class="bg-gray-50 p-4 rounded-md shadow-sm">
-                <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Additional Fees</h4>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <p><strong>Delivery Fee:</strong> $<span id="detailQuoteDeliveryFee">{{ number_format($quote->delivery_fee, 2) }}</span></p>
-                    <p><strong>Pickup Fee:</strong> $<span id="detailQuotePickupFee">{{ number_format($quote->pickup_fee, 2) }}</span></p>
-                    <p><strong>Damage Waiver:</strong> $<span id="detailQuoteDamageWaiver">{{ number_format($quote->damage_waiver, 2) }}</span></p>
-                </div>
-            </div>
-
-            @if($quote->notes)
-            <div class="bg-gray-50 p-4 rounded-md shadow-sm" id="detailQuoteNotesGroup">
-                <h4 class="text-lg font-semibold text-gray-800 mb-2 border-b border-dashed border-gray-300 pb-2">Notes/Terms</h4>
-                <p><span id="detailQuoteNotes">{{ $quote->notes }}</span></p>
-            </div>
-            @endif
+    {{-- Success/Error Messages from Controller --}}
+    @if (session('success'))
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Success!</strong>
+            <span class="block sm:inline">{{ session('success') }}</span>
         </div>
-        <div class="mt-6 flex justify-end gap-3">
-            <a href="{{ route('quotes.index') }}" class="px-6 py-2 bg-gray-300 text-gray-800 rounded-md font-semibold hover:bg-gray-400 transition-colors duration-200">Close</a>
-            <a href="{{ route('quotes.edit', $quote->id) }}" class="px-6 py-2 bg-chili-red text-white rounded-md font-semibold hover:bg-tangelo transition-colors duration-200" id="editQuoteFromDetailBtn">Edit Quote</a>
+    @endif
+    @if (session('error'))
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Error!</strong>
+            <span class="block sm:inline">{{ session('error') }}</span>
+        </div>
+    @endif
+    @if ($errors->any())
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Validation Error!</strong>
+            <span class="block sm:inline">Please check your input.</span>
+            <ul class="mt-3 list-disc list-inside text-sm">
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-            {{-- Convert to Booking & Invoice Button (Conditional) --}}
-            @if(in_array($quote->status, ['Draft', 'Sent']) && !$quote->linked_booking_id && !$quote->linked_invoice_id)
-                <form action="{{ route('quotes.convert', $quote->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to ACCEPT Quote {{ $quote->id }} and convert it to a Booking and Invoice? This action cannot be undone.');">
-                    @csrf
-                    <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-md font-semibold hover:bg-green-700 transition-colors duration-200" id="acceptQuoteBtn">Accept & Convert</button>
-                </form>
-            @elseif($quote->linked_booking_id)
-                <a href="{{ route('bookings.show', $quote->linked_booking_id) }}" class="px-6 py-2 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 transition-colors duration-200">View Linked Booking</a>
-            @elseif($quote->linked_invoice_id)
-                {{-- Assuming a route for invoices.show exists --}}
-                <a href="{{ route('invoices.show', $quote->linked_invoice_id) }}" class="px-6 py-2 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 transition-colors duration-200">View Linked Invoice</a>
+    <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            <div>
+                <p class="text-sm font-medium text-gray-500">Quote ID:</p>
+                <p class="text-lg text-gray-900 font-semibold">#{{ $quote->id }}</p>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-gray-500">Customer:</p>
+                <p class="text-lg text-gray-900">
+                    <a href="{{ route('customers.show', $quote->customer->id ?? '#') }}" class="text-blue-600 hover:underline">
+                        {{ $quote->customer->first_name ?? 'N/A' }} {{ $quote->customer->last_name ?? '' }}
+                    </a>
+                </p>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-gray-500">Issue Date:</p>
+                <p class="text-lg text-gray-900">{{ $quote->issue_date->format('M d, Y') }}</p>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-gray-500">Expiration Date:</p>
+                <p class="text-lg text-gray-900">{{ $quote->expiration_date->format('M d, Y') }}</p>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-gray-500">Status:</p>
+                <p class="text-lg text-gray-900">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                        @if($quote->status == 'Accepted') bg-green-100 text-green-800
+                        @elseif($quote->status == 'Pending' || $quote->status == 'Sent') bg-yellow-100 text-yellow-800
+                        @elseif($quote->status == 'Rejected' || $quote->status == 'Expired') bg-red-100 text-red-800
+                        @elseif($quote->status == 'Invoiced') bg-blue-100 text-blue-800
+                        @else bg-gray-100 text-gray-800 @endif">
+                        {{ $quote->status }}
+                    </span>
+                </p>
+            </div>
+            <div>
+                <p class="text-sm font-medium text-gray-500">Total Amount:</p>
+                <p class="text-lg text-gray-900">${{ number_format($quote->total_amount, 2) }}</p>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <p class="text-sm font-medium text-gray-500">Description/Service Details:</p>
+            <p class="text-lg text-gray-900">{{ $quote->description }}</p>
+        </div>
+
+        @if($quote->invoice)
+            <div class="mt-4">
+                <p class="text-sm font-medium text-gray-500">Associated Invoice:</p>
+                <p class="text-lg text-gray-900">
+                    <a href="{{ route('invoices.show', $quote->invoice->id) }}" class="text-blue-600 hover:underline">
+                        #{{ $quote->invoice->id }}
+                    </a>
+                </p>
+            </div>
+        @endif
+
+        <div class="mt-8 flex justify-end gap-3">
+            @if($quote->status === 'Accepted' && !$quote->invoice_id)
+                <a href="{{ route('invoices.create', ['quote_id' => $quote->id]) }}" class="px-6 py-3 bg-purple-600 text-white rounded-md font-semibold hover:bg-purple-700 transition-colors duration-200">
+                    Generate Invoice
+                </a>
             @endif
+            <a href="{{ route('quotes.edit', $quote->id) }}" class="px-6 py-3 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 transition-colors duration-200">
+                Edit Quote
+            </a>
+            <form action="{{ route('quotes.destroy', $quote->id) }}" method="POST" class="inline-block" onsubmit="return confirm('Are you sure you want to delete this quote? This action cannot be undone.');">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="px-6 py-3 bg-red-600 text-white rounded-md font-semibold hover:bg-red-700 transition-colors duration-200">
+                    Delete Quote
+                </button>
+            </form>
+            <a href="{{ route('quotes.index') }}" class="px-6 py-3 bg-gray-300 text-gray-800 rounded-md font-semibold hover:bg-gray-400 transition-colors duration-200">
+                Back to Quotes
+            </a>
         </div>
     </div>
-</body>
-</html>
+@endsection
